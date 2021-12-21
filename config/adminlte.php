@@ -241,30 +241,54 @@ return [
             'icon' => 'fas fa-home',
         ],
         [
-            'text' => 'Cadastrar Lote',
-            'url' => 'lotes',
+            'text' => 'Lotes',
+            'url' => 'lots',
             'icon' => 'fas fa-th',
         ],
         [
-            'text' => 'Cadastrar Obra',
-            'url' => 'obras',
+            'text' => 'Obras',
+            'url' => 'constructions',
             'icon' => 'fas fa-store-alt',
         ],
         [
-            'text' => 'Cadastrar Material',
-            'url' => 'materiais',
+            'text' => 'Materiais',
+            'url' => 'materials',
             'icon' => 'fas fa-boxes',
         ],
         [
-            'text' => 'Cadastrar Nota',
-            'url' => 'notas',
+            'text' => 'Notas',
+            'url' => 'invoices',
             'icon' => 'fas fa-file-invoice-dollar',
         ],
         [
-            'text' => 'Gerar Relatórios',
-            'url' => 'relatorios',
+            'text' => 'Relatórios',
+            'url' => 'reports',
             'icon' => 'fas fa-chart-line',
         ],
+        [
+            'header' => 'CONFIGURAÇÕES'
+        ],
+        [
+            'text' => 'Usuários',
+            'url' => 'users',
+            'icon' => 'fas fa-users',
+        ],
+        [
+            'text' => 'Acessos',
+            'url' => 'permissions',
+            'icon' => 'fas fa-key',
+        ],
+        [
+            'text' => 'Logs',
+            'url' => 'logs',
+            'icon' => 'fas fa-history',
+        ],
+        [
+            'text' => 'Atualizações',
+            'url' => 'upgrades',
+            'icon' => 'fas fa-rocket',
+        ],
+        [],
 
     ],
 
@@ -304,7 +328,7 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

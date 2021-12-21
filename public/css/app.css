@@ -1,4 +1,7 @@
 .login-page {
     background-color: #fff;
 }
-
+cw-header-title {
+    display: flex;
+    justify-content: space-between;
+}
