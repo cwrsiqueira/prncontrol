@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use App\Models\Permission_group;
+
+use Helper;
 
 class UserController extends Controller
 {
@@ -14,6 +18,7 @@ class UserController extends Controller
         $this->middleware('auth');
         // $this->middleware('can:menu-cadastro');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,7 +27,11 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('users.index', ['users' => $users]);
+        return view('users.index',
+            [
+                'users' => $users,
+            ]
+        );
     }
 
     /**
@@ -33,6 +42,31 @@ class UserController extends Controller
     public function create()
     {
         //
+    }
+
+    private function generatePassword($qtyCaraceters = 8)
+    {
+        //Letras minúsculas embaralhadas
+        $smallLetters = str_shuffle('abcdefghijklmnopqrstuvwxyz');
+
+        //Letras maiúsculas embaralhadas
+        $capitalLetters = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+        //Números aleatórios
+        $numbers = (((date('Ymd') / 12) * 24) + mt_rand(800, 9999));
+        $numbers .= 1234567890;
+
+        //Caracteres Especiais
+        $specialCharacters = str_shuffle('!@#$%*-');
+
+        //Junta tudo
+        $characters = $capitalLetters.$smallLetters.$numbers.$specialCharacters;
+
+        //Embaralha e pega apenas a quantidade de caracteres informada no parâmetro
+        $password = substr(str_shuffle($characters), 0, $qtyCaraceters);
+
+        //Retorna a senha
+        return $password;
     }
 
     /**
@@ -49,8 +83,8 @@ class UserController extends Controller
             $data,
             [
                 'name' => ['required', 'max:255'],
-                'email' => ['required', 'max:255', 'confirmed', 'unique:users'],
-                'password' => ['max:255', 'confirmed'],
+                'email' => ['required', 'max:255', 'unique:users'],
+                'password' => ['max:255', 'required'],
             ],
             $messages =
             [
@@ -61,7 +95,12 @@ class UserController extends Controller
             ]
         )->validate();
 
-        dd($data);
+        $password = UserController::generatePassword($data['password']);
+        $data['password'] = hash::make($password);
+
+        $user_id = User::insertGetId($data);
+        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso!');
     }
 
     /**

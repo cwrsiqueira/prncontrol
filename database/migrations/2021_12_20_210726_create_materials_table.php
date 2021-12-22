@@ -15,6 +15,9 @@ class CreateMaterialsTable extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained();
+            $table->string('name');
+            $table->string('obs');
             $table->timestamps();
         });
     }

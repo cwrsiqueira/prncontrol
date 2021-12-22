@@ -16,7 +16,8 @@ class CreateLotsTable extends Migration
         Schema::create('lots', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained();
-            $table->integer('registerby_userid')->default(Auth::user()->id);
+            $table->string('name');
+            $table->string('obs');
             $table->timestamps();
         });
     }

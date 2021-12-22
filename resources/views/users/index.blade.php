@@ -1,23 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'Usuários')
+@section('title', __('system.users'))
 
 @section('content_header')
     <cw-header-title>
         <h1>Usuários</h1>
 
-        @if(count($errors) > 0)
+        @if($errors->any())
 
-            <input type="hidden" id="errors" value="{{$errors}}">
-
-            <x-adminlte-modal id="modalErrors" title="Atenção!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
+            <x-adminlte-modal id="modalErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
                 <ul>
-                    @foreach ($errors as $error)
-                        <li>{{$errors}}</li>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
                     @endforeach
                 </ul>
                 <x-slot name="footerSlot">
-                    <x-adminlte-button theme="danger" label="Fechar" data-dismiss="modal" data-toggle="modal" data-target="#modalAdd"/>
+                    <x-adminlte-button theme="danger" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal" data-target="#modalAdd"/>
                 </x-slot>
             </x-adminlte-modal>
 
@@ -25,7 +23,9 @@
 
         @endif
 
-        <x-adminlte-button label="Adicionar Usuário" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus"/>
+        <input type="hidden" id="errors" value="{{$errors->any()}}">
+
+        <x-adminlte-button label="{{__('system.add_user')}}" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus"/>
     </cw-header-title>
 @stop
 
@@ -33,11 +33,14 @@
     <x-adminlte-card theme="success" theme-mode="outline" icon="fas fa-lg fa-users">
         {{-- Setup data for datatables --}}
         @php
+        $system_edit = __('system.edit');
+        $system_delete = __('system.delete');
+        $system_details = __('system.details');
         $heads = [
             'ID',
-            'Name',
-            'Email',
-            ['label' => 'Actions', 'no-export' => true, 'width' => 5],
+            __('system.name'),
+            __('system.email'),
+            ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
         ];
         $data = [];
         foreach ($users as $key => $user) {
@@ -47,13 +50,13 @@
                 $data[$key]['email'] = $user['email'];
                 $data[$key]['actions'] =
                 '<nobr>
-                    <button class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit" data-id="'.$user['id'].'">
+                    <button class="btn btn-xs btn-default text-primary mx-1 shadow" title="'.$system_edit.'" data-id="'.$user['id'].'">
                         <i class="fa fa-lg fa-fw fa-pen"></i>
                     </button>
-                    <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="Delete" data-id="'.$user['id'].'">
+                    <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="'.$system_delete.'" data-id="'.$user['id'].'">
                         <i class="fa fa-lg fa-fw fa-trash"></i>
                     </button>
-                    <button class="btn btn-xs btn-default text-teal mx-1 shadow" title="Details" data-id="'.$user['id'].'">
+                    <button class="btn btn-xs btn-default text-teal mx-1 shadow" title="'.$system_details.'" data-id="'.$user['id'].'">
                         <i class="fa fa-lg fa-fw fa-eye"></i>
                     </button>
                 </nobr>';
@@ -78,11 +81,20 @@
         </x-adminlte-datatable>
 
         {{-- Custom --}}
-        <x-adminlte-modal id="modalAdd" title="Adicionar Usuário" size="lg" theme="success" icon="fas fa-user" v-centered static-backdrop scrollable>
+        <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_user') }}" size="lg" theme="success" icon="fas fa-user" v-centered static-backdrop scrollable>
             <form action="{{route('users.store')}}" method="post">
                 @csrf
+                <input type="hidden" name="company_id" value="{{Auth::user()->company_id}}">
+                <input type="hidden" name="password" value="8">
+                <input type="hidden" name="inactive" value="0">
+                <input type="hidden" name="avatar" value="default.png">
+                <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
+                <input type="hidden" name="permission_group_id" value="4">
                 <div class="row">
-                    <x-adminlte-input name="name" label="Nome" placeholder="Digite o nome" fgroup-class="col-md-6" enable-old-support/>
+                    <x-adminlte-input name="name" label="{{__('system.name')}}" placeholder="{{__('system.enter_name')}}" fgroup-class="col-md-12" enable-old-support/>
+                </div>
+                <div class="row">
+                    <x-adminlte-input type="email" name="email" label="{{__('system.email')}}" placeholder="{{__('system.enter_email')}}" fgroup-class="col-md-12" enable-old-support/>
                 </div>
             <x-slot name="footerSlot">
                 <x-adminlte-button type="submit" class="mr-auto" theme="success" label="Salvar"/>
@@ -102,7 +114,7 @@
     <script>
         window.onload = () => {
             let errors = document.querySelector('#errors').value
-            if(errors !== '') {
+            if(errors == 1) {
                 document.querySelector('#openModalErrors').click();
             }
         }

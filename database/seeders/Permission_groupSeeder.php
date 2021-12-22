@@ -18,5 +18,17 @@ class Permission_groupSeeder extends Seeder
             'company_id' => 1,
             'name' => 'developer'
         ]);
+        DB::table('permission_groups')->insert([
+            'company_id' => 1,
+            'name' => 'admin'
+        ]);
+        DB::table('permission_groups')->insert([
+            'company_id' => 1,
+            'name' => 'user'
+        ]);
+        DB::table('permission_groups')->insert([
+            'company_id' => 1,
+            'name' => 'consultant'
+        ]);
     }
 }

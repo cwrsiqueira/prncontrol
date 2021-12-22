@@ -241,50 +241,50 @@ return [
             'icon' => 'fas fa-home',
         ],
         [
-            'text' => 'Lotes',
+            'text' => 'lots',
             'url' => 'lots',
             'icon' => 'fas fa-th',
         ],
         [
-            'text' => 'Obras',
+            'text' => 'constructions',
             'url' => 'constructions',
             'icon' => 'fas fa-store-alt',
         ],
         [
-            'text' => 'Materiais',
+            'text' => 'materials',
             'url' => 'materials',
             'icon' => 'fas fa-boxes',
         ],
         [
-            'text' => 'Notas',
+            'text' => 'invoices',
             'url' => 'invoices',
             'icon' => 'fas fa-file-invoice-dollar',
         ],
         [
-            'text' => 'Relatórios',
+            'text' => 'reports',
             'url' => 'reports',
             'icon' => 'fas fa-chart-line',
         ],
         [
-            'header' => 'CONFIGURAÇÕES'
+            'header' => 'CONFIGURATIONS'
         ],
         [
-            'text' => 'Usuários',
+            'text' => 'users',
             'url' => 'users',
             'icon' => 'fas fa-users',
         ],
         [
-            'text' => 'Acessos',
+            'text' => 'permissions',
             'url' => 'permissions',
             'icon' => 'fas fa-key',
         ],
         [
-            'text' => 'Logs',
+            'text' => 'logs',
             'url' => 'logs',
             'icon' => 'fas fa-history',
         ],
         [
-            'text' => 'Atualizações',
+            'text' => 'upgrades',
             'url' => 'upgrades',
             'icon' => 'fas fa-rocket',
         ],

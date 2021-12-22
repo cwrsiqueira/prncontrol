@@ -15,6 +15,9 @@ class CreateConstructionsTable extends Migration
     {
         Schema::create('constructions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained();
+            $table->string('name');
+            $table->string('obs');
             $table->timestamps();
         });
     }
