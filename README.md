@@ -2,6 +2,9 @@
 
 ## v1.0
 
+### 23/12/2021
+- Atualização do menu Usuários
+
 ### 22/12/2021
 - Atualização do menu Usuários
 

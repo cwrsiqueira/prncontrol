@@ -25,7 +25,7 @@
 
         <input type="hidden" id="errors" value="{{$errors->any()}}">
 
-        <x-adminlte-button label="{{__('system.add_user')}}" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus"/>
+        <x-adminlte-button label="{{__('system.add_user')}}" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus" id="openModalAdd"/>
     </cw-header-title>
 @stop
 
@@ -49,17 +49,17 @@
                 $data[$key]['name'] = $user['name'];
                 $data[$key]['email'] = $user['email'];
                 $data[$key]['actions'] =
-                '<nobr>
-                    <button class="btn btn-xs btn-default text-primary mx-1 shadow" title="'.$system_edit.'" data-id="'.$user['id'].'">
-                        <i class="fa fa-lg fa-fw fa-pen"></i>
+                "<nobr>
+                    <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='".$system_edit."' data-id='".$user["id"]."'>
+                        <i class='fa fa-lg fa-fw fa-pen'></i>
                     </button>
-                    <button class="btn btn-xs btn-default text-danger mx-1 shadow" title="'.$system_delete.'" data-id="'.$user['id'].'">
-                        <i class="fa fa-lg fa-fw fa-trash"></i>
+                    <button class='btn btn-xs btn-default text-danger mx-1 shadow btnAction delete' title='".$system_delete."' data-id='".$user["id"]."'>
+                        <i class='fa fa-lg fa-fw fa-trash'></i>
                     </button>
-                    <button class="btn btn-xs btn-default text-teal mx-1 shadow" title="'.$system_details.'" data-id="'.$user['id'].'">
-                        <i class="fa fa-lg fa-fw fa-eye"></i>
+                    <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='".$system_details."' data-id='".$user["id"]."'>
+                        <i class='fa fa-lg fa-fw fa-eye'></i>
                     </button>
-                </nobr>';
+                </nobr>";
             }
         }
 
@@ -70,7 +70,7 @@
         ];
         @endphp
         {{-- Minimal example / fill data using the component slot --}}
-        <x-adminlte-datatable id="table1" :heads="$heads">
+        <x-adminlte-datatable id="table1" :heads="$heads" with-buttons>
             @foreach($config['data'] as $row)
                 <tr>
                     @foreach($row as $cell)
@@ -112,11 +112,43 @@
 
 @section('js')
     <script>
-        window.onload = () => {
-            let errors = document.querySelector('#errors').value
-            if(errors == 1) {
-                document.querySelector('#openModalErrors').click();
-            }
+        let errors = document.querySelector('#errors').value
+        if(errors == 1) {
+            document.querySelector('#openModalErrors').click();
+        }
+        let btnAction = document.querySelectorAll('.btnAction');
+        btnAction.forEach((el) => {
+            el.addEventListener('click', (ev)=>{
+                let id = el.getAttribute('data-id')
+                let action = el.classList.contains('edit') ? 'edit' : el.classList.contains('delete') ? 'delete' : el.classList.contains('details') ? 'details' : ''
+                let user
+
+                var ajax = new XMLHttpRequest();
+                ajax.open("GET", "{{route('getUser')}}/?id="+id, true);
+                ajax.send();
+                ajax.onreadystatechange = function() {
+                    if (ajax.readyState == 4 && ajax.status == 200) {
+                        user = JSON.parse(ajax.responseText)
+                    }
+                }
+
+                switch (action) {
+                    case 'edit':
+                        edit_user(user)
+                        break;
+                    case 'delete':
+
+                        break;
+                    case 'details':
+
+                        break;
+                }
+            })
+        })
+
+        const edit_user = (user) => {
+            console.log(user)
+            document.querySelector('#openModalAdd').click()
         }
     </script>
 @stop

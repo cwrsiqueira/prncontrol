@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 use App\Models\Permission_group;
@@ -98,7 +99,11 @@ class UserController extends Controller
         $password = UserController::generatePassword($data['password']);
         $data['password'] = hash::make($password);
 
-        $user_id = User::insertGetId($data);
+        $id = User::insertGetId($data);
+
+        $data['password'] = '***';
+        $data['id'] = $id;
+        $user_id = Auth::user()->id;
         Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
         return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso!');
     }
