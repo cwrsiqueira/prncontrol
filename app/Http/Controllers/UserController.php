@@ -80,32 +80,38 @@ class UserController extends Controller
     {
         $data = $request->except('_token');
 
-        $validator = Validator::make(
+        Validator::make(
             $data,
             [
                 'name' => ['required', 'max:255'],
                 'email' => ['required', 'max:255', 'unique:users'],
                 'password' => ['max:255', 'required'],
             ],
-            $messages =
-            [
-                'required' => 'Campo :attribute deve ser preenchido',
-                'max' => ':attribute com máximo de :max caracteres excedido',
-                'confirmed' => 'Os campos de :attribute devem ser iguais',
-                'unique' => 'Já existe um cadastro com esse :attribute',
-            ]
         )->validate();
 
+        if ($request->hasFile('avatar')) {
+            $img = $request->avatar;
+            Validator::make(
+                $data,
+                [
+                    'avatar' => 'image'
+                ]
+            )->validate();
+            $path = $img->store('images');
+            $data['avatar'] = $path;
+        }
+
         $password = UserController::generatePassword($data['password']);
+
         $data['password'] = hash::make($password);
 
-        $id = User::insertGetId($data);
+        // $id = User::insertGetId($data);
 
         $data['password'] = '***';
-        $data['id'] = $id;
+        // $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
-        return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso!');
+        // Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso! A senha cadastrada foi enviada para o email '.$data['email']);
     }
 
     /**

@@ -6,6 +6,39 @@
     <cw-header-title>
         <h1>Usuários</h1>
 
+        {{-- IT OPENS ALERTS MODAL --}}
+
+        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+            @if(session($msg))
+                <x-adminlte-modal id="modalMessages" title="{{__('system.'.$msg.'')}}!" size="lg" theme="{{$msg}}" v-centered static-backdrop scrollable>
+                    {{-- @switch($msg)
+                        @case('danger')
+                            icon='fas fa-ban'
+                            @break
+                        @case('warning')
+                            icon='fa-exclamation-triangle'
+                            @break
+                        @case('success')
+                            icon='fa-thumbs-up'
+                            @break
+                        @case('info')
+                            icon='fas fa-info-circle'
+                            @break
+                    @endswitch --}}
+
+                        {!! session($msg) !!}
+
+                        <x-slot name="footerSlot">
+                            <x-adminlte-button theme="success" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal"/>
+                        </x-slot>
+                </x-adminlte-modal>
+
+                <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages" style="display:none;"/>
+            @endif
+        @endforeach
+        <input type="hidden" id="messages" value="{{ session($msg) }}">
+
+        {{-- IT OPENS ERRORS FILING FORM FIELDS MODAL --}}
         @if($errors->any())
 
             <x-adminlte-modal id="modalErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
@@ -26,6 +59,7 @@
         <input type="hidden" id="errors" value="{{$errors->any()}}">
 
         <x-adminlte-button label="{{__('system.add_user')}}" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus" id="openModalAdd"/>
+        <x-adminlte-button data-toggle="modal" data-target="#modalEdit" id="openModalEdit" style="display:none;"/>
     </cw-header-title>
 @stop
 
@@ -80,16 +114,63 @@
             @endforeach
         </x-adminlte-datatable>
 
-        {{-- Custom --}}
+        {{-- Modal ADD --}}
         <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_user') }}" size="lg" theme="success" icon="fas fa-user" v-centered static-backdrop scrollable>
-            <form action="{{route('users.store')}}" method="post">
+            <form action="{{route('users.store')}}" method="post" enctype="multipart/form-data" id="form_add_user">
                 @csrf
                 <input type="hidden" name="company_id" value="{{Auth::user()->company_id}}">
                 <input type="hidden" name="password" value="8">
                 <input type="hidden" name="inactive" value="0">
-                <input type="hidden" name="avatar" value="default.png">
+                <input type="hidden" name="avatar" value="images/default.png">
                 <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
                 <input type="hidden" name="permission_group_id" value="4">
+
+                <div class="avatar_field_area">
+                    <img src="images/default.png" id="preview_avatar">
+                    <div class="avatar_field_title">
+                        <span>{{__('system.enter_avatar_insert')}}</span>
+                        <i class="far fa-hand-pointer"></i>
+                    </div>
+                    <input type="file" id="input_avatar" type="file" accept="image/*" name="avatar" style="display: none;">
+                </div>
+
+                <div class="row">
+                    <x-adminlte-input name="name" label="{{__('system.name')}}" placeholder="{{__('system.enter_name')}}" fgroup-class="col-md-12" enable-old-support/>
+                </div>
+                <div class="row">
+                    <x-adminlte-input type="email" name="email" label="{{__('system.email')}}" placeholder="{{__('system.enter_email')}}" fgroup-class="col-md-12" enable-old-support/>
+                </div>
+            <x-slot name="footerSlot">
+                <x-adminlte-button type="submit" class="mr-auto" theme="success" label="Salvar"/>
+            </form>
+                <x-adminlte-button theme="danger" label="Fechar" data-dismiss="modal"/>
+            </x-slot>
+        </x-adminlte-modal>
+
+        {{-- Modal EDIT --}}
+        <x-adminlte-modal id="modalEdit" title=" {{ __('system.edit_user') }}" size="lg" theme="success" icon="fas fa-user" v-centered static-backdrop scrollable>
+            <form id="form_edit_user" method="post" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="company_id" value="{{Auth::user()->company_id}}">
+                <input type="hidden" name="password" value="8">
+                <input type="hidden" name="inactive" value="0">
+                <input type="hidden" name="avatar" value="images/default.png">
+                <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
+                <input type="hidden" name="permission_group_id" value="4">
+
+                <div class="avatar_field_area">
+                    <img src="images/default.png" id="preview_avatar">
+                    <div class="avatar_field_title">
+                        <span>{{__('system.enter_avatar_insert')}}</span>
+                        <i class="far fa-hand-pointer"></i>
+                    </div>
+                    <input type="file" id="input_avatar" type="file" accept="image/*" name="avatar" style="display: none;">
+                </div>
+
+                <div class="row">
+                    <x-adminlte-input type="checkbox" name="password" label="{{__('system.generate_new_password')}}" fgroup-class="col-md-12" enable-old-support/>
+                </div>
+
                 <div class="row">
                     <x-adminlte-input name="name" label="{{__('system.name')}}" placeholder="{{__('system.enter_name')}}" fgroup-class="col-md-12" enable-old-support/>
                 </div>
@@ -112,11 +193,18 @@
 
 @section('js')
     <script>
+
+        let messages = document.querySelector('#messages').value
+        if(messages !== '') {
+            document.querySelector('#openModalMessages').click()
+        }
+
         let errors = document.querySelector('#errors').value
         if(errors == 1) {
-            document.querySelector('#openModalErrors').click();
+            document.querySelector('#openModalErrors').click()
         }
-        let btnAction = document.querySelectorAll('.btnAction');
+
+        let btnAction = document.querySelectorAll('.btnAction')
         btnAction.forEach((el) => {
             el.addEventListener('click', (ev)=>{
                 let id = el.getAttribute('data-id')
@@ -129,26 +217,48 @@
                 ajax.onreadystatechange = function() {
                     if (ajax.readyState == 4 && ajax.status == 200) {
                         user = JSON.parse(ajax.responseText)
+                        switch (action) {
+                            case 'edit':
+                                edit_user(user)
+                                break;
+                            case 'delete':
+                                delete_user(user)
+                                break;
+                            case 'details':
+                                show_user(user)
+                                break;
+                        }
                     }
-                }
-
-                switch (action) {
-                    case 'edit':
-                        edit_user(user)
-                        break;
-                    case 'delete':
-
-                        break;
-                    case 'details':
-
-                        break;
                 }
             })
         })
 
         const edit_user = (user) => {
-            console.log(user)
-            document.querySelector('#openModalAdd').click()
+            let route_edit = "{{route('users.update', ['user' => 0])}}"
+            document.querySelector('#form_edit_user').setAttribute('action', route_edit.replace('0', user))
+            document.querySelector('#openModalEdit').click()
         }
+        const delete_user = (user) => {
+            if(confirm('system.delete_confirm')) {
+                return false;
+            }
+            alert('system.user_deleted')
+        }
+
+        document.querySelector('.avatar_field_area').addEventListener('click', ()=>{
+            document.querySelector('#input_avatar').click()
+        })
+
+        document.querySelector('#input_avatar').addEventListener('change', ()=>{
+            if (document.querySelector('#input_avatar').files && document.querySelector('#input_avatar').files[0]) {
+                console.log(document.querySelector('#input_avatar').files)
+                var file = new FileReader();
+                file.onload = function(e) {
+                    document.getElementById("preview_avatar").src = e.target.result;
+                };
+                file.readAsDataURL(document.querySelector('#input_avatar').files[0]);
+                document.querySelector('.avatar_field_title span').innerHTML = "{{__('system.enter_avatar_change')}}"
+            }
+        })
     </script>
 @stop

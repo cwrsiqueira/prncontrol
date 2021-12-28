@@ -20,4 +20,9 @@ return [
     'enter_name' => 'Digite o nome',
     'enter_email' => 'Digite o email',
     'enter_password' => 'Digite a senha',
+    'enter_avatar_insert' => 'Clique para inserir a foto',
+    'enter_avatar_change' => 'Clique para alterar a foto',
+    'generate_new_password' => 'Gerar nova senha',
+    'edit_user' => 'Editar Usuário',
+    'success' => 'Sucesso',
 ];
