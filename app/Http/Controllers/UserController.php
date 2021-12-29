@@ -105,12 +105,13 @@ class UserController extends Controller
 
         $data['password'] = hash::make($password);
 
-        // $id = User::insertGetId($data);
+        $id = User::insertGetId($data);
 
         $data['password'] = '***';
-        // $data['id'] = $id;
+        $data['id'] = $id;
         $user_id = Auth::user()->id;
-        // Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+
         return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso! A senha cadastrada foi enviada para o email '.$data['email']);
     }
 

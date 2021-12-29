@@ -6,41 +6,23 @@
     <cw-header-title>
         <h1>Usuários</h1>
 
-        {{-- IT OPENS ALERTS MODAL --}}
+        {{-- IT OPENS SUCCESS MODAL --}}
+        @if(session('success'))
+            <x-adminlte-modal id="modalMessages" title="{{__('system.success')}}!" size="lg" theme="success" icon="fas fa-thumbs-up" v-centered static-backdrop scrollable>
 
-        @foreach (['danger', 'warning', 'success', 'info'] as $msg)
-            @if(session($msg))
-                <x-adminlte-modal id="modalMessages" title="{{__('system.'.$msg.'')}}!" size="lg" theme="{{$msg}}" v-centered static-backdrop scrollable>
-                    {{-- @switch($msg)
-                        @case('danger')
-                            icon='fas fa-ban'
-                            @break
-                        @case('warning')
-                            icon='fa-exclamation-triangle'
-                            @break
-                        @case('success')
-                            icon='fa-thumbs-up'
-                            @break
-                        @case('info')
-                            icon='fas fa-info-circle'
-                            @break
-                    @endswitch --}}
+                    {!! session('success') !!}
 
-                        {!! session($msg) !!}
+                    <x-slot name="footerSlot">
+                        <x-adminlte-button theme="success" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal"/>
+                    </x-slot>
+            </x-adminlte-modal>
 
-                        <x-slot name="footerSlot">
-                            <x-adminlte-button theme="success" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal"/>
-                        </x-slot>
-                </x-adminlte-modal>
-
-                <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages" style="display:none;"/>
-            @endif
-        @endforeach
-        <input type="hidden" id="messages" value="{{ session($msg) }}">
+            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages" style="display:none;"/>
+        @endif
+        <input type="hidden" id="messages" value="{{ session('success') }}">
 
         {{-- IT OPENS ERRORS FILING FORM FIELDS MODAL --}}
         @if($errors->any())
-
             <x-adminlte-modal id="modalErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
                 <ul>
                     @foreach ($errors->all() as $error)

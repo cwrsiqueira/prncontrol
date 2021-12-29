@@ -25,4 +25,7 @@ return [
     'generate_new_password' => 'Gerar nova senha',
     'edit_user' => 'Editar Usuário',
     'success' => 'Sucesso',
+    'danger' => 'Erro',
+    'warning' => 'Atenção',
+    'info' => 'Informação',
 ];
