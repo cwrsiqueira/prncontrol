@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = User::where('inactive', 0)->get();
         return view('users.index',
             [
                 'users' => $users,
@@ -112,7 +112,7 @@ class UserController extends Controller
         $user_id = Auth::user()->id;
         Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
 
-        return redirect()->route("users.index")->with('success', 'Cadastro efetuado com sucesso! A senha cadastrada foi enviada para o email '.$data['email']);
+        return redirect()->route("users.index")->with('success', 'Atenção!!! Cadastro efetuado com sucesso! A senha cadastrada foi: <br><h3>'.$password.'</h3> copie e cole em algum lugar seguro antes de fechar a janela.');
     }
 
     /**
@@ -146,7 +146,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->except(['_token', '_method']);
+
+        if($data['password'] !== null) {
+            $data['password'] = hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $change_from = User::find($id);
+        User::where('id', $id)->update($data);
+        $change_for = User::find($id);
+
+        // $changes = array_unique(array_merge($change_from,$change_for), SORT_REGULAR);
+
+        $data['password'] = '***';
+        $data['id'] = $id;
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
+
+        return redirect()->route("users.index")->with('success', 'Cadastro Alterado com sucesso');
     }
 
     /**
