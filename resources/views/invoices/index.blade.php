@@ -102,7 +102,8 @@
                 <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
 
                 <div class="row">
-                    <x-adminlte-input name="invoice_number" label="{{__('system.invoice_number')}}" placeholder="{{__('system.invoice_number')}}" fgroup-class="col-md-12" enable-old-support/>
+                    <x-adminlte-input name="invoice_number" label="{{__('system.invoice_number')}}" placeholder="{{__('system.invoice_number')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input type="date" name="invoice_date" label="{{__('system.invoice_date')}}" placeholder="{{__('system.invoice_date')}}" fgroup-class="col-md" enable-old-support/>
                 </div>
                 <div class="row">
                     <x-adminlte-input name="provider" label="{{__('system.provider')}}" placeholder="{{__('system.provider')}}" fgroup-class="col-md-12" enable-old-support/>
@@ -113,10 +114,10 @@
                 <h5>{{__('system.items')}}</h5>
 
                 <div class="row">
-                    <x-adminlte-input id="material" name="material" label="{{__('system.material')}}" placeholder="{{__('system.material')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input id="unid" name="unid" label="{{__('system.unid')}}" placeholder="{{__('system.unid')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input id="qt" name="qt" label="{{__('system.qt')}}" placeholder="{{__('system.qt')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input id="unit_val" name="unit_val" label="{{__('system.unit_val')}}" placeholder="{{__('system.unit_val')}}" fgroup-class="col-md" enable-old-support>
+                    <x-adminlte-input id="material" name="" label="{{__('system.material')}}" placeholder="{{__('system.material')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input id="unid" name="" label="{{__('system.unid')}}" placeholder="{{__('system.unid')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input id="qt" name="" label="{{__('system.qt')}}" placeholder="{{__('system.qt')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input id="unit_val" name="" label="{{__('system.unit_val')}}" placeholder="{{__('system.unit_val')}}" fgroup-class="col-md" enable-old-support>
                         <x-slot name="appendSlot">
                             <div class="input-group-text text-success" id="submit_btn">
                                 <i class="fas fa-plus"></i>
@@ -127,7 +128,7 @@
 
                 <hr>
 
-                <table class="table">
+                <table class="table table-sm">
                     <thead>
                         <tr>
                             <th>{{__('system.material')}}</th>
@@ -171,6 +172,28 @@
 
 @section('css')
     <link rel="stylesheet" href="/css/app.css">
+    <style>
+        .table input.material {
+            border:0;
+            outline:0;
+            width: 250px;
+        }
+        .table input.unid {
+            border:0;
+            outline:0;
+            width: 100px;
+        }
+        .table input.qt {
+            border:0;
+            outline:0;
+            width: 100px;
+        }
+        .table input.unit_val {
+            border:0;
+            outline:0;
+            width: 100px;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -246,31 +269,42 @@
             let qt = document.querySelector('#qt').value
             let unit_val = document.querySelector('#unit_val').value
 
-            let item = [material, unid, qt, unit_val]
+            if(material && unid && qt && unit_val) {
 
-            let row_1 = document.createElement('tr')
-            let row_1_data_1 = document.createElement('td')
-            row_1_data_1.innerHTML = material
-            let row_1_data_2 = document.createElement('td')
-            row_1_data_2.innerHTML = unid
-            let row_1_data_3 = document.createElement('td')
-            row_1_data_3.innerHTML = qt
-            let row_1_data_4 = document.createElement('td')
-            row_1_data_4.innerHTML = unit_val
-            let row_1_data_5 = document.createElement('td')
-            row_1_data_5.innerHTML = (qt * unit_val).toFixed(2)
+                let item = [material, unid, qt, unit_val]
+                let cols = ['material', 'unid', 'qt', 'unit_val']
 
-            row_1.appendChild(row_1_data_1);
-            row_1.appendChild(row_1_data_2);
-            row_1.appendChild(row_1_data_3);
-            row_1.appendChild(row_1_data_4);
-            row_1.appendChild(row_1_data_5);
-            document.querySelector('#tbody').appendChild(row_1)
+                let row_1 = document.createElement('tr')
 
-            material = document.querySelector('#material').value = ''
-            unid = document.querySelector('#unid').value = ''
-            qt = document.querySelector('#qt').value = ''
-            unit_val = document.querySelector('#unit_val').value = ''
+                for (let i = 1; i < 5; i++) {
+
+                    window['row_1_data_'+i] = document.createElement('td')
+                    window['row_1_data_'+i+'_input'] = document.createElement('input')
+                    window['row_1_data_'+i+'_input'].type = 'text'
+                    window['row_1_data_'+i+'_input'].name = cols[i-1]+'[]'
+                    window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
+                    window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
+                    window['row_1_data_'+i+'_input'].value = item[i-1]
+
+                    row_1.appendChild(window['row_1_data_'+i]);
+                    window['row_1_data_'+i].appendChild(window['row_1_data_'+i+'_input']);
+                }
+
+                let row_1_data_5 = document.createElement('td')
+                row_1_data_5.innerHTML = (qt * unit_val).toFixed(2)
+
+                row_1.appendChild(row_1_data_5);
+
+                document.querySelector('#tbody').appendChild(row_1)
+
+                material = document.querySelector('#material').value = ''
+                unid = document.querySelector('#unid').value = ''
+                qt = document.querySelector('#qt').value = ''
+                unit_val = document.querySelector('#unit_val').value = ''
+
+            } else {
+                alert('Todos os campos devem ser preenchidos!');
+            }
 
         })
     </script>

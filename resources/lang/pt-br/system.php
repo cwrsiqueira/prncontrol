@@ -44,4 +44,5 @@ return [
     'unid' => 'Unidade',
     'unit_val' => 'Valor Unitário',
     'total_val' => 'Valor Total',
+    'invoice_date' => 'Data da Nota',
 ];

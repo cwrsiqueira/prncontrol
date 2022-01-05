@@ -160,6 +160,8 @@ return [
         'email' => 'Email',
         'password' => 'Senha',
         'avatar' => 'Avatar',
+        'invoice_number' => 'Número da Nota',
+        'provider' => 'Fornecedor',
     ],
 
 ];

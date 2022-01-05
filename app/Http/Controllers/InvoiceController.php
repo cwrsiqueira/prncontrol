@@ -48,11 +48,13 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $data = $request->except('_token');
-
+        dd($data);
         Validator::make(
             $data,
             [
-                'name' => ['required', 'max:255'],
+                'invoice_number' => ['required', 'max:255'],
+                'provider' => ['required', 'max:255'],
+                'material' => 'required',
             ],
         )->validate();
 
