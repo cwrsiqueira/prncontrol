@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Invoice;
+use App\Models\Invoice_material;
 
 use Helper;
 
@@ -48,21 +49,46 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $data = $request->except('_token');
-        dd($data);
+
         Validator::make(
             $data,
             [
+                'company_id' => ['required'],
+                'created_at' => ['required'],
                 'invoice_number' => ['required', 'max:255'],
+                'invoice_date' => ['required'],
                 'provider' => ['required', 'max:255'],
-                'material' => 'required',
+                'materials' => ['required'],
             ],
         )->validate();
 
-        $id = Invoice::insertGetId($data);
+        foreach ($data['materials'] as $field) {
+            foreach ($field as $key => $item) {
+                $invoices[$key][] = $item;
+            }
+        }
 
-        $data['id'] = $id;
+        unset($data['materials']);
+
+        $invoice_id = Invoice::insertGetId($data);
+
+        foreach($invoices as $item) {
+            $item['company_id'] = $data['company_id'];
+            $item['invoice_id'] = $invoice_id;
+            $item['name'] = $item[0];
+            $item['unid'] = $item[1];
+            $item['qt'] = floatval(Helper::format_value($item[2]));
+            $item['unit_value'] = floatval(Helper::format_value($item[3]));
+            unset($item[0]);
+            unset($item[1]);
+            unset($item[2]);
+            unset($item[3]);
+            $material_id = Invoice_material::insertGetId($item);
+        }
+
+        $data['id'] = $invoice_id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array($data, $invoices), 'add', $data['created_at']);
 
         return redirect()->route("invoices.index")->with('success', 'Nota cadastrada com sucesso!');
     }

@@ -53,16 +53,16 @@
         $system_delete = __('system.delete');
         $system_details = __('system.details');
         $heads = [
-            'ID',
-            __('system.name'),
-            __('system.obs'),
+            __('system.invoice_date'),
+            __('system.invoice_number'),
+            __('system.provider'),
             ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
         ];
         $data = [];
         foreach ($invoices as $key => $invoice) {
-            $data[$key]['id'] = $invoice['id'];
-            $data[$key]['name'] = $invoice['name'];
-            $data[$key]['obs'] = $invoice['obs'];
+            $data[$key]['invoice_date'] = date('d/m/Y', strtotime($invoice['invoice_date']));
+            $data[$key]['invoice_number'] = $invoice['invoice_number'];
+            $data[$key]['provider'] = $invoice['provider'];
             $data[$key]['actions'] =
             "<nobr>
                 <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='".$system_edit."' data-id='".$invoice["id"]."'>
@@ -103,10 +103,13 @@
 
                 <div class="row">
                     <x-adminlte-input name="invoice_number" label="{{__('system.invoice_number')}}" placeholder="{{__('system.invoice_number')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input type="date" name="invoice_date" label="{{__('system.invoice_date')}}" placeholder="{{__('system.invoice_date')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input type="date" name="invoice_date" label="{{__('system.invoice_date')}}" placeholder="{{__('system.invoice_date')}}" fgroup-class="col-md" enable-old-support value="{{date('Y-m-d')}}"/>
                 </div>
                 <div class="row">
-                    <x-adminlte-input name="provider" label="{{__('system.provider')}}" placeholder="{{__('system.provider')}}" fgroup-class="col-md-12" enable-old-support/>
+                    <x-adminlte-input name="provider" label="{{__('system.provider')}}" placeholder="{{__('system.provider')}}" fgroup-class="col-md-9" enable-old-support/>
+                    <div class="col-m-3 value_field">
+                        <h5>{{__('system.invoice_value')}}: </h5> <span class="invoice_value">R$ 0,00</span>
+                    </div>
                 </div>
 
                 <hr>
@@ -119,7 +122,7 @@
                     <x-adminlte-input id="qt" name="" label="{{__('system.qt')}}" placeholder="{{__('system.qt')}}" fgroup-class="col-md" enable-old-support/>
                     <x-adminlte-input id="unit_val" name="" label="{{__('system.unit_val')}}" placeholder="{{__('system.unit_val')}}" fgroup-class="col-md" enable-old-support>
                         <x-slot name="appendSlot">
-                            <div class="input-group-text text-success" id="submit_btn">
+                            <div class="input-group-text text-success" id="add_material_btn">
                                 <i class="fas fa-plus"></i>
                             </div>
                         </x-slot>
@@ -136,6 +139,7 @@
                             <th>{{__('system.qt')}}</th>
                             <th>{{__('system.unit_val')}}</th>
                             <th>{{__('system.total_val')}}</th>
+                            <th>{{__('system.delete')}}</th>
                         </tr>
                     </thead>
                     <tbody id="tbody"></tbody>
@@ -187,11 +191,28 @@
             border:0;
             outline:0;
             width: 100px;
+            text-align: right;
         }
         .table input.unit_val {
             border:0;
             outline:0;
             width: 100px;
+            text-align: right;
+        }
+        .table .total_val {
+            text-align: right;
+            background-color: #eee;
+        }
+        .value_field {
+            background-color: #eee;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .invoice_value {
+            font-size: 16px;
+            font-weight: bold;
+            font-family:'Courier New', Courier, monospace;
         }
     </style>
 @stop
@@ -263,7 +284,9 @@
             }
         }
 
-        document.querySelector('#submit_btn').addEventListener('click', () => {
+        let invoice_value = 0
+
+        document.querySelector('#add_material_btn').addEventListener('click', () => {
             let material = document.querySelector('#material').value
             let unid = document.querySelector('#unid').value
             let qt = document.querySelector('#qt').value
@@ -271,7 +294,7 @@
 
             if(material && unid && qt && unit_val) {
 
-                let item = [material, unid, qt, unit_val]
+                let item = [material, unid, qt = parseFloat(qt), unit_val = parseFloat(unit_val)]
                 let cols = ['material', 'unid', 'qt', 'unit_val']
 
                 let row_1 = document.createElement('tr')
@@ -281,21 +304,33 @@
                     window['row_1_data_'+i] = document.createElement('td')
                     window['row_1_data_'+i+'_input'] = document.createElement('input')
                     window['row_1_data_'+i+'_input'].type = 'text'
-                    window['row_1_data_'+i+'_input'].name = cols[i-1]+'[]'
+                    window['row_1_data_'+i+'_input'].name = 'materials'+'['+cols[i-1]+']'+'[]'
                     window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
                     window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
-                    window['row_1_data_'+i+'_input'].value = item[i-1]
+                    if(typeof(item[i-1]) === 'number') {
+                        window['row_1_data_'+i+'_input'].value = item[i-1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                    } else {
+                        window['row_1_data_'+i+'_input'].value = item[i-1]
+                    }
 
                     row_1.appendChild(window['row_1_data_'+i]);
                     window['row_1_data_'+i].appendChild(window['row_1_data_'+i+'_input']);
                 }
 
                 let row_1_data_5 = document.createElement('td')
-                row_1_data_5.innerHTML = (qt * unit_val).toFixed(2)
+                row_1_data_5.classList.add('total_val')
+                row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+
+                let row_1_data_6 = document.createElement('td')
+                row_1_data_6.innerHTML = "<button class='btn btn-outline-danger btn-sm delete_line'><i class='fas fa-lg fa-trash'></i></button>"
 
                 row_1.appendChild(row_1_data_5);
+                row_1.appendChild(row_1_data_6);
 
                 document.querySelector('#tbody').appendChild(row_1)
+
+                invoice_value += (qt * unit_val)
+                document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                 material = document.querySelector('#material').value = ''
                 unid = document.querySelector('#unid').value = ''

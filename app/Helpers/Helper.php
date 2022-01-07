@@ -46,4 +46,10 @@ class Helper
 
         return $hours.':'.$minutes.':'.$seconds;
     }
+
+    public static function format_value($value) {
+        $value = str_replace('.', '', $value);
+        $value = str_replace(',', '.', $value);
+        return $value;
+    }
 }
