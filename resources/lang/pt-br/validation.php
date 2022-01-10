@@ -162,6 +162,8 @@ return [
         'avatar' => 'Avatar',
         'invoice_number' => 'Número da Nota',
         'provider' => 'Fornecedor',
+        'construction' => 'Obra',
+        'materials' => 'Itens',
     ],
 
 ];

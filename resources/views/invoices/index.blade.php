@@ -56,13 +56,15 @@
             __('system.invoice_date'),
             __('system.invoice_number'),
             __('system.provider'),
+            __('system.construction'),
             ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
         ];
         $data = [];
         foreach ($invoices as $key => $invoice) {
             $data[$key]['invoice_date'] = date('d/m/Y', strtotime($invoice['invoice_date']));
             $data[$key]['invoice_number'] = $invoice['invoice_number'];
-            $data[$key]['provider'] = $invoice['provider'];
+            $data[$key]['provider'] = $invoice['provider_name'];
+            $data[$key]['construction'] = $invoice['construction_name'];
             $data[$key]['actions'] =
             "<nobr>
                 <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='".$system_edit."' data-id='".$invoice["id"]."'>
@@ -102,6 +104,7 @@
                 <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
 
                 <div class="row">
+                    <x-adminlte-input name="construction" label="{{__('system.construction')}}" placeholder="{{__('system.construction')}}" fgroup-class="col-md-6" enable-old-support/>
                     <x-adminlte-input name="invoice_number" label="{{__('system.invoice_number')}}" placeholder="{{__('system.invoice_number')}}" fgroup-class="col-md" enable-old-support/>
                     <x-adminlte-input type="date" name="invoice_date" label="{{__('system.invoice_date')}}" placeholder="{{__('system.invoice_date')}}" fgroup-class="col-md" enable-old-support value="{{date('Y-m-d')}}"/>
                 </div>

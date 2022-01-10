@@ -407,6 +407,23 @@ return [
                 ],
             ],
         ],
+        'BootstrapSelect' => [
+            'active' => false,
+            'files' => [
+                // <!-- Latest compiled and minified JavaScript -->
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js',
+                ],
+                // <!-- Latest compiled and minified CSS -->
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css',
+                ],
+            ],
+        ],
         'Chartjs' => [
             'active' => false,
             'files' => [

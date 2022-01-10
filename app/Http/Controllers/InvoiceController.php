@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Invoice;
 use App\Models\Invoice_material;
+use App\Models\Construction;
+use App\Models\Provider;
+use App\Models\Material;
 
 use Helper;
 
@@ -26,8 +29,24 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::where('inactive', 0)->get();
-        return view('invoices.index', ['invoices' => $invoices]);
+        $invoices = Invoice::select('invoices.*', 'constructions.name as construction_name', 'providers.name as provider_name')
+        ->join('constructions', 'constructions.id', 'invoices.construction_id')
+        ->join('providers', 'providers.id', 'invoices.provider_id')
+        ->where('invoices.company_id', Auth::user()->company_id)
+        ->where('invoices.inactive', 0)
+        ->get();
+
+        $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        return view('invoices.index',
+            [
+                'invoices' => $invoices,
+                'constructions' => $constructions,
+                'providers' => $providers,
+                'materials' => $materials,
+            ]
+        );
     }
 
     /**
@@ -58,9 +77,30 @@ class InvoiceController extends Controller
                 'invoice_number' => ['required', 'max:255'],
                 'invoice_date' => ['required'],
                 'provider' => ['required', 'max:255'],
+                'construction' => ['required', 'max:255'],
                 'materials' => ['required'],
             ],
         )->validate();
+
+        $construction = Construction::select('id')->where('name', $data['construction'])->first();
+        $provider = Provider::select('id')->where('name', $data['provider'])->first();
+
+        if(!$construction) {
+            $construction['id'] = Construction::insertGetId([
+                'company_id' => $data['company_id'],
+                'name' => $data['construction'],
+            ]);
+        }
+
+        if(!$provider) {
+            $provider['id'] = Provider::insertGetId([
+                'company_id' => $data['company_id'],
+                'name' => $data['provider'],
+            ]);
+        }
+
+        $data['construction_id'] = $construction['id'];
+        $data['provider_id'] = $provider['id'];
 
         foreach ($data['materials'] as $field) {
             foreach ($field as $key => $item) {
@@ -68,6 +108,8 @@ class InvoiceController extends Controller
             }
         }
 
+        unset($data['construction']);
+        unset($data['provider']);
         unset($data['materials']);
 
         $invoice_id = Invoice::insertGetId($data);
@@ -75,7 +117,16 @@ class InvoiceController extends Controller
         foreach($invoices as $item) {
             $item['company_id'] = $data['company_id'];
             $item['invoice_id'] = $invoice_id;
-            $item['name'] = $item[0];
+
+            $material = Material::select('id')->where('name', $item[0])->first();
+            if(!$material) {
+                $material['id'] = Material::insertGetId([
+                    'company_id' => $data['company_id'],
+                    'name' => $item[0],
+                ]);
+            }
+
+            $item['material_id'] = $material['id'];
             $item['unid'] = $item[1];
             $item['qt'] = floatval(Helper::format_value($item[2]));
             $item['unit_value'] = floatval(Helper::format_value($item[3]));

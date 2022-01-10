@@ -16,10 +16,11 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained();
+            $table->foreignId('construction_id')->constrained();
+            $table->foreignId('provider_id')->constrained();
             $table->integer('inactive')->default(0);
             $table->string('invoice_number');
             $table->string('invoice_date');
-            $table->string('provider');
             $table->string('obs')->nullable();
             $table->timestamps();
         });

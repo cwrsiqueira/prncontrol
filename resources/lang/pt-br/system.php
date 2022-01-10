@@ -36,7 +36,7 @@ return [
     'enter_obs' => 'Adicionar Observações',
     'add_material' => 'Adicionar Material',
     'add_invoice' => 'Adicionar Nota',
-    'invoice_number' => 'Número',
+    'invoice_number' => 'Número da Nota',
     'provider' => 'Fornecedor',
     'items' => 'Itens',
     'material' => 'Item',
@@ -46,4 +46,6 @@ return [
     'total_val' => 'Valor Total',
     'invoice_date' => 'Data',
     'invoice_value' => 'Valor Total da Nota',
+    'construction' => 'Obra',
+    'select_an_option...' => 'Selecione uma opção...',
 ];
