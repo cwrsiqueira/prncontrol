@@ -1,3 +1,9 @@
+# NOVOS REQUISITOS
+
+- Separar materiais por etapa da obra
+- Upload de imagem da nota
+- Cadastrar orçamento para comparação com o executado
+
 # OBSERVAÇÕES
 
 ## ENV

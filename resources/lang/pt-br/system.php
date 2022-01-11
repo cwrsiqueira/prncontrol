@@ -52,4 +52,5 @@ return [
     'reports' => 'Relatórios',
     'lots' => 'Lotes',
     'materials' => 'Materiais',
+    'generate_report' => 'Gerar Relatório',
 ];
