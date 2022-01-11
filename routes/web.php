@@ -6,6 +6,8 @@ use App\Http\Controllers\LotController;
 use App\Http\Controllers\ConstructionController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ReportController;
+
 use App\Http\Controllers\AjaxController;
 
 /*
@@ -33,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('constructions', ConstructionController::class);
     Route::resource('materials', MaterialController::class);
     Route::resource('invoices', InvoiceController::class);
+
+    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
 
     Route::get('/getUser', [AjaxController::class, 'getUser'])->name('getUser');
     Route::get('/delUser', [AjaxController::class, 'delUser'])->name('delUser');

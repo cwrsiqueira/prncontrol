@@ -48,4 +48,8 @@ return [
     'invoice_value' => 'Valor Total da Nota',
     'construction' => 'Obra',
     'select_an_option...' => 'Selecione uma opção...',
+    'invoices' => 'Notas',
+    'reports' => 'Relatórios',
+    'lots' => 'Lotes',
+    'materials' => 'Materiais',
 ];

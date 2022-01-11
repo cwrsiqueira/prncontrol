@@ -4,7 +4,7 @@
 
 @section('content_header')
     <cw-header-title>
-        <h1>Notas</h1>
+        <h1><i class="fas fa-file-invoice-dollar"></i> {{__('system.invoices')}}</h1>
 
         {{-- IT OPENS SUCCESS MODAL --}}
         @if(session('success'))
@@ -46,7 +46,7 @@
 @stop
 
 @section('content')
-    <x-adminlte-card theme="success" theme-mode="outline" icon="fas fa-file-invoice-dollar">
+    <x-adminlte-card theme="success" theme-mode="outline">
         {{-- Setup data for datatables --}}
         @php
         $system_edit = __('system.edit');

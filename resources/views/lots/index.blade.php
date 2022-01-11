@@ -4,7 +4,7 @@
 
 @section('content_header')
     <cw-header-title>
-        <h1>Lotes</h1>
+        <h1><i class="fas fa-th"></i> {{__('system.lots')}}</h1>
 
         {{-- IT OPENS SUCCESS MODAL --}}
         @if(session('success'))
@@ -46,7 +46,7 @@
 @stop
 
 @section('content')
-    <x-adminlte-card theme="success" theme-mode="outline" icon="fas fa-th">
+    <x-adminlte-card theme="success" theme-mode="outline">
         {{-- Setup data for datatables --}}
         @php
         $system_edit = __('system.edit');

@@ -15,9 +15,9 @@ class CompanySeeder extends Seeder
     public function run()
     {
         DB::table('companies')->insert([
-            'name' => 'Hostler Dev & Host',
-            'email' => 'admin@hostler.com.br',
-            'website' => 'hostler.com.br',
+            'name' => 'Pronorte Imóveis Ltda.',
+            'email' => 'admin@pronorteimoveis.com.br',
+            'website' => 'pronorteimoveis.com.br',
             'logo' => 'default.jpg',
         ]);
     }

@@ -1,3 +1,14 @@
+# OBSERVAÇÕES
+
+## ENV
+- Incluir a variável APP_TIMEZONE com o valor referente a timezone local no arquivo .env
+    Ex: APP_TIMEZONE='America/Sao_Paulo'
+
+## APP CONFIG
+- Alterar o arquivo config/app.php na configuração da Application Timezone para:
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
+
+=========================================
 # ATUALIZAÇÕES
 
 ## v1.0
@@ -19,3 +30,5 @@
 ### Primeira Atualização - 21/12/2021
 - Criação das migrations e seeds
 - Criação dos menus
+
+
