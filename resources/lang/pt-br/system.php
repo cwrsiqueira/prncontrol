@@ -53,4 +53,6 @@ return [
     'lots' => 'Lotes',
     'materials' => 'Materiais',
     'generate_report' => 'Gerar Relatório',
+    'no_filter' => 'Sem Filtro',
+    'back' => 'Voltar',
 ];

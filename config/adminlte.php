@@ -264,6 +264,7 @@ return [
             'text' => 'reports',
             'url' => 'reports',
             'icon' => 'fas fa-chart-line',
+            'active' => ['reports/*'],
         ],
         [
             'header' => 'CONFIGURATIONS'

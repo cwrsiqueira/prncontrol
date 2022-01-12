@@ -36,7 +36,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('materials', MaterialController::class);
     Route::resource('invoices', InvoiceController::class);
 
-    Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate', [ReportController::class, 'generate_report'])->name('reports.generate');
 
     Route::get('/getUser', [AjaxController::class, 'getUser'])->name('getUser');
     Route::get('/delUser', [AjaxController::class, 'delUser'])->name('delUser');
