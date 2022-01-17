@@ -39,6 +39,12 @@
 			<th>Vlr Unit</th>
 			<th>Vlr Total</th>
 		</tr>
+        <td>
+            <th colspan="2">TOTAIS</th>
+            <th>{{$total_materials}}</th>
+            <th></th>
+            <th>{{$total_cost}}</th>
+        </td>
 
 		<?php
 

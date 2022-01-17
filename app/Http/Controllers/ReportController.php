@@ -77,6 +77,16 @@ class ReportController extends Controller
         ->orderBy('invoice_date', 'DESC')
         ->get();
 
+        $total_materials = 0;
+        foreach ($invoices as $key => $value) {
+            $total_materials += $value->material_qt;
+        }
+
+        $total_cost = 0;
+        foreach ($invoices as $key => $value) {
+            $total_cost += $value->material_qt * $value->material_unit_value;
+        }
+
         $construction = 'Todas';
         $provider = 'Todos';
         $material = 'Todos';
@@ -146,6 +156,8 @@ class ReportController extends Controller
                 'material' => $material,
                 'invoice' => $invoice,
                 'dtRange' => $dtRange,
+                'total_materials' => $total_materials,
+                'total_cost' => $total_cost,
             ]
         ));
 
