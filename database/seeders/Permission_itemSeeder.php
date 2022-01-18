@@ -16,8 +16,8 @@ class Permission_itemSeeder extends Seeder
     {
         DB::table('permission_items')->insert([
             'company_id' => 1,
-            'name' => 'developer',
-            'slug' => 'developer'
+            'name' => 'admin',
+            'slug' => 'admin'
         ]);
     }
 }

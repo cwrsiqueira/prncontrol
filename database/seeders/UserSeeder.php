@@ -18,8 +18,8 @@ class UserSeeder extends Seeder
         DB::table('users')->insert([
             'company_id' => 1,
             'permission_group_id' => 1,
-            'name' => 'Developer',
-            'email' => 'cwrsiqueira@hotmail.com',
+            'name' => 'Admin',
+            'email' => 'admin@email.com',
             'password' => Hash::make('password'),
             'inactive' => 0,
             'avatar' => 'default.jpg'
