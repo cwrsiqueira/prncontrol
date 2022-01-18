@@ -17,36 +17,36 @@
             @csrf
             <div class="row">
                 <x-adminlte-select2 name="construction_id" label="{{__('system.construction')}}" fgroup-class="col-md-6">
-                    <option value=""></option>
+                    <option value="">Todas</option>
                     @foreach ($constructions as $construction)
                         <option value="{{$construction->id}}">{{$construction->name}}</option>
                     @endforeach
                 </x-adminlte-select2>
             </div>
-            <div class="row">
+            {{-- <div class="row">
                 <x-adminlte-select2 name="provider_id" label="{{__('system.provider')}}" fgroup-class="col-md-6">
                     <option value=""></option>
                     @foreach ($providers as $provider)
                         <option value="{{$provider->id}}">{{$provider->name}}</option>
                     @endforeach
                 </x-adminlte-select2>
-            </div>
+            </div> --}}
             <div class="row">
                 <x-adminlte-select2 name="material_id" label="{{__('system.material')}}" fgroup-class="col-md-6">
-                    <option value=""></option>
+                    <option value="">Todos</option>
                     @foreach ($materials as $material)
                         <option value="{{$material->id}}">{{$material->name}}</option>
                     @endforeach
                 </x-adminlte-select2>
             </div>
-            <div class="row">
+            {{-- <div class="row">
                 <x-adminlte-select2 name="invoice_id" label="{{__('system.invoice_number')}}" fgroup-class="col-md-6">
                     <option value=""></option>
                     @foreach ($invoices as $invoice)
                         <option value="{{$invoice->id}}">{{$invoice->invoice_number}}</option>
                     @endforeach
                 </x-adminlte-select2>
-            </div>
+            </div> --}}
 
             @php
             $config = [

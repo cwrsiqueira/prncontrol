@@ -39,7 +39,7 @@ return [
     'invoice_number' => 'Número da Nota',
     'provider' => 'Fornecedor',
     'items' => 'Itens',
-    'material' => 'Item',
+    'material' => 'Material',
     'qt' => 'Quantidade',
     'unid' => 'Unidade',
     'unit_val' => 'Valor Unitário',

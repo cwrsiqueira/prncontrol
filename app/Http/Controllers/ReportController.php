@@ -74,62 +74,78 @@ class ReportController extends Controller
         ->where('invoices.id', 'LIKE', $data['invoice_id'] ?? '%')
         ->whereBetween('invoice_date', [$init_date, $fin_date])
         ->where('invoices.company_id', Auth::user()->company_id)->where('invoices.inactive', 0)
-        ->orderBy('invoice_date', 'DESC')
+        ->orderBy('invoice_date', 'asc')
         ->get();
 
         $total_materials = 0;
-        foreach ($invoices as $key => $value) {
-            $total_materials += $value->material_qt;
-        }
-
         $total_cost = 0;
-        foreach ($invoices as $key => $value) {
-            $total_cost += $value->material_qt * $value->material_unit_value;
-        }
-
         $construction = 'Todas';
         $provider = 'Todos';
         $material = 'Todos';
         $invoice = 'Todas';
 
-        if(isset($data['construction_id'])) {
-            $construction_total_cost = 0;
-            foreach ($invoices as $key => $value) {
-                $construction_total_cost += $value->material_qt * $value->material_unit_value;
-            }
-            $construction = $invoices[0]->construction_name.' = '.number_format($construction_total_cost, 2, ',', '.');
-        }
+        if(count($invoices) > 0) {
 
-        if(isset($data['provider_id'])) {
-            $provider_total_cost = 0;
             foreach ($invoices as $key => $value) {
-                $provider_total_cost += $value->material_qt * $value->material_unit_value;
+                $total_materials += $value->material_qt;
             }
-            $provider = $invoices[0]->provider_name.' = '.number_format($provider_total_cost, 2, ',', '.');
-        }
 
-        if(isset($data['material_id'])) {
-            $material_total = 0;
-            $material_total_cost = 0;
             foreach ($invoices as $key => $value) {
-                $material_total += $value->material_qt;
-                $material_total_cost += $value->material_qt * $value->material_unit_value;
+                $total_cost += $value->material_qt * $value->material_unit_value;
             }
-            $material = $invoices[0]->material_name.' = '.number_format($material_total, 2, ',', '.').' = '.number_format($material_total_cost, 2, ',', '.');
-        }
 
-        if(isset($data['invoice_id'])) {
-            $invoice_total_cost = 0;
-            foreach ($invoices as $key => $value) {
-                $invoice_total_cost += $value->material_qt * $value->material_unit_value;
+
+            if(isset($data['construction_id'])) {
+                $construction_total_cost = 0;
+                foreach ($invoices as $key => $value) {
+                    $construction_total_cost += $value->material_qt * $value->material_unit_value;
+                }
+                $construction = $invoices[0]->construction_name;
             }
-            $invoice = $invoices[0]->invoice_number.' = '.number_format($invoice_total_cost, 2, ',', '.');
+
+            if(isset($data['provider_id'])) {
+                $provider_total_cost = 0;
+                foreach ($invoices as $key => $value) {
+                    $provider_total_cost += $value->material_qt * $value->material_unit_value;
+                }
+                $provider = $invoices[0]->provider_name.' = '.number_format($provider_total_cost, 2, ',', '.');
+            }
+
+            if(isset($data['material_id'])) {
+                $material_total = 0;
+                $material_total_cost = 0;
+                foreach ($invoices as $key => $value) {
+                    $material_total += $value->material_qt;
+                    $material_total_cost += $value->material_qt * $value->material_unit_value;
+                }
+                $material = $invoices[0]->material_name;
+            }
+
+            if(isset($data['invoice_id'])) {
+                $invoice_total_cost = 0;
+                foreach ($invoices as $key => $value) {
+                    $invoice_total_cost += $value->material_qt * $value->material_unit_value;
+                }
+                $invoice = $invoices[0]->invoice_number.' = '.number_format($invoice_total_cost, 2, ',', '.');
+            }
+
         }
 
         $dtRange = $data['dtRange'] ?? '';
 
+        // dd(
+        //     $invoices,
+        //     $construction,
+        //     $provider,
+        //     $material,
+        //     $invoice,
+        //     $dtRange,
+        //     $total_materials,
+        //     $total_cost,
+        // );
+
         // Setup a filename
-        $documentFileName = "fun.pdf";
+        $documentFileName = "relatório.pdf";
 
         // Create the mPDF document
         $document = new PDF( [
