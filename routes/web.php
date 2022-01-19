@@ -53,4 +53,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/getInvoice', [AjaxController::class, 'getInvoice'])->name('getInvoice');
     Route::get('/delInvoice', [AjaxController::class, 'delInvoice'])->name('delInvoice');
+
+    Route::get('/getData', [AjaxController::class, 'getData'])->name('getData');
 });

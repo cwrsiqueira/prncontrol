@@ -104,12 +104,12 @@
                 <input type="hidden" name="created_at" value="{{date('Y-m-d H:m:i')}}">
 
                 <div class="row">
-                    <x-adminlte-input name="construction" label="{{__('system.construction')}}" placeholder="{{__('system.construction')}}" fgroup-class="col-md-6" enable-old-support/>
+                    <x-adminlte-input id="construction" name="construction" label="{{__('system.construction')}}" placeholder="{{__('system.construction')}}" fgroup-class="col-md-6" class="search" enable-old-support/>
                     <x-adminlte-input name="invoice_number" label="{{__('system.invoice_number')}}" placeholder="{{__('system.invoice_number')}}" fgroup-class="col-md" enable-old-support/>
                     <x-adminlte-input type="date" name="invoice_date" label="{{__('system.invoice_date')}}" placeholder="{{__('system.invoice_date')}}" fgroup-class="col-md" enable-old-support value="{{date('Y-m-d')}}"/>
                 </div>
                 <div class="row">
-                    <x-adminlte-input name="provider" label="{{__('system.provider')}}" placeholder="{{__('system.provider')}}" fgroup-class="col-md-9" enable-old-support/>
+                    <x-adminlte-input id="provider" name="provider" label="{{__('system.provider')}}" placeholder="{{__('system.provider')}}" fgroup-class="col-md-9" class="search" enable-old-support/>
                     <div class="col-m-3 value_field">
                         <h5>{{__('system.invoice_value')}}: </h5> <span class="invoice_value">R$ 0,00</span>
                     </div>
@@ -120,7 +120,7 @@
                 <h5>{{__('system.items')}}</h5>
 
                 <div class="row">
-                    <x-adminlte-input id="material" name="" label="{{__('system.material')}}" placeholder="{{__('system.material')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input id="material" name="" label="{{__('system.material')}}" placeholder="{{__('system.material')}}" fgroup-class="col-md" class="search" enable-old-support/>
                     <x-adminlte-input id="unid" name="" label="{{__('system.unid')}}" placeholder="{{__('system.unid')}}" fgroup-class="col-md" enable-old-support/>
                     <x-adminlte-input id="qt" name="" label="{{__('system.qt')}}" placeholder="{{__('system.qt')}}" fgroup-class="col-md" enable-old-support/>
                     <x-adminlte-input id="unit_val" name="" label="{{__('system.unit_val')}}" placeholder="{{__('system.unit_val')}}" fgroup-class="col-md" enable-old-support>
@@ -216,6 +216,25 @@
             font-size: 16px;
             font-weight: bold;
             font-family:'Courier New', Courier, monospace;
+        }
+
+        .search_result {
+            position: fixed;
+            border: 1px solid #ccc;
+            background-color: #eee;
+            margin-top: 38px;
+            z-index: 9;
+        }
+        .search_result_insert {
+            padding: 10px;
+        }
+        .search_result_insert:hover {
+            cursor: pointer;
+            background-color: green;
+            color: #fff;
+        }
+        .no_results {
+            padding: 10px;
         }
     </style>
 @stop
@@ -345,5 +364,65 @@
             }
 
         })
+
+        let search  = document.querySelectorAll('.search');
+
+        search.forEach((el)=>{
+            let type = el.getAttribute('id')
+
+            el.addEventListener('keyup', (item)=>{
+                let q = item.target.value
+
+                if(q.length > 2) {
+
+                    var ajax = new XMLHttpRequest();
+                    ajax.open("GET", "{{route('getData')}}/?q="+q+"&type="+type, true);
+                    ajax.send();
+                    ajax.onreadystatechange = function() {
+                        if (ajax.readyState == 4 && ajax.status == 200) {
+                            var data = JSON.parse(ajax.response);
+
+                            if(document.querySelector('.search_result_'+type)) {
+                                document.querySelector('.search_result_'+type).remove()
+                            }
+
+                            let search_result_type = document.createElement('div')
+                            search_result_type.classList.add('search_result_'+type)
+                            search_result_type.classList.add('search_result')
+
+                            if(data.length > 0) {
+                                for(let i in data) {
+                                    let search_result = document.createElement('div')
+                                    search_result.setAttribute('data-id', data[i].id)
+                                    search_result.classList.add('id', 'search_result_insert')
+                                    search_result.innerHTML = data[i].name
+                                    let input = document.querySelector('#'+type)
+                                    search_result_type.appendChild(search_result)
+                                    insertAfter(search_result_type, input)
+
+                                }
+                            }
+
+                        }
+                    }
+                } else {
+                    if(document.querySelector('.search_result_'+type)) {
+                        document.querySelector('.search_result_'+type).remove()
+                    }
+                }
+
+            })
+
+            el.addEventListener('blur', (item)=>{
+                if(document.querySelector('.search_result_'+type)) {
+                    document.querySelector('.search_result_'+type).remove()
+                }
+            })
+        })
+
+        function insertAfter(newNode, referenceNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+        }
+
     </script>
 @stop

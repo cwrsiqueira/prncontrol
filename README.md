@@ -19,6 +19,9 @@
 
 ## v1.0
 
+### 19/01/2022
+- Incluindo sistema de busca nos campos input do modal Adicionar Nota no menu Notas
+
 ### 04/01/2022
 - Finalização parcial do menu Usuários
 - Criação de views, models, controller e CRUDs dos outros menus
