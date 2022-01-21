@@ -18,6 +18,7 @@ return [
     'Information'                   => 'Informação',
     'lots' => 'Lotes',
     'constructions' => 'Obras',
+    'providers' => 'Fornecedores',
     'materials' => 'Materiais',
     'invoices' => 'Notas',
     'reports' => 'Relatórios',

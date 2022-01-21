@@ -251,6 +251,11 @@ return [
             'icon' => 'fas fa-store-alt',
         ],
         [
+            'text' => 'providers',
+            'url' => 'providers',
+            'icon' => 'fas fa-truck',
+        ],
+        [
             'text' => 'materials',
             'url' => 'materials',
             'icon' => 'fas fa-boxes',

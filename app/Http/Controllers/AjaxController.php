@@ -53,6 +53,19 @@ class AjaxController extends Controller
         echo 'Obra deletada com sucesso!';
     }
 
+    // PROVIDERS
+    public function getProvider(Request $request)
+    {
+        $provider = Provider::find($request->id);
+        return $provider;
+    }
+
+    public function delProvider(Request $request)
+    {
+        Provider::where('id', $request->id)->update(['inactive' => 1]);
+        echo 'Fornecedor deletada com sucesso!';
+    }
+
     // MATERIALS
     public function getMaterial(Request $request)
     {

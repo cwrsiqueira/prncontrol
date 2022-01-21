@@ -19,6 +19,10 @@
 
 ## v1.0
 
+### 21/01/2022
+- Adicionado no menu Notas, modal Adicionar Nota, as seleções de Obras, Fornecedores e Materiais
+- Criado o menu, tabela e o CRUD Fornecedores
+
 ### 19/01/2022
 - Incluindo sistema de busca nos campos input do modal Adicionar Nota no menu Notas
 

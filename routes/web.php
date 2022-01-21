@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LotController;
 use App\Http\Controllers\ConstructionController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReportController;
@@ -33,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('lots', LotController::class);
     Route::resource('constructions', ConstructionController::class);
+    Route::resource('providers', ProviderController::class);
     Route::resource('materials', MaterialController::class);
     Route::resource('invoices', InvoiceController::class);
 
@@ -47,6 +49,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/getConstruction', [AjaxController::class, 'getConstruction'])->name('getConstruction');
     Route::get('/delConstruction', [AjaxController::class, 'delConstruction'])->name('delConstruction');
+
+    Route::get('/getProvider', [AjaxController::class, 'getProvider'])->name('getProvider');
+    Route::get('/delProvider', [AjaxController::class, 'delProvider'])->name('delProvider');
 
     Route::get('/getMaterial', [AjaxController::class, 'getMaterial'])->name('getMaterial');
     Route::get('/delMaterial', [AjaxController::class, 'delMaterial'])->name('delMaterial');

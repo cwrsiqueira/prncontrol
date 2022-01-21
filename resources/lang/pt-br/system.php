@@ -55,4 +55,6 @@ return [
     'generate_report' => 'Gerar Relatório',
     'no_filter' => 'Sem Filtro',
     'back' => 'Voltar',
+    'add_provider' => 'Adicionar Fornecedor',
+    'providers' => 'Fornecedores',
 ];
