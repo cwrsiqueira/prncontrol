@@ -142,8 +142,8 @@
                         @endforeach
                     </x-adminlte-select2>
                     <x-adminlte-input id="unid" name="" label="{{__('system.unid')}}" placeholder="{{__('system.unid')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input id="qt" name="" label="{{__('system.qt')}}" placeholder="{{__('system.qt')}}" fgroup-class="col-md" enable-old-support/>
-                    <x-adminlte-input id="unit_val" name="" label="{{__('system.unit_val')}}" placeholder="{{__('system.unit_val')}}" fgroup-class="col-md" enable-old-support>
+                    <x-adminlte-input id="qt" name="" label="{{__('system.qt')}}" placeholder="{{__('system.only_numbers')}}" fgroup-class="col-md" enable-old-support/>
+                    <x-adminlte-input id="unit_val" name="" label="{{__('system.unit_val')}}" placeholder="{{__('system.only_numbers')}}" fgroup-class="col-md" enable-old-support>
                         <x-slot name="appendSlot">
                             <div class="input-group-text text-success" id="add_material_btn">
                                 <i class="fas fa-plus"></i>
@@ -165,7 +165,34 @@
                             <th>{{__('system.delete')}}</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody"></tbody>
+                    <tbody id="tbody">
+                        @if (old('materials'))
+                            @for($i=0;$i<count(old('materials')['material']);$i++)
+                                @php
+                                    $qt = old('materials')['qt'][$i];
+                                    $qt = str_replace('.', '', $qt);
+                                    $qt = str_replace(',', '.', $qt);
+                                    $unit_val = old('materials')['unit_val'][$i];
+                                    $unit_val = str_replace('.', '', $unit_val);
+                                    $unit_val = str_replace(',', '.', $unit_val);
+                                    $total_val = $qt * $unit_val;
+                                @endphp
+                                <tr>
+                                    @foreach (old('materials') as $key => $item)
+                                    <td>
+                                        <input type="text" name="materials[{{$key}}][]" readonly="" class="{{$key}}" value="{{$item[$i]}}">
+                                    </td>
+                                    @endforeach
+                                    <td class="total_val">{{number_format($total_val, 2, ',', '.')}}</td>
+                                    <td>
+                                        <div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">
+                                            <i class="fas fa-lg fa-trash"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endfor
+                        @endif
+                    </tbody>
                 </table>
 
             <x-slot name="footerSlot">
@@ -262,6 +289,12 @@
 @section('js')
     <script>
 
+        const deleteLine = (e) => {
+            if(confirm('Confirma a exclusão do material?')) {
+                e.parentNode.parentNode.remove()
+            }
+        }
+
         let messages = document.querySelector('#messages').value
         if(messages !== '') {
             document.querySelector('#openModalMessages').click()
@@ -310,7 +343,7 @@
         }
 
         const delete_invoice = (invoice) => {
-            if(!confirm('system.delete_confirm')) {
+            if(!confirm('Confirma a exclusão da nota?')) {
                 return false;
             }
             let id = invoice.id
@@ -333,6 +366,11 @@
             let unid = document.querySelector('#unid').value
             let qt = document.querySelector('#qt').value
             let unit_val = document.querySelector('#unit_val').value
+
+            qt = qt.replace('.', '')
+            qt = qt.replace(',', '.')
+            unit_val = unit_val.replace('.', '')
+            unit_val = unit_val.replace(',', '.')
 
             if(material && unid && qt && unit_val) {
 
@@ -364,7 +402,7 @@
                 row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                 let row_1_data_6 = document.createElement('td')
-                row_1_data_6.innerHTML = "<button class='btn btn-outline-danger btn-sm delete_line'><i class='fas fa-lg fa-trash'></i></button>"
+                row_1_data_6.innerHTML = "<div class='btn btn-outline-danger btn-sm delete_line' onclick='deleteLine(this)'><i class='fas fa-lg fa-trash'></i></div>"
 
                 row_1.appendChild(row_1_data_5);
                 row_1.appendChild(row_1_data_6);
@@ -379,10 +417,18 @@
                 qt = document.querySelector('#qt').value = ''
                 unit_val = document.querySelector('#unit_val').value = ''
 
+                let del_btn = document.querySelector('.delete_line');
+                console.log(del_btn)
+
             } else {
                 alert('Todos os campos devem ser preenchidos!');
             }
 
+        })
+
+        $(function(){
+            $('#qt').mask('#.#00,00', {reverse:true})
+            $('#unit_val').mask('#.#00,00', {reverse:true})
         })
 
     </script>

@@ -91,33 +91,4 @@ class AjaxController extends Controller
         Invoice::where('id', $request->id)->update(['inactive' => 1]);
         echo 'Nota deletada com sucesso!';
     }
-
-    public function getData(Request $request)
-    {
-        $data = [];
-        switch ($request->type) {
-            case 'construction':
-                $data = Construction::where('company_id', Auth::user()->company_id)
-                ->where('inactive', 0)
-                ->where('name', 'LIKE', '%'.$request->q.'%')
-                ->limit(10)
-                ->get();
-                break;
-            case 'provider':
-                $data = Provider::where('company_id', Auth::user()->company_id)
-                ->where('inactive', 0)
-                ->where('name', 'LIKE', '%'.$request->q.'%')
-                ->limit(10)
-                ->get();
-                break;
-            case 'material':
-                $data = Material::where('company_id', Auth::user()->company_id)
-                ->where('inactive', 0)
-                ->where('name', 'LIKE', '%'.$request->q.'%')
-                ->limit(10)
-                ->get();
-                break;
-        }
-        return json_encode($data);
-    }
 }

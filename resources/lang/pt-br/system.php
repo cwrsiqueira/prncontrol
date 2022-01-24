@@ -57,4 +57,5 @@ return [
     'back' => 'Voltar',
     'add_provider' => 'Adicionar Fornecedor',
     'providers' => 'Fornecedores',
+    'only_numbers' => 'Somente números',
 ];
