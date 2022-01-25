@@ -36,6 +36,7 @@ return [
     'enter_obs' => 'Adicionar Observações',
     'add_material' => 'Adicionar Material',
     'add_invoice' => 'Adicionar Nota',
+    'edit_invoice' => 'Editar Nota',
     'invoice_number' => 'Número da Nota',
     'provider' => 'Fornecedor',
     'items' => 'Itens',

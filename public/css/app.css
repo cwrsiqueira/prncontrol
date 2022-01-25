@@ -18,6 +18,6 @@ cw-header-title {
     height: 120px;
     border-radius: 3px;
 }
-#add_material_btn {
+.add_material_btn {
     cursor: pointer;
 }

@@ -82,7 +82,11 @@ class AjaxController extends Controller
     // INVOICES
     public function getInvoice(Request $request)
     {
-        $invoice = Invoice::find($request->id);
+        $invoice = Invoice::select('invoices.*', 'constructions.name as construction_name', 'providers.name as provider_name')
+        ->leftJoin('constructions', 'constructions.id', 'invoices.construction_id')
+        ->leftJoin('providers', 'providers.id', 'invoices.provider_id')
+        ->where('invoices.id', $request->id)
+        ->first();
         return $invoice;
     }
 

@@ -74,10 +74,10 @@ class InvoiceController extends Controller
             [
                 'company_id' => ['required'],
                 'created_at' => ['required'],
+                'construction' => ['required', 'max:255'],
                 'invoice_number' => ['required', 'max:255'],
                 'invoice_date' => ['required'],
                 'provider' => ['required', 'max:255'],
-                'construction' => ['required', 'max:255'],
                 'materials' => ['required'],
             ],
         )->validate();
@@ -177,17 +177,81 @@ class InvoiceController extends Controller
     {
         $data = $request->except(['_token', '_method']);
 
-        $change_from = Invoice::find($id);
-        Invoice::where('id', $id)->update($data);
-        $change_for = Invoice::find($id);
+        Validator::make(
+            $data,
+            [
+                'company_id' => ['required'],
+                'updated_at' => ['required'],
+                'construction' => ['required', 'max:255'],
+                'invoice_number' => ['required', 'max:255'],
+                'invoice_date' => ['required'],
+                'provider' => ['required', 'max:255'],
+                'materials' => ['required'],
+            ],
+        )->validateWithBag('edit');
 
-        // $changes = array_unique(array_merge($change_from,$change_for), SORT_REGULAR);
+        dd($data);
 
-        $data['id'] = $id;
+        $construction = Construction::select('id')->where('name', $data['construction'])->first();
+        $provider = Provider::select('id')->where('name', $data['provider'])->first();
+
+        if(!$construction) {
+            $construction['id'] = Construction::insertGetId([
+                'company_id' => $data['company_id'],
+                'name' => $data['construction'],
+            ]);
+        }
+
+        if(!$provider) {
+            $provider['id'] = Provider::insertGetId([
+                'company_id' => $data['company_id'],
+                'name' => $data['provider'],
+            ]);
+        }
+
+        $data['construction_id'] = $construction['id'];
+        $data['provider_id'] = $provider['id'];
+
+        foreach ($data['materials'] as $field) {
+            foreach ($field as $key => $item) {
+                $invoices[$key][] = $item;
+            }
+        }
+
+        unset($data['construction']);
+        unset($data['provider']);
+        unset($data['materials']);
+
+        $invoice_id = Invoice::insertGetId($data);
+
+        foreach($invoices as $item) {
+            $item['company_id'] = $data['company_id'];
+            $item['invoice_id'] = $invoice_id;
+
+            $material = Material::select('id')->where('name', $item[0])->first();
+            if(!$material) {
+                $material['id'] = Material::insertGetId([
+                    'company_id' => $data['company_id'],
+                    'name' => $item[0],
+                ]);
+            }
+
+            $item['material_id'] = $material['id'];
+            $item['unid'] = $item[1];
+            $item['qt'] = floatval(Helper::format_value($item[2]));
+            $item['unit_value'] = floatval(Helper::format_value($item[3]));
+            unset($item[0]);
+            unset($item[1]);
+            unset($item[2]);
+            unset($item[3]);
+            $material_id = Invoice_material::insertGetId($item);
+        }
+
+        $data['id'] = $invoice_id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array($data, $invoices), 'add', $data['created_at']);
 
-        return redirect()->route("invoices.index")->with('success', 'Nota alterada com sucesso');
+        return redirect()->route("invoices.index")->with('success', 'Nota cadastrada com sucesso!');
     }
 
     /**
