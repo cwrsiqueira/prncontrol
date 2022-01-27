@@ -180,6 +180,7 @@ class InvoiceController extends Controller
         Validator::make(
             $data,
             [
+                'invoiceId' => ['required'],
                 'company_id' => ['required'],
                 'updated_at' => ['required'],
                 'construction' => ['required', 'max:255'],

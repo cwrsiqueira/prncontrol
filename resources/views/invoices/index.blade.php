@@ -47,7 +47,7 @@
                     @endforeach
                 </ul>
                 <x-slot name="footerSlot">
-                    <x-adminlte-button theme="danger" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit"/>
+                    <x-adminlte-button theme="danger" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit" id="btn_open_modal_edit"/>
                 </x-slot>
             </x-adminlte-modal>
 
@@ -225,6 +225,7 @@
             <form method="post" enctype="multipart/form-data" id="form_edit_invoice">
                 @method('PUT')
                 @csrf
+                <x-adminlte-input type="hidden" name="invoiceId" enable-old-support/>
                 <input type="hidden" name="company_id" value="{{Auth::user()->company_id}}">
                 <input type="hidden" name="updated_at" value="{{date('Y-m-d H:m:i')}}">
 
@@ -386,9 +387,39 @@
             document.querySelector('#openModalErrors').click()
         }
 
+        const get_invoice = (id, action) => {
+            let invoice
+
+            var ajax = new XMLHttpRequest();
+            ajax.open("GET", "{{route('getInvoice')}}/?id="+id, true);
+            ajax.send();
+            ajax.onreadystatechange = function() {
+                if (ajax.readyState == 4 && ajax.status == 200) {
+                    invoice = JSON.parse(ajax.responseText)
+                    switch (action) {
+                        case 'edit':
+                            edit_invoice(invoice)
+                            break;
+                        case 'delete':
+                            delete_invoice(invoice)
+                            break;
+                        case 'details':
+                            show_invoice(invoice)
+                            break;
+                    }
+                }
+            }
+        }
+
         let edit_errors = document.querySelector('#edit_errors').value
         if(edit_errors == 1) {
             document.querySelector('#openModalEditErrors').click()
+
+            document.querySelector('#btn_open_modal_edit').addEventListener('click', ()=>{
+                let id = document.querySelector('#invoiceId').value
+                get_invoice(id, 'edit')
+            })
+
         }
 
         let btnAction = document.querySelectorAll('.btnAction')
@@ -396,34 +427,16 @@
             el.addEventListener('click', (ev)=>{
                 let id = el.getAttribute('data-id')
                 let action = el.classList.contains('edit') ? 'edit' : el.classList.contains('delete') ? 'delete' : el.classList.contains('details') ? 'details' : ''
-                let invoice
-
-                var ajax = new XMLHttpRequest();
-                ajax.open("GET", "{{route('getInvoice')}}/?id="+id, true);
-                ajax.send();
-                ajax.onreadystatechange = function() {
-                    if (ajax.readyState == 4 && ajax.status == 200) {
-                        invoice = JSON.parse(ajax.responseText)
-                        switch (action) {
-                            case 'edit':
-                                edit_invoice(invoice)
-                                break;
-                            case 'delete':
-                                delete_invoice(invoice)
-                                break;
-                            case 'details':
-                                show_invoice(invoice)
-                                break;
-                        }
-                    }
-                }
+                get_invoice(id, action)
             })
         })
 
         const edit_invoice = (invoice) => {
-            console.log(invoice)
+
             let route_edit = "{{route('invoices.update', ['invoice' => 'invoice_id'])}}"
             document.querySelector('#form_edit_invoice').setAttribute('action', route_edit.replace('invoice_id', invoice.id))
+
+            document.querySelector('#invoiceId').value = invoice.id
 
             document.querySelector('#edit_construction').innerHTML =
                 '<option value="'+invoice.construction_name+'">'+invoice.construction_name+'</option>@foreach ($constructions as $construction)<option value="{{$construction->name}}">{{$construction->name}}</option>@endforeach'
@@ -462,10 +475,7 @@
             html += '@endfor'
             html += '@endif'
 
-            console.log(html)
-
             document.querySelector('#edit_tbody').innerHTML = html
-
 
             document.querySelector('#openModalEdit').click()
         }
@@ -488,12 +498,12 @@
         }
 
         let add_material_btn = document.querySelectorAll('.add_material_btn')
-        console.log(add_material_btn)
+
         add_material_btn.forEach(el => {
             let action = el.getAttribute('data-action')
             let invoice_value = 0
             el.addEventListener('click', () => {
-                console.log(action)
+
                 let material = document.querySelector('#'+action+'material').value
                 let unid = document.querySelector('#'+action+'unid').value
                 let qt = document.querySelector('#'+action+'qt').value
