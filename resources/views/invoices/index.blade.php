@@ -448,6 +448,8 @@
                 '<option value="'+invoice.provider_name+'">'+invoice.provider_name+'</option>@foreach ($providers as $provider)<option value="{{$provider->name}}">{{$provider->name}}</option>@endforeach'
 
             let html = ''
+
+            // MONTA A LISTA DE MATERIAIS RETORNADOS NO OLD('MATERIALS') // COM ERRO NO LARAVEL
             html += '@if (old("materials"))'
             html += '@for($i=0;$i<count(old("materials")["material"]);$i++)'
             html += '@php'
@@ -474,6 +476,31 @@
             html += '</tr>'
             html += '@endfor'
             html += '@endif'
+
+            // MONTA A LISTA DE MATERIAIS DA NOTA A SER EDITADA
+            if(invoice.materials) {
+                for(let i=0;i<invoice.materials.material.length;i++) {
+
+                    let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
+
+                    html += '<tr>'
+                    console.log(invoice.materials)
+                    Object.keys(invoice.materials).forEach((item, key) => {
+                        console.log(item, key)
+                        html += '<td>'
+                        html += '<input type="text" name="'+item+'" readonly="" class="'+item+'" value="'+item[2]+'">'
+                        html += '</td>'
+                    });
+                    html += '<td class="total_val">'+total_val+'</td>'
+                    html += '<td>'
+                    html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
+                    html += '<i class="fas fa-lg fa-trash"></i>'
+                    html += '</div>'
+                    html += '</td>'
+                    html += '</tr>'
+                }
+            }
+
 
             document.querySelector('#edit_tbody').innerHTML = html
 

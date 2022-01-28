@@ -222,8 +222,11 @@ class InvoiceController extends Controller
         unset($data['construction']);
         unset($data['provider']);
         unset($data['materials']);
+        unset($data['invoiceId']);
 
-        $invoice_id = Invoice::insertGetId($data);
+        $change_from = Invoice::find($id);
+        Invoice::where('id', $id)->update($data);
+        $change_for = Invoice::find($id);
 
         foreach($invoices as $item) {
             $item['company_id'] = $data['company_id'];
@@ -250,9 +253,9 @@ class InvoiceController extends Controller
 
         $data['id'] = $invoice_id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data, $invoices), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
 
-        return redirect()->route("invoices.index")->with('success', 'Nota cadastrada com sucesso!');
+        return redirect()->route("invoices.index")->with('success', 'Nota alterada com sucesso!');
     }
 
     /**

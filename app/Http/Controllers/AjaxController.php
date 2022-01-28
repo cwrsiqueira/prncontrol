@@ -11,6 +11,7 @@ use App\Models\Construction;
 use App\Models\Provider;
 use App\Models\Material;
 use App\Models\Invoice;
+use App\Models\Invoice_material;
 
 class AjaxController extends Controller
 {
@@ -87,6 +88,23 @@ class AjaxController extends Controller
         ->leftJoin('providers', 'providers.id', 'invoices.provider_id')
         ->where('invoices.id', $request->id)
         ->first();
+
+        $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
+        ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
+        ->where('invoice_materials.company_id', Auth::user()->company_id)
+        ->where('invoice_materials.inactive', 0)
+        ->where('invoice_materials.invoice_id', $invoice->id)
+        ->get();
+
+        foreach($invoice_materials as $item) {
+            $material = $invoice->materials;
+            $material['material'][] = $item->material_name;
+            $material['unid'][] = $item->unid;
+            $material['qt'][] = $item->qt;
+            $material['unit_val'][] = $item->unit_value;
+            $invoice->materials = $material;
+        }
+
         return $invoice;
     }
 
