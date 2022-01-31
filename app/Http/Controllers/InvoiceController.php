@@ -108,6 +108,21 @@ class InvoiceController extends Controller
             }
         }
 
+        $total_invoice = 0;
+        foreach ($invoices as $value) {
+            $total_invoice += floatval($value[2]) * floatval($value[3]);
+        }
+
+        $invoice_value = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
+        $invoice_value = str_replace('.', '', $invoice_value);
+        $invoice_value = str_replace(',', '.', $invoice_value);
+
+        if($total_invoice != $invoice_value) {
+            return redirect()->route("invoices.index")->with('errors', 'Valor da Nota é diferente da soma dos materiais!');
+        }
+
+        dd($data, $invoice_value, $invoices, $total_invoice);
+
         unset($data['construction']);
         unset($data['provider']);
         unset($data['materials']);

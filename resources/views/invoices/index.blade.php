@@ -143,7 +143,7 @@
                         @endforeach
                     </x-adminlte-select2>
                     <div class="col-m-3 value_field">
-                        <h5>{{__('system.invoice_value')}}: </h5> <span class="invoice_value">R$ 0,00</span>
+                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value" value="R$ 0,00" readonly enable-old-support>
                     </div>
                 </div>
 
@@ -251,7 +251,7 @@
                         @endforeach
                     </x-adminlte-select2>
                     <div class="col-m-3 value_field">
-                        <h5>{{__('system.invoice_value')}}: </h5> <span class="invoice_value">R$ 0,00</span>
+                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value" value="R$ 0,00" readonly>
                     </div>
                 </div>
 
@@ -291,9 +291,7 @@
                             <th>{{__('system.delete')}}</th>
                         </tr>
                     </thead>
-                    <tbody id="edit_tbody">
-
-                    </tbody>
+                    <tbody id="edit_tbody"></tbody>
                 </table>
 
             <x-slot name="footerSlot">
@@ -345,6 +343,10 @@
             font-size: 16px;
             font-weight: bold;
             font-family:'Courier New', Courier, monospace;
+            border:0;
+            outline:0;
+            width: 250px;
+            text-align: right;
         }
 
         .search_result {
@@ -371,8 +373,20 @@
 @section('js')
     <script>
 
+        const calc_invoice_value = (value, action) => {
+            let invoice_value = document.querySelector('.invoice_value').value || '0'
+            invoice_value = invoice_value.replace(/[^0-9.,]/g,'').replace(/[.]/g, '').replace(/[,]/g, '.')
+
+            present_value = (action == '+') ? parseFloat(invoice_value) + parseFloat(value) : parseFloat(invoice_value) - parseFloat(value)
+
+            document.querySelector('.invoice_value').value = 'R$ '+present_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , maximumFractionDigits: 2 })
+        }
+
         const deleteLine = (e) => {
             if(confirm('Confirma a exclusão do material?')) {
+                let line_value = e.parentNode.parentNode.querySelector('.total_val').innerHTML
+                line_value = line_value.replace(/[^0-9.,]/g,'').replace(/[.]/g, '').replace(/[,]/g, '.')
+                calc_invoice_value(line_value, '-')
                 e.parentNode.parentNode.remove()
             }
         }
@@ -481,22 +495,37 @@
             if(invoice.materials) {
                 for(let i=0;i<invoice.materials.material.length;i++) {
 
+                    let material = invoice.materials.material[i]
+                    let unid = invoice.materials.unid[i]
+                    let qt = parseFloat(invoice.materials.qt[i])
+                    let unit_val = parseFloat(invoice.materials.unit_val[i])
                     let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
 
                     html += '<tr>'
-                    console.log(invoice.materials)
-                    Object.keys(invoice.materials).forEach((item, key) => {
-                        console.log(item, key)
+
                         html += '<td>'
-                        html += '<input type="text" name="'+item+'" readonly="" class="'+item+'" value="'+item[2]+'">'
+                        html += '<input type="text" name="materials[material][]" readonly="" class="material" value="'+material+'">'
                         html += '</td>'
-                    });
-                    html += '<td class="total_val">'+total_val+'</td>'
-                    html += '<td>'
-                    html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
-                    html += '<i class="fas fa-lg fa-trash"></i>'
-                    html += '</div>'
-                    html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unid][]" readonly="" class="unid" value="'+unid+'">'
+                        html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[qt][]" readonly="" class="qt" value="'+qt.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
+
+                        html += '<td class="total_val">'+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>'
+                        html += '<td>'
+                        html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
+                        html += '<i class="fas fa-lg fa-trash"></i>'
+                        html += '</div>'
+                        html += '</td>'
+
                     html += '</tr>'
                 }
             }
@@ -528,7 +557,6 @@
 
         add_material_btn.forEach(el => {
             let action = el.getAttribute('data-action')
-            let invoice_value = 0
             el.addEventListener('click', () => {
 
                 let material = document.querySelector('#'+action+'material').value
@@ -578,8 +606,9 @@
 
                     document.querySelector('#'+action+'tbody').appendChild(row_1)
 
-                    invoice_value += (qt * unit_val)
-                    document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+                    calc_invoice_value(qt * unit_val, '+')
+                    // invoice_value += (qt * unit_val)
+                    // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                     material = document.querySelector('#'+action+'material').value = ''
                     unid = document.querySelector('#'+action+'unid').value = ''
