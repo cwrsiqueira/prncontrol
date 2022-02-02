@@ -100,7 +100,7 @@
         $config = [
             'data' => $data,
             'order' => [[1, 'asc']],
-            'columns' => [null, null, null, ['orderable' => false]],
+            'columns' => [null, null, null, null, ['orderable' => false]],
         ];
         @endphp
         {{-- Minimal example / fill data using the component slot --}}
@@ -143,7 +143,7 @@
                         @endforeach
                     </x-adminlte-select2>
                     <div class="col-m-3 value_field">
-                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value" value="R$ 0,00" readonly enable-old-support>
+                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value" value="{{old('invoice_value') ?? 'R$ 0,00'}}" readonly>
                     </div>
                 </div>
 
@@ -251,7 +251,7 @@
                         @endforeach
                     </x-adminlte-select2>
                     <div class="col-m-3 value_field">
-                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value" value="R$ 0,00" readonly>
+                        <h5>{{__('system.invoice_value')}}: </h5> <input type="text" name="invoice_value" class="invoice_value edit_invoice_value" value="R$ 0,00" readonly>
                     </div>
                 </div>
 
@@ -493,6 +493,7 @@
 
             // MONTA A LISTA DE MATERIAIS DA NOTA A SER EDITADA
             if(invoice.materials) {
+                let total_invoice = 0
                 for(let i=0;i<invoice.materials.material.length;i++) {
 
                     let material = invoice.materials.material[i]
@@ -500,6 +501,7 @@
                     let qt = parseFloat(invoice.materials.qt[i])
                     let unit_val = parseFloat(invoice.materials.unit_val[i])
                     let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
+                    total_invoice += parseFloat(total_val.toFixed(2))
 
                     html += '<tr>'
 
@@ -528,6 +530,8 @@
 
                     html += '</tr>'
                 }
+
+                document.querySelector('.edit_invoice_value').value = total_invoice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'BRL'})
             }
 
 

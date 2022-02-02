@@ -34,11 +34,13 @@ class InvoiceController extends Controller
         ->join('providers', 'providers.id', 'invoices.provider_id')
         ->where('invoices.company_id', Auth::user()->company_id)
         ->where('invoices.inactive', 0)
+        ->orderBy('invoices.invoice_date', 'DESC')
         ->get();
 
         $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+
         return view('invoices.index',
             [
                 'invoices' => $invoices,
@@ -82,6 +84,39 @@ class InvoiceController extends Controller
             ],
         )->validate();
 
+        foreach ($data['materials'] as $field) {
+            foreach ($field as $key => $item) {
+                $invoices[$key][] = $item;
+            }
+        }
+
+        $total_invoice = 0;
+        foreach ($invoices as $value) {
+            $qt = Helper::format_value($value[2]);
+            $vlr_unit = Helper::format_value($value[3]);
+
+            $total_invoice += floatval($qt) * floatval($vlr_unit);
+        }
+
+        $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
+        $data['invoice_value'] = Helper::format_value($data['invoice_value']);
+        $data['invoice_value'] = floatval($data['invoice_value']);
+
+        $data['invoice_value_confirmation'] = $total_invoice;
+
+        Validator::make(
+            $data,
+            [
+                'invoice_value' => ['required', 'same:invoice_value_confirmation'],
+                'invoice_value_confirmation' => ['required'],
+            ],
+            $messages = [
+                'same' => 'Valor da Nota e Soma dos Materiais não conferem'
+            ]
+        )->validate();
+
+        // INCLUIR CONSTRUCTION E PROVIDER SE NÃO EXISTIREM
+        // NÃO ESTÁ FUNCIONANDO POIS OS DADOS ESTÃO VINDO DE UM SELECT E NÃO TEM COMO VIR EM BRANCO
         $construction = Construction::select('id')->where('name', $data['construction'])->first();
         $provider = Provider::select('id')->where('name', $data['provider'])->first();
 
@@ -101,31 +136,13 @@ class InvoiceController extends Controller
 
         $data['construction_id'] = $construction['id'];
         $data['provider_id'] = $provider['id'];
-
-        foreach ($data['materials'] as $field) {
-            foreach ($field as $key => $item) {
-                $invoices[$key][] = $item;
-            }
-        }
-
-        $total_invoice = 0;
-        foreach ($invoices as $value) {
-            $total_invoice += floatval($value[2]) * floatval($value[3]);
-        }
-
-        $invoice_value = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
-        $invoice_value = str_replace('.', '', $invoice_value);
-        $invoice_value = str_replace(',', '.', $invoice_value);
-
-        if($total_invoice != $invoice_value) {
-            return redirect()->route("invoices.index")->with('errors', 'Valor da Nota é diferente da soma dos materiais!');
-        }
-
-        dd($data, $invoice_value, $invoices, $total_invoice);
+        // FINAL DE INCLUIR CONSTRUCTION E PROVIDER SE NÃO EXISTIREM
 
         unset($data['construction']);
         unset($data['provider']);
         unset($data['materials']);
+        unset($data['invoice_value']);
+        unset($data['invoice_value_confirmation']);
 
         $invoice_id = Invoice::insertGetId($data);
 
@@ -206,8 +223,41 @@ class InvoiceController extends Controller
             ],
         )->validateWithBag('edit');
 
+        foreach ($data['materials'] as $field) {
+            foreach ($field as $key => $item) {
+                $invoices[$key][] = $item;
+            }
+        }
+
+        $total_invoice = 0;
+        foreach ($invoices as $value) {
+            $qt = Helper::format_value($value[2]);
+            $vlr_unit = Helper::format_value($value[3]);
+
+            $total_invoice += floatval($qt) * floatval($vlr_unit);
+        }
+
+        $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
+        $data['invoice_value'] = Helper::format_value($data['invoice_value']);
+        $data['invoice_value'] = floatval($data['invoice_value']);
+
+        $data['invoice_value_confirmation'] = $total_invoice;
+
+        Validator::make(
+            $data,
+            [
+                'invoice_value' => ['required', 'same:invoice_value_confirmation'],
+                'invoice_value_confirmation' => ['required'],
+            ],
+            $messages = [
+                'same' => 'Valor da Nota e Soma dos Materiais não conferem'
+            ]
+        )->validateWithBag('edit');
+
         dd($data);
 
+        // INCLUIR CONSTRUCTION E PROVIDER SE NÃO EXISTIREM
+        // NÃO ESTÁ FUNCIONANDO POIS OS DADOS ESTÃO VINDO DE UM SELECT E NÃO TEM COMO VIR EM BRANCO
         $construction = Construction::select('id')->where('name', $data['construction'])->first();
         $provider = Provider::select('id')->where('name', $data['provider'])->first();
 
@@ -227,22 +277,20 @@ class InvoiceController extends Controller
 
         $data['construction_id'] = $construction['id'];
         $data['provider_id'] = $provider['id'];
-
-        foreach ($data['materials'] as $field) {
-            foreach ($field as $key => $item) {
-                $invoices[$key][] = $item;
-            }
-        }
+        // FINAL DE INCLUIR CONSTRUCTION E PROVIDER SE NÃO EXISTIREM
 
         unset($data['construction']);
         unset($data['provider']);
         unset($data['materials']);
         unset($data['invoiceId']);
+        unset($data['invoice_value']);
+        unset($data['invoice_value_confirmation']);
 
         $change_from = Invoice::find($id);
         Invoice::where('id', $id)->update($data);
         $change_for = Invoice::find($id);
 
+        Invoice_material::where('invoice_id', $id)->delete();
         foreach($invoices as $item) {
             $item['company_id'] = $data['company_id'];
             $item['invoice_id'] = $invoice_id;
