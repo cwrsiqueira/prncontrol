@@ -58,7 +58,17 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        //
+        $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+
+        return view('invoices.add_invoices',
+            [
+                'constructions' => $constructions,
+                'providers' => $providers,
+                'materials' => $materials,
+            ]
+        );
     }
 
     /**

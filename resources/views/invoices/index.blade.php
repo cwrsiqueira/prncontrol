@@ -5,60 +5,9 @@
 @section('content_header')
     <cw-header-title>
         <h1><i class="fas fa-file-invoice-dollar"></i> {{__('system.invoices')}}</h1>
-
-        {{-- IT OPENS SUCCESS MODAL --}}
-        @if(session('success'))
-            <x-adminlte-modal id="modalMessages" title="{{__('system.success')}}!" size="lg" theme="success" icon="fas fa-thumbs-up" v-centered static-backdrop scrollable>
-
-                    {!! session('success') !!}
-
-                    <x-slot name="footerSlot">
-                        <x-adminlte-button theme="success" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal"/>
-                    </x-slot>
-            </x-adminlte-modal>
-
-            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages" style="display:none;"/>
-        @endif
-        <input type="hidden" id="messages" value="{{ session('success') }}">
-
-        {{-- SHOW ERRORS FROM MODAL ADD --}}
-        @if($errors->any())
-            <x-adminlte-modal id="modalErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <x-slot name="footerSlot">
-                    <x-adminlte-button theme="danger" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal" data-target="#modalAdd"/>
-                </x-slot>
-            </x-adminlte-modal>
-
-            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalErrors" id="openModalErrors" style="display:none;"/>
-
-        @endif
-
-        {{-- SHOW ERRORS FROM MODAL EDIT --}}
-        @if($errors->edit->any())
-            <x-adminlte-modal id="modalEditErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
-                <ul>
-                    @foreach ($errors->edit->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <x-slot name="footerSlot">
-                    <x-adminlte-button theme="danger" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal" data-target="#modalEdit" id="btn_open_modal_edit"/>
-                </x-slot>
-            </x-adminlte-modal>
-
-            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalEditErrors" id="openModalEditErrors" style="display:none;"/>
-
-        @endif
-
-        <input type="hidden" id="errors" value="{{$errors->any()}}">
-        <input type="hidden" id="edit_errors" value="{{$errors->edit->any()}}">
-
-        <x-adminlte-button label="{{__('system.add_invoice')}}" data-toggle="modal" data-target="#modalAdd" class="bg-success" icon="fas fa-plus" id="openModalAdd"/>
+        <a href="{{route('invoices.create')}}">
+            <x-adminlte-button label="{{__('system.add_invoice')}}" class="bg-success" icon="fas fa-plus"/>
+        </a>
         <x-adminlte-button data-toggle="modal" data-target="#modalEdit" id="openModalEdit" style="display:none;"/>
     </cw-header-title>
 @stop
