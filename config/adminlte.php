@@ -264,6 +264,7 @@ return [
             'text' => 'invoices',
             'url' => 'invoices',
             'icon' => 'fas fa-file-invoice-dollar',
+            'active' => ['invoices/*'],
         ],
         [
             'text' => 'reports',

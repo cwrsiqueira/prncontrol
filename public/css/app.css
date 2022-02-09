@@ -21,3 +21,7 @@ cw-header-title {
 .add_material_btn {
     cursor: pointer;
 }
+.area-buttons {
+    display: flex;
+    justify-content: space-between;
+}

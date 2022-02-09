@@ -62,7 +62,7 @@ class InvoiceController extends Controller
         $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
 
-        return view('invoices.add_invoices',
+        return view('invoices.add_invoice',
             [
                 'constructions' => $constructions,
                 'providers' => $providers,
@@ -110,9 +110,9 @@ class InvoiceController extends Controller
 
         $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
         $data['invoice_value'] = Helper::format_value($data['invoice_value']);
-        $data['invoice_value'] = floatval($data['invoice_value']);
+        $data['invoice_value'] = round(floatval($data['invoice_value']), 2);
 
-        $data['invoice_value_confirmation'] = $total_invoice;
+        $data['invoice_value_confirmation'] = round($total_invoice, 2);
 
         Validator::make(
             $data,
@@ -194,7 +194,19 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-        //
+        $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $invoice = Invoice::find($id);
+
+        return view('invoices.edit_invoice',
+            [
+                'constructions' => $constructions,
+                'providers' => $providers,
+                'materials' => $materials,
+                'invoice' => $invoice,
+            ]
+        );
     }
 
     /**
@@ -205,7 +217,28 @@ class InvoiceController extends Controller
      */
     public function edit($id)
     {
-        //
+        $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+
+        $invoice = Invoice::find($id);
+
+        $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
+        ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
+        ->where('invoice_materials.company_id', Auth::user()->company_id)
+        ->where('invoice_materials.inactive', 0)
+        ->where('invoice_materials.invoice_id', $id)
+        ->get();
+
+        return view('invoices.edit_invoice',
+            [
+                'constructions' => $constructions,
+                'providers' => $providers,
+                'materials' => $materials,
+                'invoice' => $invoice,
+                'invoice_materials' => $invoice_materials,
+            ]
+        );
     }
 
     /**
@@ -231,7 +264,7 @@ class InvoiceController extends Controller
                 'provider' => ['required', 'max:255'],
                 'materials' => ['required'],
             ],
-        )->validateWithBag('edit');
+        )->validate();
 
         foreach ($data['materials'] as $field) {
             foreach ($field as $key => $item) {
@@ -249,9 +282,9 @@ class InvoiceController extends Controller
 
         $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
         $data['invoice_value'] = Helper::format_value($data['invoice_value']);
-        $data['invoice_value'] = floatval($data['invoice_value']);
+        $data['invoice_value'] = round(floatval($data['invoice_value']), 2);
 
-        $data['invoice_value_confirmation'] = $total_invoice;
+        $data['invoice_value_confirmation'] = round($total_invoice, 2);
 
         Validator::make(
             $data,
@@ -262,9 +295,7 @@ class InvoiceController extends Controller
             $messages = [
                 'same' => 'Valor da Nota e Soma dos Materiais não conferem'
             ]
-        )->validateWithBag('edit');
-
-        dd($data);
+        )->validate();
 
         // INCLUIR CONSTRUCTION E PROVIDER SE NÃO EXISTIREM
         // NÃO ESTÁ FUNCIONANDO POIS OS DADOS ESTÃO VINDO DE UM SELECT E NÃO TEM COMO VIR EM BRANCO
@@ -303,7 +334,7 @@ class InvoiceController extends Controller
         Invoice_material::where('invoice_id', $id)->delete();
         foreach($invoices as $item) {
             $item['company_id'] = $data['company_id'];
-            $item['invoice_id'] = $invoice_id;
+            $item['invoice_id'] = $id;
 
             $material = Material::select('id')->where('name', $item[0])->first();
             if(!$material) {
@@ -324,11 +355,11 @@ class InvoiceController extends Controller
             $material_id = Invoice_material::insertGetId($item);
         }
 
-        $data['id'] = $invoice_id;
+        $data['id'] = $id;
         $user_id = Auth::user()->id;
         Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
 
-        return redirect()->route("invoices.index")->with('success', 'Nota alterada com sucesso!');
+        return redirect()->route("invoices.edit", ['invoice' => $id])->with('success', 'Nota alterada com sucesso!');
     }
 
     /**
