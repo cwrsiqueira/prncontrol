@@ -194,17 +194,29 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-        $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
-        $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
-        $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
-        $invoice = Invoice::find($id);
+        $invoice = Invoice::select('invoices.*', 'constructions.name as construction_name', 'providers.name as provider_name')
+            ->join('constructions', 'constructions.id', 'invoices.construction_id')
+            ->join('providers', 'providers.id', 'invoices.provider_id')
+            ->where('invoices.id', $id)
+        ->first();
 
-        return view('invoices.edit_invoice',
+        $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
+            ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
+            ->where('invoice_materials.company_id', Auth::user()->company_id)
+            ->where('invoice_materials.inactive', 0)
+            ->where('invoice_materials.invoice_id', $id)
+        ->get();
+
+        $total_invoice_value = 0;
+        foreach ($invoice_materials as $item) {
+            $total_invoice_value += $item['qt'] * $item['unit_value'];
+        }
+
+        return view('invoices.view_invoice',
             [
-                'constructions' => $constructions,
-                'providers' => $providers,
-                'materials' => $materials,
                 'invoice' => $invoice,
+                'invoice_materials' => $invoice_materials,
+                'total_invoice_value' => $total_invoice_value
             ]
         );
     }
