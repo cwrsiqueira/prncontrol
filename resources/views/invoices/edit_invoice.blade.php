@@ -9,6 +9,21 @@
             <a href="{{route('invoices.index')}}">{{__('system.invoices')}}</a> | {{__('system.edit_invoice')}}
         </div>
 
+        {{-- IT OPENS SUCCESS MODAL --}}
+        @if(session('success'))
+            <x-adminlte-modal id="modalMessages" title="{{__('system.success')}}!" size="lg" theme="success" icon="fas fa-thumbs-up" v-centered static-backdrop scrollable>
+
+                    {!! session('success') !!}
+
+                    <x-slot name="footerSlot">
+                        <x-adminlte-button theme="success" label="{{__('system.close')}}" data-dismiss="modal" data-toggle="modal"/>
+                    </x-slot>
+            </x-adminlte-modal>
+
+            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages" style="display:none;"/>
+        @endif
+        <input type="hidden" id="messages" value="{{ session('success') }}">
+
         {{-- SHOW ERRORS FROM MODAL ADD --}}
         @if($errors->any())
             <x-adminlte-modal id="modalErrors" title="{{__('system.atenction')}}!" size="lg" theme="danger" icon="fas fa-ban" v-centered static-backdrop scrollable>
@@ -133,7 +148,7 @@
 
             <div class="area-buttons">
                 <x-adminlte-button type="submit" class="d-flex mr-auto" theme="success" label="Salvar"/>
-                <a href="{{route('invoices.index')}}" class="btn btn-danger ml-auto">Voltar</a>
+                <a href="{{route('invoices.index')}}" class="btn btn-danger ml-auto">Sair</a>
             </div>
         </form>
 
@@ -208,6 +223,11 @@
 
 @section('js')
     <script>
+
+        let messages = document.querySelector('#messages').value
+        if(messages !== '') {
+            document.querySelector('#openModalMessages').click()
+        }
 
         const calc_invoice_value = (value, action) => {
             let invoice_value = document.querySelector('.invoice_value').value || '0'
