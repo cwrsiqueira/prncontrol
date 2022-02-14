@@ -328,5 +328,113 @@
             })
         })
 
+        const get_invoice = (id) => {
+            let invoice
+            var ajax = new XMLHttpRequest();
+            ajax.open("GET", "{{route('getInvoice')}}/?id="+id, true);
+            ajax.send();
+            ajax.onreadystatechange = function() {
+                if (ajax.readyState == 4 && ajax.status == 200) {
+                    invoice = JSON.parse(ajax.responseText)
+                    edit_invoice(invoice)
+                }
+            }
+        }
+
+        get_invoice('{{$invoice->id}}')
+
+        const edit_invoice = (invoice) => {
+
+            let route_edit = "{{route('invoices.update', ['invoice' => 'invoice_id'])}}"
+            document.querySelector('#form_edit_invoice').setAttribute('action', route_edit.replace('invoice_id', invoice.id))
+
+            document.querySelector('#invoiceId').value = invoice.id
+
+            document.querySelector('#edit_construction').innerHTML =
+                '<option value="'+invoice.construction_name+'">'+invoice.construction_name+'</option>@foreach ($constructions as $construction)<option value="{{$construction->name}}">{{$construction->name}}</option>@endforeach'
+
+            document.querySelector('#edit_invoice_number').value = invoice.invoice_number
+            document.querySelector('#edit_invoice_date').value = invoice.invoice_date
+
+            document.querySelector('#edit_provider').innerHTML =
+                '<option value="'+invoice.provider_name+'">'+invoice.provider_name+'</option>@foreach ($providers as $provider)<option value="{{$provider->name}}">{{$provider->name}}</option>@endforeach'
+
+            let html = ''
+
+            // MONTA A LISTA DE MATERIAIS RETORNADOS NO OLD('MATERIALS') // COM ERRO NO LARAVEL
+            html += '@if (old("materials"))'
+            html += '@for($i=0;$i<count(old("materials")["material"]);$i++)'
+            html += '@php'
+            html += '$qt = old("materials")["qt"][$i];'
+            html += '$qt = str_replace(".", "", $qt);'
+            html += '$qt = str_replace(",", ".", $qt);'
+            html += '$unit_val = old("materials")["unit_val"][$i];'
+            html += '$unit_val = str_replace(".", "", $unit_val);'
+            html += '$unit_val = str_replace(",", ".", $unit_val);'
+            html += '$total_val = $qt * $unit_val;'
+            html += '@endphp'
+            html += '<tr>'
+            html += '@foreach (old("materials") as $key => $item)'
+            html += '<td>'
+            html += '<input type="text" name="materials[{{$key}}][]" readonly="" class="{{$key}}" value="{{$item[$i]}}">'
+            html += '</td>'
+            html += '@endforeach'
+            html += '<td class="total_val">{{number_format($total_val, 2, ",", ".")}}</td>'
+            html += '<td>'
+            html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
+            html += '<i class="fas fa-lg fa-trash"></i>'
+            html += '</div>'
+            html += '</td>'
+            html += '</tr>'
+            html += '@endfor'
+            html += '@endif'
+
+            // MONTA A LISTA DE MATERIAIS DA NOTA A SER EDITADA
+            if(invoice.materials) {
+                let total_invoice = 0
+                for(let i=0;i<invoice.materials.material.length;i++) {
+
+                    let material = invoice.materials.material[i]
+                    let unid = invoice.materials.unid[i]
+                    let qt = parseFloat(invoice.materials.qt[i])
+                    let unit_val = parseFloat(invoice.materials.unit_val[i])
+                    let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
+                    total_invoice += parseFloat(total_val.toFixed(2))
+
+                    html += '<tr>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[material][]" readonly="" class="material" value="'+material+'">'
+                        html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unid][]" readonly="" class="unid" value="'+unid+'">'
+                        html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[qt][]" readonly="" class="qt" value="'+qt.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
+
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
+
+                        html += '<td class="total_val">'+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>'
+                        html += '<td>'
+                        html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
+                        html += '<i class="fas fa-lg fa-trash"></i>'
+                        html += '</div>'
+                        html += '</td>'
+
+                    html += '</tr>'
+                }
+
+                document.querySelector('.edit_invoice_value').value = total_invoice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'BRL'})
+            }
+
+
+            document.querySelector('#edit_tbody').innerHTML = html
+        }
+
     </script>
 @stop

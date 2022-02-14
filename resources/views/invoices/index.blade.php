@@ -70,7 +70,7 @@
         ];
         @endphp
         {{-- Minimal example / fill data using the component slot --}}
-        <x-adminlte-datatable id="table1" :heads="$heads" with-buttons>
+        <x-adminlte-datatable id="table1" :heads="$heads" with-buttons hoverable>
             @foreach($config['data'] as $row)
                 <tr>
                     @foreach($row as $cell)
