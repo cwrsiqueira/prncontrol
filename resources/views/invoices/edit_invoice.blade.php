@@ -153,6 +153,14 @@
         </form>
 
     </x-adminlte-card>
+
+    <div class="modal" id="spinnerModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="spinner-border text-light"></div>
+            <h4 class="m-3 text-light">AGUARDE...</h4>
+        </div>
+    </div>
+
 @stop
 
 @section('css')
@@ -223,6 +231,8 @@
 
 @section('js')
     <script>
+
+        $("#spinnerModal").modal("show");
 
         let messages = document.querySelector('#messages').value
         if(messages !== '') {
@@ -404,6 +414,8 @@
 
 
             document.querySelector('#edit_tbody').innerHTML = html
+
+            $("#spinnerModal").modal("hide");
         }
 
     </script>
