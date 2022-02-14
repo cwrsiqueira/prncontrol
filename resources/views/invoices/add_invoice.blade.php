@@ -377,81 +377,81 @@
             }
         }
 
-        let add_material_btn = document.querySelectorAll('.add_material_btn')
+        // let add_material_btn = document.querySelectorAll('.add_material_btn')
 
-        add_material_btn.forEach(el => {
-            let action = el.getAttribute('data-action')
-            el.addEventListener('click', () => {
+        // add_material_btn.forEach(el => {
+        //     let action = el.getAttribute('data-action')
+        //     el.addEventListener('click', () => {
 
-                let material = document.querySelector('#'+action+'material').value
-                let unid = document.querySelector('#'+action+'unid').value
-                let qt = document.querySelector('#'+action+'qt').value
-                let unit_val = document.querySelector('#'+action+'unit_val').value
+        //         let material = document.querySelector('#'+action+'material').value
+        //         let unid = document.querySelector('#'+action+'unid').value
+        //         let qt = document.querySelector('#'+action+'qt').value
+        //         let unit_val = document.querySelector('#'+action+'unit_val').value
 
-                qt = qt.replace('.', '')
-                qt = qt.replace(',', '.')
-                unit_val = unit_val.replace('.', '')
-                unit_val = unit_val.replace(',', '.')
+        //         qt = qt.replace('.', '')
+        //         qt = qt.replace(',', '.')
+        //         unit_val = unit_val.replace('.', '')
+        //         unit_val = unit_val.replace(',', '.')
 
-                if(material && unid && qt && unit_val) {
+        //         if(material && unid && qt && unit_val) {
 
-                    let item = [material, unid, qt = parseFloat(qt), unit_val = parseFloat(unit_val)]
-                    let cols = ['material', 'unid', 'qt', 'unit_val']
+        //             let item = [material, unid, qt = parseFloat(qt), unit_val = parseFloat(unit_val)]
+        //             let cols = ['material', 'unid', 'qt', 'unit_val']
 
-                    let row_1 = document.createElement('tr')
+        //             let row_1 = document.createElement('tr')
 
-                    for (let i = 1; i < 5; i++) {
+        //             for (let i = 1; i < 5; i++) {
 
-                        window['row_1_data_'+i] = document.createElement('td')
-                        window['row_1_data_'+i+'_input'] = document.createElement('input')
-                        window['row_1_data_'+i+'_input'].type = 'text'
-                        window['row_1_data_'+i+'_input'].name = 'materials'+'['+cols[i-1]+']'+'[]'
-                        window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
-                        window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
-                        if(typeof(item[i-1]) === 'number') {
-                            window['row_1_data_'+i+'_input'].value = item[i-1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })
-                        } else {
-                            window['row_1_data_'+i+'_input'].value = item[i-1]
-                        }
+        //                 window['row_1_data_'+i] = document.createElement('td')
+        //                 window['row_1_data_'+i+'_input'] = document.createElement('input')
+        //                 window['row_1_data_'+i+'_input'].type = 'text'
+        //                 window['row_1_data_'+i+'_input'].name = 'materials'+'['+cols[i-1]+']'+'[]'
+        //                 window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
+        //                 window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
+        //                 if(typeof(item[i-1]) === 'number') {
+        //                     window['row_1_data_'+i+'_input'].value = item[i-1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+        //                 } else {
+        //                     window['row_1_data_'+i+'_input'].value = item[i-1]
+        //                 }
 
-                        row_1.appendChild(window['row_1_data_'+i]);
-                        window['row_1_data_'+i].appendChild(window['row_1_data_'+i+'_input']);
-                    }
+        //                 row_1.appendChild(window['row_1_data_'+i]);
+        //                 window['row_1_data_'+i].appendChild(window['row_1_data_'+i+'_input']);
+        //             }
 
-                    let row_1_data_5 = document.createElement('td')
-                    row_1_data_5.classList.add('total_val')
-                    row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+        //             let row_1_data_5 = document.createElement('td')
+        //             row_1_data_5.classList.add('total_val')
+        //             row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
-                    let row_1_data_6 = document.createElement('td')
+        //             let row_1_data_6 = document.createElement('td')
+        //             row_1_data_6.innerHTML = '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)"><i class="fas fa-lg fa-trash"></i></div>'
 
+        //             row_1.appendChild(row_1_data_5);
+        //             row_1.appendChild(row_1_data_6);
 
-                    row_1.appendChild(row_1_data_5);
-                    row_1.appendChild(row_1_data_6);
+        //             document.querySelector('#'+action+'tbody').appendChild(row_1)
 
-                    document.querySelector('#'+action+'tbody').appendChild(row_1)
+        //             calc_invoice_value(qt * unit_val, '+')
+        //             // invoice_value += (qt * unit_val)
+        //             // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
-                    calc_invoice_value(qt * unit_val, '+')
-                    // invoice_value += (qt * unit_val)
-                    // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+        //             material = document.querySelector('#'+action+'material').value = ''
+        //             unid = document.querySelector('#'+action+'unid').value = ''
+        //             qt = document.querySelector('#'+action+'qt').value = ''
+        //             unit_val = document.querySelector('#'+action+'unit_val').value = ''
 
-                    material = document.querySelector('#'+action+'material').value = ''
-                    unid = document.querySelector('#'+action+'unid').value = ''
-                    qt = document.querySelector('#'+action+'qt').value = ''
-                    unit_val = document.querySelector('#'+action+'unit_val').value = ''
+        //             let del_btn = document.querySelector('.delete_line');
 
-                    let del_btn = document.querySelector('.delete_line');
+        //         } else {
+        //             alert('Todos os campos devem ser preenchidos!');
+        //         }
 
-                } else {
-                    alert('Todos os campos devem ser preenchidos!');
-                }
+        //     })
 
-            })
-
-            $(function(){
-                $('#'+action+'qt').mask('#.#00,00', {reverse:true})
-                $('#'+action+'unit_val').mask('#.#00,00', {reverse:true})
-            })
-        })
+        //     $(function(){
+        //         $('#'+action+'qt').mask('#.#00,00', {reverse:true})
+        //         $('#'+action+'unit_val').mask('#.#00,00', {reverse:true})
+        //     })
+        // })
 
     </script>
 @stop
