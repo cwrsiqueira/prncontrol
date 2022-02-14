@@ -232,150 +232,81 @@
             document.querySelector('#openModalErrors').click()
         }
 
-        const get_invoice = (id, action) => {
-            let invoice
+        let add_material_btn = document.querySelectorAll('.add_material_btn')
 
-            var ajax = new XMLHttpRequest();
-            ajax.open("GET", "{{route('getInvoice')}}/?id="+id, true);
-            ajax.send();
-            ajax.onreadystatechange = function() {
-                if (ajax.readyState == 4 && ajax.status == 200) {
-                    invoice = JSON.parse(ajax.responseText)
-                    switch (action) {
-                        case 'edit':
-                            edit_invoice(invoice)
-                            break;
-                        case 'delete':
-                            delete_invoice(invoice)
-                            break;
-                        case 'details':
-                            show_invoice(invoice)
-                            break;
+        add_material_btn.forEach(el => {
+            let action = el.getAttribute('data-action')
+            el.addEventListener('click', () => {
+
+                let material = document.querySelector('#'+action+'material').value
+                let unid = document.querySelector('#'+action+'unid').value
+                let qt = document.querySelector('#'+action+'qt').value
+                let unit_val = document.querySelector('#'+action+'unit_val').value
+
+                qt = qt.replace('.', '')
+                qt = qt.replace(',', '.')
+                unit_val = unit_val.replace('.', '')
+                unit_val = unit_val.replace(',', '.')
+
+                if(material && unid && qt && unit_val) {
+
+                    let item = [material, unid, qt = parseFloat(qt), unit_val = parseFloat(unit_val)]
+                    let cols = ['material', 'unid', 'qt', 'unit_val']
+
+                    let row_1 = document.createElement('tr')
+
+                    for (let i = 1; i < 5; i++) {
+
+                        window['row_1_data_'+i] = document.createElement('td')
+                        window['row_1_data_'+i+'_input'] = document.createElement('input')
+                        window['row_1_data_'+i+'_input'].type = 'text'
+                        window['row_1_data_'+i+'_input'].name = 'materials'+'['+cols[i-1]+']'+'[]'
+                        window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
+                        window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
+                        if(typeof(item[i-1]) === 'number') {
+                            window['row_1_data_'+i+'_input'].value = item[i-1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                        } else {
+                            window['row_1_data_'+i+'_input'].value = item[i-1]
+                        }
+
+                        row_1.appendChild(window['row_1_data_'+i]);
+                        window['row_1_data_'+i].appendChild(window['row_1_data_'+i+'_input']);
                     }
-                }
-            }
-        }
 
-        let btnAction = document.querySelectorAll('.btnAction')
-        btnAction.forEach((el) => {
-            el.addEventListener('click', (ev)=>{
-                let id = el.getAttribute('data-id')
-                let action = el.classList.contains('edit') ? 'edit' : el.classList.contains('delete') ? 'delete' : el.classList.contains('details') ? 'details' : ''
-                get_invoice(id, action)
+                    let row_1_data_5 = document.createElement('td')
+                    row_1_data_5.classList.add('total_val')
+                    row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+
+                    let row_1_data_6 = document.createElement('td')
+                    row_1_data_6.innerHTML = '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)"><i class="fas fa-lg fa-trash"></i></div>'
+
+                    row_1.appendChild(row_1_data_5);
+                    row_1.appendChild(row_1_data_6);
+
+                    document.querySelector('#'+action+'tbody').appendChild(row_1)
+
+                    calc_invoice_value(qt * unit_val, '+')
+                    // invoice_value += (qt * unit_val)
+                    // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+
+                    material = document.querySelector('#'+action+'material').value = ''
+                    unid = document.querySelector('#'+action+'unid').value = ''
+                    qt = document.querySelector('#'+action+'qt').value = ''
+                    unit_val = document.querySelector('#'+action+'unit_val').value = ''
+
+                    let del_btn = document.querySelector('.delete_line');
+
+                } else {
+                    alert('Todos os campos devem ser preenchidos!');
+                }
+
+            })
+
+            $(function(){
+                $('#'+action+'qt').mask('#.#00,00', {reverse:true})
+                $('#'+action+'unit_val').mask('#.#00,00', {reverse:true})
             })
         })
-
-        const edit_invoice = (invoice) => {
-
-            let route_edit = "{{route('invoices.update', ['invoice' => 'invoice_id'])}}"
-            document.querySelector('#form_edit_invoice').setAttribute('action', route_edit.replace('invoice_id', invoice.id))
-
-            document.querySelector('#invoiceId').value = invoice.id
-
-            document.querySelector('#edit_construction').innerHTML =
-                '<option value="'+invoice.construction_name+'">'+invoice.construction_name+'</option>@foreach ($constructions as $construction)<option value="{{$construction->name}}">{{$construction->name}}</option>@endforeach'
-
-            document.querySelector('#edit_invoice_number').value = invoice.invoice_number
-            document.querySelector('#edit_invoice_date').value = invoice.invoice_date
-
-            document.querySelector('#edit_provider').innerHTML =
-                '<option value="'+invoice.provider_name+'">'+invoice.provider_name+'</option>@foreach ($providers as $provider)<option value="{{$provider->name}}">{{$provider->name}}</option>@endforeach'
-
-            let html = ''
-
-            // MONTA A LISTA DE MATERIAIS RETORNADOS NO OLD('MATERIALS') // COM ERRO NO LARAVEL
-            html += '@if (old("materials"))'
-            html += '@for($i=0;$i<count(old("materials")["material"]);$i++)'
-            html += '@php'
-            html += '$qt = old("materials")["qt"][$i];'
-            html += '$qt = str_replace(".", "", $qt);'
-            html += '$qt = str_replace(",", ".", $qt);'
-            html += '$unit_val = old("materials")["unit_val"][$i];'
-            html += '$unit_val = str_replace(".", "", $unit_val);'
-            html += '$unit_val = str_replace(",", ".", $unit_val);'
-            html += '$total_val = $qt * $unit_val;'
-            html += '@endphp'
-            html += '<tr>'
-            html += '@foreach (old("materials") as $key => $item)'
-            html += '<td>'
-            html += '<input type="text" name="materials[{{$key}}][]" readonly="" class="{{$key}}" value="{{$item[$i]}}">'
-            html += '</td>'
-            html += '@endforeach'
-            html += '<td class="total_val">{{number_format($total_val, 2, ",", ".")}}</td>'
-            html += '<td>'
-            html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
-            html += '<i class="fas fa-lg fa-trash"></i>'
-            html += '</div>'
-            html += '</td>'
-            html += '</tr>'
-            html += '@endfor'
-            html += '@endif'
-
-            // MONTA A LISTA DE MATERIAIS DA NOTA A SER EDITADA
-            if(invoice.materials) {
-                let total_invoice = 0
-                for(let i=0;i<invoice.materials.material.length;i++) {
-
-                    let material = invoice.materials.material[i]
-                    let unid = invoice.materials.unid[i]
-                    let qt = parseFloat(invoice.materials.qt[i])
-                    let unit_val = parseFloat(invoice.materials.unit_val[i])
-                    let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
-                    total_invoice += parseFloat(total_val.toFixed(2))
-
-                    html += '<tr>'
-
-                        html += '<td>'
-                        html += '<input type="text" name="materials[material][]" readonly="" class="material" value="'+material+'">'
-                        html += '</td>'
-
-                        html += '<td>'
-                        html += '<input type="text" name="materials[unid][]" readonly="" class="unid" value="'+unid+'">'
-                        html += '</td>'
-
-                        html += '<td>'
-                        html += '<input type="text" name="materials[qt][]" readonly="" class="qt" value="'+qt.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
-                        html += '</td>'
-
-                        html += '<td>'
-                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
-                        html += '</td>'
-
-                        html += '<td class="total_val">'+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>'
-                        html += '<td>'
-                        html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
-                        html += '<i class="fas fa-lg fa-trash"></i>'
-                        html += '</div>'
-                        html += '</td>'
-
-                    html += '</tr>'
-                }
-
-                document.querySelector('.edit_invoice_value').value = total_invoice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'BRL'})
-            }
-
-
-            document.querySelector('#edit_tbody').innerHTML = html
-
-            document.querySelector('#openModalEdit').click()
-        }
-
-        const delete_invoice = (invoice) => {
-            if(!confirm('Confirma a exclusão da nota?')) {
-                return false;
-            }
-            let id = invoice.id
-
-            var ajax = new XMLHttpRequest();
-            ajax.open("GET", "{{route('delInvoice')}}/?id="+id, true);
-            ajax.send();
-            ajax.onreadystatechange = function() {
-                if (ajax.readyState == 4 && ajax.status == 200) {
-                    alert(ajax.responseText)
-                    location.reload()
-                }
-            }
-        }
 
     </script>
 @stop
