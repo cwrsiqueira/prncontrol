@@ -401,32 +401,32 @@
                     let total_val = parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i])
                     total_invoice += parseFloat(total_val.toFixed(2))
 
-                    html += '<tr>';
+                    html += '<tr>'
 
-                        html += '<td>';
-                        html += '<input type="text" name="materials[material][]" readonly="" class="material" value="'+material+'">';
-                        html += '</td>';
+                        html += '<td>'
+                        html += '<input type="text" name="materials[material][]" readonly="" class="material" value="'+material+'">'
+                        html += '</td>'
 
-                        html += '<td>';
-                        html += '<input type="text" name="materials[unid][]" readonly="" class="unid" value="'+unid+'">';
-                        html += '</td>';
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unid][]" readonly="" class="unid" value="'+unid+'">'
+                        html += '</td>'
 
-                        html += '<td>';
-                        html += '<input type="text" name="materials[qt][]" readonly="" class="qt" value="'+qt.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">';
-                        html += '</td>';
+                        html += '<td>'
+                        html += '<input type="text" name="materials[qt][]" readonly="" class="qt" value="'+qt.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
 
-                        html += '<td>';
-                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">';
-                        html += '</td>';
+                        html += '<td>'
+                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '</td>'
 
-                        html += '<td class="total_val">';+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>';
-                        html += '<td>';
-                        html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">';
-                        html += '<i class="fas fa-lg fa-trash"></i>';
-                        html += '</div>';
-                        html += '</td>';
+                        html += '<td class="total_val">'+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>'
+                        html += '<td>'
+                        html += '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">'
+                        html += '<i class="fas fa-lg fa-trash"></i>'
+                        html += '</div>'
+                        html += '</td>'
 
-                    html += '</tr>';
+                    html += '</tr>'
                 }
 
                 document.querySelector('.edit_invoice_value').value = total_invoice.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2, style: 'currency', currency: 'BRL'})
