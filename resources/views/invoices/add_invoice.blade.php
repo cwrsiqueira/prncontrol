@@ -423,7 +423,7 @@
                     row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                     let row_1_data_6 = document.createElement('td')
-                    // row_1_data_6.innerHTML = '<div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)"><i class="fas fa-lg fa-trash"></i></div>';
+
 
                     row_1.appendChild(row_1_data_5);
                     row_1.appendChild(row_1_data_6);
