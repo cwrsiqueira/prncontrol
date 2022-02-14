@@ -116,34 +116,7 @@
                         <th>{{__('system.delete')}}</th>
                     </tr>
                 </thead>
-                <tbody id="edit_tbody">
-                    @if (old('materials'))
-                        @for($i=0;$i<count(old('materials')['material']);$i++)
-                            @php
-                                $qt = old('materials')['qt'][$i];
-                                $qt = str_replace('.', '', $qt);
-                                $qt = str_replace(',', '.', $qt);
-                                $unit_val = old('materials')['unit_val'][$i];
-                                $unit_val = str_replace('.', '', $unit_val);
-                                $unit_val = str_replace(',', '.', $unit_val);
-                                $total_val = $qt * $unit_val;
-                            @endphp
-                            <tr>
-                                @foreach (old('materials') as $key => $item)
-                                <td>
-                                    <input type="text" name="materials[{{$key}}][]" readonly="" class="{{$key}}" value="{{$item[$i]}}">
-                                </td>
-                                @endforeach
-                                <td class="total_val">{{number_format($total_val, 2, ',', '.')}}</td>
-                                <td>
-                                    <div class="btn btn-outline-danger btn-sm delete_line" onclick="deleteLine(this)">
-                                        <i class="fas fa-lg fa-trash"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endfor
-                    @endif
-                </tbody>
+                <tbody id="edit_tbody"></tbody>
             </table>
 
             <div class="area-buttons">
