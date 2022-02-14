@@ -350,14 +350,12 @@
 
             document.querySelector('#invoiceId').value = invoice.id
 
-            document.querySelector('#edit_construction').innerHTML =
-                '<option value="'+invoice.construction_name+'">'+invoice.construction_name+'</option>@foreach ($constructions as $construction)<option value="{{$construction->name}}">{{$construction->name}}</option>@endforeach'
+            document.querySelector('#edit_construction').innerHTML = '<option value="'+invoice.construction_name+'">'+invoice.construction_name+'</option>@foreach ($constructions as $construction)<option value="{{$construction->name}}">{{$construction->name}}</option>@endforeach'
 
             document.querySelector('#edit_invoice_number').value = invoice.invoice_number
             document.querySelector('#edit_invoice_date').value = invoice.invoice_date
 
-            document.querySelector('#edit_provider').innerHTML =
-                '<option value="'+invoice.provider_name+'">'+invoice.provider_name+'</option>@foreach ($providers as $provider)<option value="{{$provider->name}}">{{$provider->name}}</option>@endforeach'
+            document.querySelector('#edit_provider').innerHTML = '<option value="'+invoice.provider_name+'">'+invoice.provider_name+'</option>@foreach ($providers as $provider)<option value="{{$provider->name}}">{{$provider->name}}</option>@endforeach'
 
             let html = ''
 
