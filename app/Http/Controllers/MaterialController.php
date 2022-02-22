@@ -52,7 +52,7 @@ class MaterialController extends Controller
         Validator::make(
             $data,
             [
-                'name' => ['required', 'max:255'],
+                'name' => ['required', 'max:255', 'unique:materials'],
             ],
         )->validate();
 
