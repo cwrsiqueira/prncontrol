@@ -52,6 +52,7 @@ return [
     'invoices' => 'Notas',
     'reports' => 'Relatórios',
     'lots' => 'Lotes',
+    'add_lot' => 'Adicionar Lote',
     'materials' => 'Materiais',
     'generate_report' => 'Gerar Relatório',
     'no_filter' => 'Sem Filtro',
@@ -59,4 +60,5 @@ return [
     'add_provider' => 'Adicionar Fornecedor',
     'providers' => 'Fornecedores',
     'only_numbers' => 'Somente números',
+    'You are logged in!' => 'Você está logado!',
 ];
