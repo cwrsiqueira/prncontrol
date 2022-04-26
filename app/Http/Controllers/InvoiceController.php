@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -12,10 +13,13 @@ use App\Models\Construction;
 use App\Models\Provider;
 use App\Models\Material;
 
-use Helper;
+// use Helper;
 
 class InvoiceController extends Controller
 {
+    /**
+     * Class InvoiceController constructor
+     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -341,7 +345,7 @@ class InvoiceController extends Controller
 
         $change_from = Invoice::find($id);
         Invoice::where('id', $id)->update($data);
-        $change_for = Invoice::find($id);
+        $change_to = Invoice::find($id);
 
         Invoice_material::where('invoice_id', $id)->delete();
         foreach($invoices as $item) {
@@ -369,7 +373,7 @@ class InvoiceController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
 
         return redirect()->route("invoices.edit", ['invoice' => $id])->with('success', 'Nota alterada com sucesso!');
     }

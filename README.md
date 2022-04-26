@@ -19,6 +19,9 @@
 
 ## v1.0
 
+### 26/04/2022
+- Iniciado o menu Logs para mostrar os logs do sistema
+
 ### 24/01/2022
 - Concluido item Adicionar Nota no menu Notas
 

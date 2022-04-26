@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Helper;
+use App\Models\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 
-use App\Models\Lot;
-
-class LotController extends Controller
+class LogController extends Controller
 {
+    /**
+     * Class LogController constructor
+     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -24,8 +23,10 @@ class LotController extends Controller
      */
     public function index()
     {
-        $lots = Lot::where('inactive', 0)->get();
-        return view('lots.index', ['lots' => $lots]);
+        $logs = Log::all();
+        return view('logs.index', [
+            'logs' => $logs
+        ]);
     }
 
     /**
@@ -46,22 +47,7 @@ class LotController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->except('_token');
-
-        Validator::make(
-            $data,
-            [
-                'name' => ['required', 'max:255'],
-            ],
-        )->validate();
-
-        $id = Lot::insertGetId($data);
-
-        $data['id'] = $id;
-        $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
-
-        return redirect()->route("lots.index")->with('success', 'Lote cadastrado com sucesso!');
+        //
     }
 
     /**
@@ -95,19 +81,7 @@ class LotController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->except(['_token', '_method']);
-
-        $change_from = Lot::find($id);
-        Lot::where('id', $id)->update($data);
-        $change_to = Lot::find($id);
-
-        // $changes = array_unique(array_merge($change_from,$change_to), SORT_REGULAR);
-
-        $data['id'] = $id;
-        $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
-
-        return redirect()->route("lots.index")->with('success', 'Lote alterado com sucesso');
+        //
     }
 
     /**

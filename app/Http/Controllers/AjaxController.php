@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,8 +25,12 @@ class AjaxController extends Controller
 
     public function delUser(Request $request)
     {
+        $change_from = User::find($request->id);
         User::where('id', $request->id)->update(['inactive' => 1]);
-        echo 'Usuário deletado com sucesso!';
+        $change_to = User::find($request->id);
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'inactive', $change_to['updated_at']);
     }
 
     // LOTS

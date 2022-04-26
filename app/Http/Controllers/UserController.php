@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
@@ -9,8 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 use App\Models\Permission_group;
-
-use Helper;
 
 class UserController extends Controller
 {
@@ -156,14 +155,14 @@ class UserController extends Controller
 
         $change_from = User::find($id);
         User::where('id', $id)->update($data);
-        $change_for = User::find($id);
+        $change_to = User::find($id);
 
-        // $changes = array_unique(array_merge($change_from,$change_for), SORT_REGULAR);
+        // $changes = array_unique(array_merge($change_from,$change_to), SORT_REGULAR);
 
         $data['password'] = '***';
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_for' => $change_for), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
 
         return redirect()->route("users.index")->with('success', 'Cadastro Alterado com sucesso');
     }
