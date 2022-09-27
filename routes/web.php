@@ -11,6 +11,8 @@ use App\Http\Controllers\ReportController;
 
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\UpdateController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -40,6 +42,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('materials', MaterialController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('logs', LogController::class);
+    Route::resource('permissions', PermissionController::class);
+
+    Route::get('updates', [UpdateController::class, 'index']);
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [ReportController::class, 'generate_report'])->name('reports.generate');

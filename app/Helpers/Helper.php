@@ -11,13 +11,14 @@ use App\Models\Permission_link;
 
 class Helper
 {
-    public static function saveLog($user_id, $detail, $action, $date_action)
+    public static function saveLog($user_id, $detail, $menu, $action, $date_action)
     {
         $log = new Log();
         $log->company_id = Auth::user()->company_id;
         $log->user_id = $user_id;
         $log->detail = json_encode($detail);
         $log->action = $action;
+        $log->menu = $menu;
         $log->created_at = $date_action;
         $log->save();
     }

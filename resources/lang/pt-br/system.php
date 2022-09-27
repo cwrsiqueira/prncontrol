@@ -61,4 +61,12 @@ return [
     'providers' => 'Fornecedores',
     'only_numbers' => 'Somente números',
     'You are logged in!' => 'Você está logado!',
+    'logs' => 'Logs',
+    'user_name' => 'Usuário',
+    'action' => 'Ação',
+    'menu' => 'Menu',
+    'beforeChange' => 'Antes',
+    'afterChange' => 'Depois',
+    'updated_at' => 'Atualização',
+    'delete_confirm' => "Confirma a exclusão?",
 ];

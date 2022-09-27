@@ -30,7 +30,7 @@ class AjaxController extends Controller
         $change_to = User::find($request->id);
 
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'inactive', $change_to['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'inactivate', $change_to['updated_at']);
     }
 
     // LOTS

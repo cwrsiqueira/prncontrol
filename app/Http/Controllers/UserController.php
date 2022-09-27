@@ -27,7 +27,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::where('inactive', 0)->get();
-        return view('users.index',
+        return view(
+            'users.index',
             [
                 'users' => $users,
             ]
@@ -44,7 +45,13 @@ class UserController extends Controller
         //
     }
 
-    private function generatePassword($qtyCaraceters = 8)
+    /**
+     * Generate Password
+     *
+     * @param integer $qtyCaraceters
+     * @return string
+     */
+    private function generatePassword($qtyCaraceters = 8): string
     {
         //Letras minúsculas embaralhadas
         $smallLetters = str_shuffle('abcdefghijklmnopqrstuvwxyz');
@@ -60,7 +67,7 @@ class UserController extends Controller
         $specialCharacters = str_shuffle('!@#$%*-');
 
         //Junta tudo
-        $characters = $capitalLetters.$smallLetters.$numbers.$specialCharacters;
+        $characters = $capitalLetters . $smallLetters . $numbers . $specialCharacters;
 
         //Embaralha e pega apenas a quantidade de caracteres informada no parâmetro
         $password = substr(str_shuffle($characters), 0, $qtyCaraceters);
@@ -109,9 +116,9 @@ class UserController extends Controller
         $data['password'] = '***';
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'users', 'add', $data['created_at']);
 
-        return redirect()->route("users.index")->with('success', 'Atenção!!! Cadastro efetuado com sucesso! A senha cadastrada foi: <br><h3>'.$password.'</h3> copie e cole em algum lugar seguro antes de fechar a janela.');
+        return redirect()->route("users.index")->with('success', 'Atenção!!! Cadastro efetuado com sucesso! A senha cadastrada foi: <br><h3>' . $password . '</h3> copie e cole em algum lugar seguro antes de fechar a janela.');
     }
 
     /**
@@ -147,7 +154,7 @@ class UserController extends Controller
     {
         $data = $request->except(['_token', '_method']);
 
-        if($data['password'] !== null) {
+        if ($data['password'] !== null) {
             $data['password'] = hash::make($data['password']);
         } else {
             unset($data['password']);
@@ -162,7 +169,7 @@ class UserController extends Controller
         $data['password'] = '***';
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'edit', $data['updated_at']);
 
         return redirect()->route("users.index")->with('success', 'Cadastro Alterado com sucesso');
     }

@@ -18,6 +18,7 @@ class CreateLogsTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->string('action');
+            $table->string('menu');
             $table->text('detail');
             $table->timestamps();
         });

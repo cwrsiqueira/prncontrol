@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Log;
+use App\Models\Permission_group;
 use Illuminate\Http\Request;
 
-class LogController extends Controller
+class PermissionController extends Controller
 {
-    /**
-     * Class LogController constructor
-     */
     public function __construct()
     {
         $this->middleware('auth');
@@ -23,30 +20,9 @@ class LogController extends Controller
      */
     public function index()
     {
-        $logs = Log::select('logs.*', 'users.name as user_name')->join('users', 'users.id', 'logs.user_id')->get();
-        foreach ($logs as $log) {
-            $beforeChange = '';
-            $afterChange = '';
-
-            if (!empty($changeFrom)) {
-                $changeFrom = (array)json_decode($log['detail'])->change_from;
-                $changeTo = (array)json_decode($log['detail'])->change_to;
-                $changed = array_diff($changeFrom, $changeTo);
-
-                foreach ($changed as $key => $value) {
-                    $beforeChange .= "{$key} = {$changeFrom[$key]}<br>";
-                    $afterChange .= "{$key} = {$changeTo[$key]}<br>";
-                }
-            }
-
-            $afterChange = (array)json_decode($log['detail']);
-
-            $log['beforeChange'] = $beforeChange;
-            $log['afterChange'] = $afterChange;
-        }
-
-        return view('logs.index', [
-            'logs' => $logs
+        $permission_groups = Permission_group::all();
+        return view('permissions.index', [
+            'permission_groups' => $permission_groups,
         ]);
     }
 

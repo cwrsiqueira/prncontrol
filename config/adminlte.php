@@ -291,8 +291,8 @@ return [
             'icon' => 'fas fa-history',
         ],
         [
-            'text' => 'upgrades',
-            'url' => 'upgrades',
+            'text' => 'updates',
+            'url' => 'updates',
             'icon' => 'fas fa-rocket',
         ],
         [],
