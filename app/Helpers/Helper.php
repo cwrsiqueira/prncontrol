@@ -23,13 +23,14 @@ class Helper
         $log->save();
     }
 
-    public static function get_permissions() {
+    public static function get_permissions()
+    {
         $user = Auth::user();
 
         $user_permissions = Permission_link::select('permission_items.slug')
-        ->where('permission_group_id', $user->nivel_acesso)
-        ->join('permission_items', 'permission_items.id', 'permission_links.permission_item_id')
-        ->get();
+            ->where('permission_group_id', $user->nivel_acesso)
+            ->join('permission_items', 'permission_items.id', 'permission_links.permission_item_id')
+            ->get();
 
         $permissions = [];
         foreach ($user_permissions as $item) {
@@ -39,16 +40,18 @@ class Helper
         return $permissions;
     }
 
-    public static function get_hour_format($segundos) {
+    public static function get_hour_format($segundos)
+    {
         $init = $segundos;
-        $hours = (floor($init / 3600) < 10) ? '0'.(floor($init / 3600)) : floor($init / 3600);
-        $minutes = ((floor(($init / 60) % 60) < 10) ? '0'.(floor(($init / 60) % 60)) : floor(($init / 60) % 60));
-        $seconds = (($init % 60) < 10) ? '0'.($init % 60) : ($init % 60);
+        $hours = (floor($init / 3600) < 10) ? '0' . (floor($init / 3600)) : floor($init / 3600);
+        $minutes = ((floor(($init / 60) % 60) < 10) ? '0' . (floor(($init / 60) % 60)) : floor(($init / 60) % 60));
+        $seconds = (($init % 60) < 10) ? '0' . ($init % 60) : ($init % 60);
 
-        return $hours.':'.$minutes.':'.$seconds;
+        return $hours . ':' . $minutes . ':' . $seconds;
     }
 
-    public static function format_value($value) {
+    public static function format_value($value)
+    {
         $value = str_replace('.', '', $value);
         $value = str_replace(',', '.', $value);
         return $value;

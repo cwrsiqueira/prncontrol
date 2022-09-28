@@ -59,7 +59,7 @@ class ProviderController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Fornecedores', 'Inclusão', $data['created_at']);
 
         return redirect()->route("providers.index")->with('success', 'Fornecedor cadastrado com sucesso!');
     }
@@ -105,7 +105,7 @@ class ProviderController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Fornecedores', 'Alteração', $change_to['updated_at']);
 
         return redirect()->route("providers.index")->with('success', 'Cadastro Alterado com sucesso');
     }

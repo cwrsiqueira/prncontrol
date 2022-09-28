@@ -34,18 +34,19 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = Invoice::select('invoices.*', 'constructions.name as construction_name', 'providers.name as provider_name')
-        ->join('constructions', 'constructions.id', 'invoices.construction_id')
-        ->join('providers', 'providers.id', 'invoices.provider_id')
-        ->where('invoices.company_id', Auth::user()->company_id)
-        ->where('invoices.inactive', 0)
-        ->orderBy('invoices.invoice_date', 'DESC')
-        ->get();
+            ->join('constructions', 'constructions.id', 'invoices.construction_id')
+            ->join('providers', 'providers.id', 'invoices.provider_id')
+            ->where('invoices.company_id', Auth::user()->company_id)
+            ->where('invoices.inactive', 0)
+            ->orderBy('invoices.invoice_date', 'DESC')
+            ->get();
 
         $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
 
-        return view('invoices.index',
+        return view(
+            'invoices.index',
             [
                 'invoices' => $invoices,
                 'constructions' => $constructions,
@@ -66,7 +67,8 @@ class InvoiceController extends Controller
         $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
 
-        return view('invoices.add_invoice',
+        return view(
+            'invoices.add_invoice',
             [
                 'constructions' => $constructions,
                 'providers' => $providers,
@@ -134,14 +136,14 @@ class InvoiceController extends Controller
         $construction = Construction::select('id')->where('name', $data['construction'])->first();
         $provider = Provider::select('id')->where('name', $data['provider'])->first();
 
-        if(!$construction) {
+        if (!$construction) {
             $construction['id'] = Construction::insertGetId([
                 'company_id' => $data['company_id'],
                 'name' => $data['construction'],
             ]);
         }
 
-        if(!$provider) {
+        if (!$provider) {
             $provider['id'] = Provider::insertGetId([
                 'company_id' => $data['company_id'],
                 'name' => $data['provider'],
@@ -160,12 +162,12 @@ class InvoiceController extends Controller
 
         $invoice_id = Invoice::insertGetId($data);
 
-        foreach($invoices as $item) {
+        foreach ($invoices as $item) {
             $item['company_id'] = $data['company_id'];
             $item['invoice_id'] = $invoice_id;
 
             $material = Material::select('id')->where('name', $item[0])->first();
-            if(!$material) {
+            if (!$material) {
                 $material['id'] = Material::insertGetId([
                     'company_id' => $data['company_id'],
                     'name' => $item[0],
@@ -185,7 +187,7 @@ class InvoiceController extends Controller
 
         $data['id'] = $invoice_id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array($data, $invoices), 'add', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Notas', 'Inclusão', $data['created_at']);
 
         return redirect()->route("invoices.index")->with('success', 'Nota cadastrada com sucesso!');
     }
@@ -202,21 +204,22 @@ class InvoiceController extends Controller
             ->join('constructions', 'constructions.id', 'invoices.construction_id')
             ->join('providers', 'providers.id', 'invoices.provider_id')
             ->where('invoices.id', $id)
-        ->first();
+            ->first();
 
         $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
             ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
             ->where('invoice_materials.company_id', Auth::user()->company_id)
             ->where('invoice_materials.inactive', 0)
             ->where('invoice_materials.invoice_id', $id)
-        ->get();
+            ->get();
 
         $total_invoice_value = 0;
         foreach ($invoice_materials as $item) {
             $total_invoice_value += $item['qt'] * $item['unit_value'];
         }
 
-        return view('invoices.view_invoice',
+        return view(
+            'invoices.view_invoice',
             [
                 'invoice' => $invoice,
                 'invoice_materials' => $invoice_materials,
@@ -240,13 +243,14 @@ class InvoiceController extends Controller
         $invoice = Invoice::find($id);
 
         $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
-        ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
-        ->where('invoice_materials.company_id', Auth::user()->company_id)
-        ->where('invoice_materials.inactive', 0)
-        ->where('invoice_materials.invoice_id', $id)
-        ->get();
+            ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
+            ->where('invoice_materials.company_id', Auth::user()->company_id)
+            ->where('invoice_materials.inactive', 0)
+            ->where('invoice_materials.invoice_id', $id)
+            ->get();
 
-        return view('invoices.edit_invoice',
+        return view(
+            'invoices.edit_invoice',
             [
                 'constructions' => $constructions,
                 'providers' => $providers,
@@ -318,14 +322,14 @@ class InvoiceController extends Controller
         $construction = Construction::select('id')->where('name', $data['construction'])->first();
         $provider = Provider::select('id')->where('name', $data['provider'])->first();
 
-        if(!$construction) {
+        if (!$construction) {
             $construction['id'] = Construction::insertGetId([
                 'company_id' => $data['company_id'],
                 'name' => $data['construction'],
             ]);
         }
 
-        if(!$provider) {
+        if (!$provider) {
             $provider['id'] = Provider::insertGetId([
                 'company_id' => $data['company_id'],
                 'name' => $data['provider'],
@@ -348,12 +352,12 @@ class InvoiceController extends Controller
         $change_to = Invoice::find($id);
 
         Invoice_material::where('invoice_id', $id)->delete();
-        foreach($invoices as $item) {
+        foreach ($invoices as $item) {
             $item['company_id'] = $data['company_id'];
             $item['invoice_id'] = $id;
 
             $material = Material::select('id')->where('name', $item[0])->first();
-            if(!$material) {
+            if (!$material) {
                 $material['id'] = Material::insertGetId([
                     'company_id' => $data['company_id'],
                     'name' => $item[0],
@@ -373,7 +377,7 @@ class InvoiceController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Notas', 'Alteração', $change_to['updated_at']);
 
         return redirect()->route("invoices.edit", ['invoice' => $id])->with('success', 'Nota alterada com sucesso!');
     }

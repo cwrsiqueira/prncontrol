@@ -67,6 +67,8 @@ return [
     'menu' => 'Menu',
     'beforeChange' => 'Antes',
     'afterChange' => 'Depois',
+    'changes' => 'Mudanças',
     'updated_at' => 'Atualização',
     'delete_confirm' => "Confirma a exclusão?",
+    'date' => 'Data',
 ];
