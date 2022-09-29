@@ -334,7 +334,7 @@
 
             $(function(){
                 $('#'+action+'qt').mask('#.#00,00', {reverse:true})
-                $('#'+action+'unit_val').mask('#.#00,00', {reverse:true})
+                $('#'+action+'unit_val').mask('#.#00,0000', {reverse:true})
             })
         })
 

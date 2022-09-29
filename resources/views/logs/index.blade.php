@@ -27,8 +27,8 @@
 
             $config = [
                 'data' => $data,
-                'order' => [[1, 'asc']],
-                'columns' => [null, null, null, null, null, null],
+                'order' => [[5, 'DESC']],
+                'columns' => [null, null, null, null, null],
             ];
         @endphp
         {{-- Minimal example / fill data using the component slot --}}
