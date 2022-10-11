@@ -89,19 +89,19 @@ class AjaxController extends Controller
     public function getInvoice(Request $request)
     {
         $invoice = Invoice::select('invoices.*', 'constructions.name as construction_name', 'providers.name as provider_name')
-        ->leftJoin('constructions', 'constructions.id', 'invoices.construction_id')
-        ->leftJoin('providers', 'providers.id', 'invoices.provider_id')
-        ->where('invoices.id', $request->id)
-        ->first();
+            ->leftJoin('constructions', 'constructions.id', 'invoices.construction_id')
+            ->leftJoin('providers', 'providers.id', 'invoices.provider_id')
+            ->where('invoices.id', $request->id)
+            ->first();
 
         $invoice_materials = Invoice_material::select('invoice_materials.*', 'materials.name as material_name')
-        ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
-        ->where('invoice_materials.company_id', Auth::user()->company_id)
-        ->where('invoice_materials.inactive', 0)
-        ->where('invoice_materials.invoice_id', $invoice->id)
-        ->get();
+            ->leftJoin('materials', 'materials.id', 'invoice_materials.material_id')
+            ->where('invoice_materials.company_id', Auth::user()->company_id)
+            ->where('invoice_materials.inactive', 0)
+            ->where('invoice_materials.invoice_id', $invoice->id)
+            ->get();
 
-        foreach($invoice_materials as $item) {
+        foreach ($invoice_materials as $item) {
             $material = $invoice->materials;
             $material['material'][] = $item->material_name;
             $material['unid'][] = $item->unid;
@@ -116,6 +116,7 @@ class AjaxController extends Controller
     public function delInvoice(Request $request)
     {
         Invoice::where('id', $request->id)->update(['inactive' => 1]);
+        Invoice_material::where('invoice_id', $request->id)->update(['inactive' => 1]);
         echo 'Nota deletada com sucesso!';
     }
 }

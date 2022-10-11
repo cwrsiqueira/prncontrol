@@ -1,3 +1,45 @@
 .login-page {
     background-color: #fff;
 }
+
+cw-header-title {
+    display: flex;
+    justify-content: space-between;
+}
+
+.avatar_field_area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.avatar_field_title {
+    font-weight: bold;
+}
+
+#preview_avatar {
+    height: 120px;
+    border-radius: 3px;
+}
+
+.add_material_btn {
+    cursor: pointer;
+}
+
+.area-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.view-invoice {
+    background-color: #eee;
+}
+
+.view-invoice .text-col {
+    text-align: left;
+}
+
+.view-invoice .number-col {
+    text-align: right;
+}
