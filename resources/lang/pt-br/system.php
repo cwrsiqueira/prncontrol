@@ -71,4 +71,6 @@ return [
     'updated_at' => 'Atualização',
     'delete_confirm' => "Confirma a exclusão?",
     'date' => 'Data',
+    'clients' => 'Clientes',
+    'add_client' => 'Adicionar Cliente'
 ];

@@ -241,6 +241,11 @@ return [
             'icon' => 'fas fa-home',
         ],
         [
+            'text' => 'clients',
+            'url' => 'clients',
+            'icon' => 'fas fa-user',
+        ],
+        [
             'text' => 'lots',
             'url' => 'lots',
             'icon' => 'fas fa-th',

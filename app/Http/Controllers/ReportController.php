@@ -20,7 +20,8 @@ class ReportController extends Controller
         // $this->middleware('can:menu-cadastro');
     }
 
-    public function index() {
+    public function index()
+    {
 
         $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
@@ -30,7 +31,8 @@ class ReportController extends Controller
         $first_invoice = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->orderBy('invoice_date', 'asc')->first();
         $last_invoice = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->orderBy('invoice_date', 'desc')->first();
 
-        return view('reports.index',
+        return view(
+            'reports.index',
             [
                 'constructions' => $constructions,
                 'materials' => $materials,
@@ -42,11 +44,12 @@ class ReportController extends Controller
         );
     }
 
-    public function generate_report(Request $request) {
+    public function generate_report(Request $request)
+    {
         $data = $request->except('_token');
 
         foreach ($data as $key => $value) {
-            if($value === null) {
+            if ($value === null) {
                 unset($data[$key]);
             }
         }
@@ -63,19 +66,19 @@ class ReportController extends Controller
             'invoice_materials.unid as material_unid',
             'invoice_materials.qt as material_qt',
             'invoice_materials.unit_value as material_unit_value',
-            )
-        ->join('invoice_materials', 'invoices.id', 'invoice_materials.invoice_id')
-        ->join('constructions', 'constructions.id', 'invoices.construction_id')
-        ->join('providers', 'providers.id', 'invoices.provider_id')
-        ->join('materials', 'materials.id', 'invoice_materials.material_id')
-        ->where('invoices.construction_id', 'LIKE', $data['construction_id'] ?? '%')
-        ->where('invoices.provider_id', 'LIKE', $data['provider_id'] ?? '%')
-        ->where('invoice_materials.material_id', 'LIKE', $data['material_id'] ?? '%')
-        ->where('invoices.id', 'LIKE', $data['invoice_id'] ?? '%')
-        ->whereBetween('invoice_date', [$init_date, $fin_date])
-        ->where('invoices.company_id', Auth::user()->company_id)->where('invoices.inactive', 0)
-        ->orderBy('invoice_date', 'asc')
-        ->get();
+        )
+            ->join('invoice_materials', 'invoices.id', 'invoice_materials.invoice_id')
+            ->join('constructions', 'constructions.id', 'invoices.construction_id')
+            ->join('providers', 'providers.id', 'invoices.provider_id')
+            ->join('materials', 'materials.id', 'invoice_materials.material_id')
+            ->where('invoices.construction_id', 'LIKE', $data['construction_id'] ?? '%')
+            ->where('invoices.provider_id', 'LIKE', $data['provider_id'] ?? '%')
+            ->where('invoice_materials.material_id', 'LIKE', $data['material_id'] ?? '%')
+            ->where('invoices.id', 'LIKE', $data['invoice_id'] ?? '%')
+            ->whereBetween('invoice_date', [$init_date, $fin_date])
+            ->where('invoices.company_id', Auth::user()->company_id)->where('invoices.inactive', 0)
+            ->orderBy('invoice_date', 'asc')
+            ->get();
 
         $total_materials = 0;
         $total_cost = 0;
@@ -84,7 +87,7 @@ class ReportController extends Controller
         $material = 'Todos';
         $invoice = 'Todas';
 
-        if(count($invoices) > 0) {
+        if (count($invoices) > 0) {
 
             foreach ($invoices as $key => $value) {
                 $total_materials += $value->material_qt;
@@ -95,7 +98,7 @@ class ReportController extends Controller
             }
 
 
-            if(isset($data['construction_id'])) {
+            if (isset($data['construction_id'])) {
                 $construction_total_cost = 0;
                 foreach ($invoices as $key => $value) {
                     $construction_total_cost += $value->material_qt * $value->material_unit_value;
@@ -103,15 +106,15 @@ class ReportController extends Controller
                 $construction = $invoices[0]->construction_name;
             }
 
-            if(isset($data['provider_id'])) {
+            if (isset($data['provider_id'])) {
                 $provider_total_cost = 0;
                 foreach ($invoices as $key => $value) {
                     $provider_total_cost += $value->material_qt * $value->material_unit_value;
                 }
-                $provider = $invoices[0]->provider_name.' = '.number_format($provider_total_cost, 2, ',', '.');
+                $provider = $invoices[0]->provider_name . ' = ' . number_format($provider_total_cost, 2, ',', '.');
             }
 
-            if(isset($data['material_id'])) {
+            if (isset($data['material_id'])) {
                 $material_total = 0;
                 $material_total_cost = 0;
                 foreach ($invoices as $key => $value) {
@@ -121,14 +124,13 @@ class ReportController extends Controller
                 $material = $invoices[0]->material_name;
             }
 
-            if(isset($data['invoice_id'])) {
+            if (isset($data['invoice_id'])) {
                 $invoice_total_cost = 0;
                 foreach ($invoices as $key => $value) {
                     $invoice_total_cost += $value->material_qt * $value->material_unit_value;
                 }
-                $invoice = $invoices[0]->invoice_number.' = '.number_format($invoice_total_cost, 2, ',', '.');
+                $invoice = $invoices[0]->invoice_number . ' = ' . number_format($invoice_total_cost, 2, ',', '.');
             }
-
         }
 
         $dtRange = $data['dtRange'] ?? '';
@@ -148,7 +150,7 @@ class ReportController extends Controller
         $documentFileName = "relatório.pdf";
 
         // Create the mPDF document
-        $document = new PDF( [
+        $document = new PDF([
             'mode' => 'utf-8',
             'format' => 'A4',
             'margin_header' => '3',
@@ -160,11 +162,12 @@ class ReportController extends Controller
         // Set some header informations for output
         $header = [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="'.$documentFileName.'"'
+            'Content-Disposition' => 'inline; filename="' . $documentFileName . '"'
         ];
 
         // Write some simple Content
-        $document->WriteHTML(view('reports.generate',
+        $document->WriteHTML(view(
+            'reports.generate',
             [
                 'invoices' => $invoices,
                 'construction' => $construction,

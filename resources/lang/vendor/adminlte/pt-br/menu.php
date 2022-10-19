@@ -25,6 +25,7 @@ return [
     'users'                         => 'Usuários',
     'permissions'                   => 'Acessos',
     'logs'                          => 'Logs',
-    'updates'                      => 'Atualizações',
+    'updates'                       => 'Atualizações',
     'CONFIGURATIONS'                => 'CONFIGURAÇÕES',
+    'clients'                       => 'Clientes',
 ];

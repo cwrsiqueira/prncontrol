@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AddressesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LotController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReportController;
 
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UpdateController;
@@ -43,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('invoices', InvoiceController::class);
     Route::resource('logs', LogController::class);
     Route::resource('permissions', PermissionController::class);
+    Route::resource('clients', ClientsController::class);
+    Route::resource('addresses', AddressesController::class);
+    Route::resource('contacts', ContactsController::class);
 
     Route::get('updates', [UpdateController::class, 'index']);
 
@@ -51,6 +57,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/getUser', [AjaxController::class, 'getUser'])->name('getUser');
     Route::get('/delUser', [AjaxController::class, 'delUser'])->name('delUser');
+
+    Route::get('/getClient', [AjaxController::class, 'getClient'])->name('getClient');
+    Route::get('/delClient', [AjaxController::class, 'delClient'])->name('delClient');
 
     Route::get('/getLot', [AjaxController::class, 'getLot'])->name('getLot');
     Route::get('/delLot', [AjaxController::class, 'delLot'])->name('delLot');

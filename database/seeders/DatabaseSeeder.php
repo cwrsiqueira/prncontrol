@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             Permission_itemSeeder::class,
             Permission_linkSeeder::class,
             UserSeeder::class,
+            ClientSeeder::class,
+            AddressSeeder::class,
+            ContactSeeder::class,
         ]);
     }
 }
