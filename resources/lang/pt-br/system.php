@@ -72,5 +72,6 @@ return [
     'delete_confirm' => "Confirma a exclusão?",
     'date' => 'Data',
     'clients' => 'Clientes',
-    'add_client' => 'Adicionar Cliente'
+    'add_client' => 'Adicionar Cliente',
+    'contact' => 'Contato'
 ];

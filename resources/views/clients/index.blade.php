@@ -59,12 +59,12 @@
             $system_edit = __('system.edit');
             $system_delete = __('system.delete');
             $system_details = __('system.details');
-            $heads = ['ID', __('system.name'), __('system.obs'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
+            $heads = ['ID', __('system.name'), __('system.contact'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
             $data = [];
             foreach ($clients as $key => $client) {
                 $data[$key]['id'] = $client['id'];
                 $data[$key]['nome_razao_social'] = $client['nome_razao_social'];
-                $data[$key]['obs'] = $client['obs'];
+                $data[$key]['contact'] = $client->contacts[0]->descricao_contato . ': ' . $client->contacts[0]->dados_contato;
                 $data[$key]['actions'] =
                     "<nobr>
                 <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='" .
