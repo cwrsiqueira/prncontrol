@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Client;
+use App\Models\Contact;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientsController extends Controller
 {
@@ -17,10 +20,10 @@ class ClientsController extends Controller
         $clients = Client::where('inactive', 0)->get();
 
         foreach ($clients as $client) {
-            $client = $client->addresses;
+            $client['addresses'] = $client->addresses;
         }
         foreach ($clients as $client) {
-            $client = $client->contacts;
+            $client['contacts'] = $client->contacts()->orderBy('preferencial', 'desc')->get();
         }
 
         return view('clients.index', ['clients' => $clients]);

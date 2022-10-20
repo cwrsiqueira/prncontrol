@@ -18,14 +18,16 @@ class ContactSeeder extends Seeder
             'company_id' => 1,
             'client_id' => 1,
             'descricao_contato' => 'Telefone',
-            'dados_contato' => '96991100451'
+            'dados_contato' => '96991100451',
+            'preferencial' => 0
         ]);
 
         DB::table('contacts')->insert([
             'company_id' => 1,
             'client_id' => 1,
             'descricao_contato' => 'Email',
-            'dados_contato' => 'cwrsiqueira@hotmail.com'
+            'dados_contato' => 'cwrsiqueira@hotmail.com',
+            'preferencial' => 1
         ]);
     }
 }

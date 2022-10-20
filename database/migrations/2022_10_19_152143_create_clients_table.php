@@ -34,6 +34,7 @@ class CreateClientsTable extends Migration
             $table->string('inscricao_estadual')->nullable();
             $table->string('socios_ids')->nullable();
 
+            $table->text('obs')->nullable();
             $table->integer('inactive')->default(0);
             $table->timestamps();
         });

@@ -43,3 +43,7 @@ cw-header-title {
 .view-invoice .number-col {
     text-align: right;
 }
+
+.hidden {
+    display: none;
+}

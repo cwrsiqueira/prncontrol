@@ -44,3 +44,7 @@ cw-header-title {
     text-align: right;
 }
 
+.hidden {
+    display: none;
+}
+

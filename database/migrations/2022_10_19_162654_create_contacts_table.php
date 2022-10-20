@@ -20,7 +20,9 @@ class CreateContactsTable extends Migration
 
             $table->string('descricao_contato')->comment('telefone, whatsapp, email etc.');
             $table->string('dados_contato');
+            $table->integer('preferencial')->default(0);
 
+            $table->text('obs')->nullable();
             $table->integer('inactive')->default(0);
             $table->timestamps();
         });
