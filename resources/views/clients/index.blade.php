@@ -114,7 +114,6 @@
             <form action="{{ route('clients.store') }}" method="post" enctype="multipart/form-data" id="form_add_client">
                 @csrf
                 <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
-                <input type="hidden" name="created_at" value="{{ date('Y-m-d H:m:i') }}">
 
                 <div class="row">
                     <x-adminlte-select onchange="selectPessoa(this)" name="pessoa">
@@ -127,7 +126,7 @@
                     <h4>{{ __('system.client_informations') }}</h4>
 
                     <div class="row">
-                        <x-adminlte-input name="nome_razao_social" label="{{ __('system.name') }}"
+                        <x-adminlte-input name="nome" label="{{ __('system.name') }}"
                             placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
                     </div>
 
@@ -163,7 +162,7 @@
                     <h4>{{ __('system.client_informations') }}</h4>
 
                     <div class="row">
-                        <x-adminlte-input name="nome_razao_social" label="{{ __('system.corporate_name') }}"
+                        <x-adminlte-input name="razao_social" label="{{ __('system.corporate_name') }}"
                             placeholder="{{ __('system.corporate_name') }}" fgroup-class="col-md-12"
                             enable-old-support />
                     </div>
@@ -192,6 +191,7 @@
                 </div>
 
                 <div class="contacts">
+
                     <hr>
                     <div class="d-flex justify-content-between w-100%">
                         <h4>{{ __('system.contact_informations') }}</h4>
@@ -202,27 +202,65 @@
                         <div class="col-md">
                             <div class="custom-control custom-radio">
                                 <input class="custom-control-input custom-control-input-success" type="radio"
-                                    id="contact-data1" name="preferencial">
+                                    id="contact-data1" name="preferencialContact" value="1" checked />
                                 <label for="contact-data1"
                                     class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                             </div>
                         </div>
                         <x-adminlte-input style="cursor:help" title="{{ __('system.contact_descriptions') }}"
-                            name="descricao_contato" label="{{ __('system.contact_description') }}"
+                            name="contacts[contact1][descricao_contato]" label="{{ __('system.contact_description') }}"
                             placeholder="{{ __('system.contact_descriptions') }}" fgroup-class="col-md"
                             enable-old-support />
                         <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
-                            name="dados_contato" label="{{ __('system.contact_data') }}"
+                            name="contacts[contact1][dados_contato]" label="{{ __('system.contact_data') }}"
                             placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
                     </div>
 
                 </div>
 
                 <div class="addresses">
+
                     <hr>
-                    <h4>{{ __('system.address_informations') }}</h4>
+                    <div class="d-flex justify-content-between w-100%">
+                        <h4>{{ __('system.address_informations') }}</h4>
+                    </div>
+
+                    <div class="container">
+                        <div class="row">
+                            <x-adminlte-input class="postal_code_field" name="address[cep]"
+                                label="{{ __('system.postal_code') }}" placeholder="{{ __('system.postal_code') }}"
+                                fgroup-class="col-md" enable-old-support />
+                        </div>
+                        <div class="row">
+                            <x-adminlte-input class="logradouro_tipo" name="address[logradouro_tipo]"
+                                label="{{ __('system.address_type') }}" placeholder="{{ __('system.address_type') }}"
+                                fgroup-class="col-md" enable-old-support />
+                            <x-adminlte-input class="logradouro_nome" name="address[logradouro_nome]"
+                                label="{{ __('system.address_name') }}" placeholder="{{ __('system.address_name') }}"
+                                fgroup-class="col-md" enable-old-support />
+                            <x-adminlte-input class="numero" name="address[numero]"
+                                label="{{ __('system.address_number') }}"
+                                placeholder="{{ __('system.address_number') }}" fgroup-class="col-md"
+                                enable-old-support />
+                        </div>
+                        <div class="row">
+                            <x-adminlte-input class="complemento" name="address[complemento]"
+                                label="{{ __('system.address_complement') }}"
+                                placeholder="{{ __('system.address_complement') }}" fgroup-class="col-md"
+                                enable-old-support />
+                            <x-adminlte-input class="bairro" name="address[bairro]" label="{{ __('system.district') }}"
+                                placeholder="{{ __('system.district') }}" fgroup-class="col-md" enable-old-support />
+                            <x-adminlte-input class="municipio" name="address[municipio]"
+                                label="{{ __('system.city') }}" placeholder="{{ __('system.city') }}"
+                                fgroup-class="col-md" enable-old-support />
+                            <x-adminlte-input class="estado" name="address[estado]" label="{{ __('system.state') }}"
+                                placeholder="{{ __('system.state') }}" fgroup-class="col-md" enable-old-support />
+                        </div>
+                    </div>
 
                 </div>
+
+                <hr>
 
                 <div class="row">
                     <x-adminlte-input name="obs" label="{{ __('system.obs') }}"
@@ -337,52 +375,66 @@
             document.querySelector('.area-pessoa-juridica').classList.toggle('hidden');
         }
 
-        var productNumber = 1
+        var contactNumber = 2
 
         function add_field_contact() {
-            let newRow = `
-                <div class="row" data-produto="${productNumber}">
-                    <div class="input-field col s12">
-                        <input value="Drinking horn lagarto" data-conteudo="${productNumber}" type="text" class="validate">
-                        <label class="active" for="first_name2">Produto</label>
+            let newContact =
+                `<div class="row">
+                <div class="col-md">
+                    <div class="custom-control custom-radio">
+                        <input class="custom-control-input custom-control-input-success" type="radio"
+                            id="contact-data${contactNumber}" name="preferencialContact" value="${contactNumber}">
+                        <label for="contact-data${contactNumber}"
+                            class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                     </div>
-                    <div class="input-field col s3">
-                        <input value="2" data-quantidade="${productNumber}" type="text" class="validate">
-                        <label class="active" for="first_name2">Quantidade</label>
-                    </div>
-                    <div class="input-field col s3">
-                        <input value="125.00" data-valor="${productNumber}" type="text" class="validate">
-                        <label class="active" for="first_name2">Valor unitário</label>
-                    </div>
-                    <div class="row">
-                        <div class="input-field col s3">
-                            <input value="1.00" id="peso" type="text" class="validate">
-                            <label class="active" for="first_name2">Peso total</label>
-                        </div>
-                    </div>
-                </div>`
-            document.querySelector(".contacts").innerHTML += newRow
-            productNumber++;
+                </div>
+                <x-adminlte-input style="cursor:help" title="{{ __('system.contact_descriptions') }}"
+                    name="contacts[contact${contactNumber}][descricao_contato]" label="{{ __('system.contact_description') }}"
+                    placeholder="{{ __('system.contact_descriptions') }}" fgroup-class="col-md"
+                    enable-old-support />
+                <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
+                    name="contacts[contact${contactNumber}][dados_contato]" label="{{ __('system.contact_data') }}"
+                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
+            </div>`;
+            document.querySelector(".contacts").innerHTML += newContact
+            contactNumber++;
         }
 
-        // const add_field_contact = () => {
-        //     html = '';
-        //     html += "<div class='row'>";
-        //     html += "<div class='col-md'>";
-        //     html += "<div class='custom-control custom-radio'>";
-        //     html +=
-        //         "<input class='custom-control-input custom-control-input-success' type='radio' id='contact-data1' name='preferencial'>";
-        //     html +=
-        //         "<label for='contact-data1' class='custom-control-label'>{{ __('system.preferencial_contact') }}</label>";
-        //     html += "</div>";
-        //     html += "</div>";
-        //     html +=
-        //         "<x-adminlte-input style='cursor:help' title='{{ __('system.contact_descriptions') }}' name='descricao_contato' label='{{ __('system.contact_description') }}' placeholder='{{ __('system.contact_descriptions') }}' fgroup-class='col-md' enable-old-support />";
-        //     html +=
-        //         "<x-adminlte-input style='cursor:help' title='{{ __('system.contact_datas') }}' name='dados_contato' label='{{ __('system.contact_data') }}' placeholder='{{ __('system.contact_datas') }}' fgroup-class='col-md' enable-old-support />";
-        //     html += "</div>";
+        document.querySelector('.postal_code_field').addEventListener('keyup', (e) => {
+            if (e.target.value.length >= 10) {
+                let cep = e.target.value.replace(/[^0-9]/g, '');
+                console.log(cep);
+                fetch("https://viacep.com.br/ws/" + cep + "/json")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (!data.erro) {
+                            // console.log('Success:', data);
+                            let logradouro_tipo = data.logradouro.split(' ').shift();
+                            let logradouro_nome = data.logradouro.replace(logradouro_tipo, '').trim();
+                            let complemento = data.complemento
+                            let bairro = data.bairro
+                            let municipio = data.localidade
+                            let estado = data.uf
 
-        //     document.querySelector('.contacts').appendChild(html);
-        // }
+                            document.querySelector('.logradouro_tipo').value = logradouro_tipo;
+                            document.querySelector('.logradouro_nome').value = logradouro_nome;
+                            document.querySelector('.complemento').value = complemento;
+                            document.querySelector('.bairro').value = bairro;
+                            document.querySelector('.municipio').value = municipio;
+                            document.querySelector('.estado').value = estado;
+
+                            return;
+                        }
+                        console.log('Error:', 'CEP não encontrado');
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            }
+        })
+
+        $('input[name=cpf]').mask('000.000.000-00');
+        $('input[name=cnpj]').mask('00.000.000/0000-00');
+        $('.postal_code_field').mask('00.000-000');
     </script>
 @stop

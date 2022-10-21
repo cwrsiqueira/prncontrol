@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ClientsController extends Controller
 {
@@ -47,7 +48,31 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $client = $request->except('_token');
+
+        $client['nome_razao_social'] = $client['nome'] ?? $client['razao_social'];
+        unset($client['nome']);
+        unset($client['razao_social']);
+        unset($client['contacts']);
+        unset($client['preferencialContact']);
+        unset($client['address']);
+
+        Validator::make($client, [
+            'company_id' => 'required',
+            'nome_razao_social' => 'required',
+            'pessoa' => 'required',
+        ]);
+
+        $contacts = $request->only([
+            'preferencialContact',
+            'contacts',
+        ]);
+
+        $address = $request->only([
+            'address'
+        ]);
+
+        dd($client, $contacts, $address);
     }
 
     /**
