@@ -116,12 +116,12 @@
                 <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
 
                 <div class="row">
-                    <x-adminlte-select onchange="selectPessoa(this)" name="pessoa">
+                    <x-adminlte-select onchange="selectPessoa(this)" name="pessoa" enable-old-support>
                         <x-adminlte-options :options="['fisica' => 'Pessoa Física', 'juridica' => 'Pessoa Jurídica']" />
                     </x-adminlte-select>
                 </div>
 
-                <div class="area-pessoa-fisica">
+                <div class="area-pessoa-fisica @if (old('pessoa') == 'fisica' || old('pessoa') == '') @else hidden @endif">
                     <hr>
                     <h4>{{ __('system.client_informations') }}</h4>
 
@@ -157,7 +157,7 @@
 
                 </div>
 
-                <div class="area-pessoa-juridica hidden">
+                <div class="area-pessoa-juridica @if (old('pessoa') == 'fisica' || old('pessoa') == '') hidden @endif">
                     <hr>
                     <h4>{{ __('system.client_informations') }}</h4>
 
@@ -202,7 +202,8 @@
                         <div class="col-md">
                             <div class="custom-control custom-radio">
                                 <input class="custom-control-input custom-control-input-success" type="radio"
-                                    id="contact-data1" name="preferencialContact" value="1" checked />
+                                    id="contact-data1" name="preferencialContact" value="1" enable-old-support
+                                    @if (empty(old('preferencialContact')) || old('preferencialContact') == 1) checked @endif />
                                 <label for="contact-data1"
                                     class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                             </div>
@@ -215,6 +216,34 @@
                             name="contacts[contact1][dados_contato]" label="{{ __('system.contact_data') }}"
                             placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
                     </div>
+
+                    @if (old('contacts'))
+                        @for ($o = 2; $o <= count(old('contacts')); $o++)
+                            <div class="row">
+                                <div class="col-md">
+                                    <div class="custom-control custom-radio">
+                                        <input class="custom-control-input custom-control-input-success" type="radio"
+                                            id="{{ 'contact-data' . $o }}" name="preferencialContact"
+                                            value="{{ $o }}"
+                                            @if (old('preferencialContact') == $o) checked @endif />
+                                        <label for="{{ 'contact-data' . $o }}"
+                                            class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
+                                    </div>
+                                </div>
+                                <x-adminlte-input style="cursor:help" title="{{ __('system.contact_descriptions') }}"
+                                    name="{{ 'contacts[contact' . $o . '][descricao_contato]' }}"
+                                    label="{{ __('system.contact_description') }}"
+                                    placeholder="{{ __('system.contact_descriptions') }}" fgroup-class="col-md"
+                                    value="{{ old('contacts[contact' . $o . '][descricao_contato]') }}"
+                                    enable-old-support />
+                                <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
+                                    name="{{ 'contacts[contact' . $o . '][dados_contato]' }}"
+                                    label="{{ __('system.contact_data') }}"
+                                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md"
+                                    value="{{ old('contacts[contact' . $o . '][dados_contato]') }}" enable-old-support />
+                            </div>
+                        @endfor
+                    @endif;
 
                 </div>
 
@@ -396,7 +425,9 @@
                     name="contacts[contact${contactNumber}][dados_contato]" label="{{ __('system.contact_data') }}"
                     placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
             </div>`;
-            document.querySelector(".contacts").innerHTML += newContact
+            const newDiv = document.createElement("div");
+            newDiv.innerHTML = newContact;
+            document.querySelector(".contacts").appendChild(newDiv);
             contactNumber++;
         }
 
