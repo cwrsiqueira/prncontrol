@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Permission_group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends Controller
 {
@@ -20,7 +21,7 @@ class PermissionController extends Controller
      */
     public function index()
     {
-        $permission_groups = Permission_group::all();
+        $permission_groups = Permission_group::where('company_id', Auth::user()->company_id);
         return view('permissions.index', [
             'permission_groups' => $permission_groups,
         ]);

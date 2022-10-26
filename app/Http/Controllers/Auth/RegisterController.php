@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -64,7 +65,14 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $company_id = Company::insertGetId([
+            'name' => $data['name'],
+            'email' => $data['email']
+        ]);
+
         return User::create([
+            'company_id' => $company_id,
+            'permission_group_id' => 1,
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),

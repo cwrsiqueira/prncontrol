@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::where('inactive', 0)->get();
+        $users = User::where('inactive', 0)->where('company_id', Auth::user()->company_id)->get();
         return view(
             'users.index',
             [

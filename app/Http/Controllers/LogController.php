@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LogController extends Controller
 {
@@ -23,27 +24,7 @@ class LogController extends Controller
      */
     public function index()
     {
-        $logs = Log::select('logs.*', 'users.name as user_name')->join('users', 'users.id', 'logs.user_id')->get();
-        // foreach ($logs as $log) {
-        //     $beforeChange = '';
-        //     $afterChange = '';
-
-        //     if (!empty($changeFrom)) {
-        //         $changeFrom = (array)json_decode($log['detail'])->change_from;
-        //         $changeTo = (array)json_decode($log['detail'])->change_to;
-        //         $changed = array_diff($changeFrom, $changeTo);
-
-        //         foreach ($changed as $key => $value) {
-        //             $beforeChange .= "{$key} = {$changeFrom[$key]}<br>";
-        //             $afterChange .= "{$key} = {$changeTo[$key]}<br>";
-        //         }
-        //     }
-
-        //     $afterChange = (array)json_decode($log['detail']);
-
-        //     $log['beforeChange'] = $beforeChange;
-        //     $log['afterChange'] = $afterChange;
-        // }
+        $logs = Log::select('logs.*', 'users.name as user_name')->join('users', 'users.id', 'logs.user_id')->where('logs.company_id', Auth::user()->company_id)->get();
 
         return view('logs.index', [
             'logs' => $logs

@@ -30,6 +30,7 @@
                 'order' => [[5, 'DESC']],
                 'columns' => [null, null, null, null, null],
             ];
+            $config['lengthMenu'] = [10, 50, 100, 500];
         @endphp
         {{-- Minimal example / fill data using the component slot --}}
         <x-adminlte-datatable id="table1" :heads="$heads" with-buttons>

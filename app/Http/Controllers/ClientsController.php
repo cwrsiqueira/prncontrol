@@ -19,7 +19,7 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        $clients = Client::where('inactive', 0)->get();
+        $clients = Client::where('inactive', 0)->where('company_id', Auth::user()->company_id)->get();
 
         foreach ($clients as $client) {
             $client['addresses'] = $client->addresses;
