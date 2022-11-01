@@ -290,11 +290,16 @@
                             '[]'
                         window['row_1_data_' + i + '_input'].setAttribute('readonly', '')
                         window['row_1_data_' + i + '_input'].classList.add(cols[i - 1])
-                        if (typeof(item[i - 1]) === 'number') {
+                        if (cols[i - 1] === 'qt') {
                             window['row_1_data_' + i + '_input'].value = item[i - 1].toLocaleString(
-                            'pt-BR', {
-                                minimumFractionDigits: 2
-                            })
+                                'pt-BR', {
+                                    minimumFractionDigits: 2
+                                })
+                        } else if (cols[i - 1] === 'unit_val') {
+                            window['row_1_data_' + i + '_input'].value = item[i - 1].toLocaleString(
+                                'pt-BR', {
+                                    minimumFractionDigits: 4
+                                })
                         } else {
                             window['row_1_data_' + i + '_input'].value = item[i - 1]
                         }
@@ -346,5 +351,9 @@
                 })
             })
         })
+
+        $(function() {
+            $('.unit_val').mask('#.#00,0000');
+        });
     </script>
 @stop

@@ -32,7 +32,7 @@
                     <td class="text-col">{{ $item->material_name }}</td>
                     <td class="number-col">{{ $item->unid }}</td>
                     <td class="number-col">{{ number_format($item->qt, 2, ',', '.') }}</td>
-                    <td class="number-col">{{ number_format($item->unit_value, 2, ',', '.') }}</td>
+                    <td class="number-col">{{ number_format($item->unit_value, 4, ',', '.') }}</td>
                     <td class="number-col">{{ number_format($item->qt * $item->unit_value, 2, ',', '.') }}</td>
                 </tr>
             @endforeach

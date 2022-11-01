@@ -89,7 +89,6 @@
                 </button>
             </nobr>";
             }
-
             $config = [
                 'data' => $data,
                 'order' => [[1, 'asc']],
@@ -164,7 +163,7 @@
     <script>
         let messages = document.querySelector('#messages').value
         if (messages !== '') {
-            document.querySelector('#openModalMessages').click()
+            document.querySelector('#openModalAdd').click()
         }
 
         let errors = document.querySelector('#errors').value

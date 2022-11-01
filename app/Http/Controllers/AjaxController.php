@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +29,23 @@ class AjaxController extends Controller
         $change_from = User::find($request->id);
         User::where('id', $request->id)->update(['inactive' => 1]);
         $change_to = User::find($request->id);
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'inactivate', $change_to['updated_at']);
+    }
+
+    // CLIENT
+    public function getClient(Request $request)
+    {
+        $client = Client::find($request->id);
+        return $client;
+    }
+
+    public function delClient(Request $request)
+    {
+        $change_from = Client::find($request->id);
+        Client::where('id', $request->id)->update(['inactive' => 1]);
+        $change_to = Client::find($request->id);
 
         $user_id = Auth::user()->id;
         Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'inactivate', $change_to['updated_at']);
