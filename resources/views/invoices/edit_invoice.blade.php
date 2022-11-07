@@ -293,10 +293,18 @@
                         window['row_1_data_'+i+'_input'].name = 'materials'+'['+cols[i-1]+']'+'[]'
                         window['row_1_data_'+i+'_input'].setAttribute('readonly', '')
                         window['row_1_data_'+i+'_input'].classList.add(cols[i-1])
-                        if(typeof(item[i-1]) === 'number') {
-                            window['row_1_data_'+i+'_input'].value = item[i-1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+                        if (cols[i - 1] === 'qt') {
+                            window['row_1_data_' + i + '_input'].value = item[i - 1].toLocaleString(
+                                'pt-BR', {
+                                    minimumFractionDigits: 2
+                                })
+                        } else if (cols[i - 1] === 'unit_val') {
+                            window['row_1_data_' + i + '_input'].value = item[i - 1].toLocaleString(
+                                'pt-BR', {
+                                    minimumFractionDigits: 4
+                                })
                         } else {
-                            window['row_1_data_'+i+'_input'].value = item[i-1]
+                            window['row_1_data_' + i + '_input'].value = item[i - 1]
                         }
 
                         row_1.appendChild(window['row_1_data_'+i]);
@@ -396,7 +404,7 @@
                         html += '</td>'
 
                         html += '<td>'
-                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'">'
+                        html += '<input type="text" name="materials[unit_val][]" readonly="" class="unit_val" value="'+unit_val.toLocaleString('pt-BR', {minimumFractionDigits: 4, maximumFractionDigits: 4})+'">'
                         html += '</td>'
 
                         html += '<td class="total_val">'+total_val.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})+'</td>'
