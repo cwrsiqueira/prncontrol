@@ -73,19 +73,19 @@
                     "'>
                     <i class='fa fa-lg fa-fw fa-pen'></i>
                 </button>
-                <button class='btn btn-xs btn-default text-danger mx-1 shadow btnAction delete' title='" .
-                    $system_delete .
-                    "' data-id='" .
-                    $lot['id'] .
-                    "'>
-                    <i class='fa fa-lg fa-fw fa-trash'></i>
-                </button>
                 <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='" .
                     $system_details .
                     "' data-id='" .
                     $lot['id'] .
                     "'>
                     <i class='fa fa-lg fa-fw fa-eye'></i>
+                </button>
+                <button class='btn btn-xs btn-default text-danger mx-1 shadow btnAction delete' title='" .
+                    $system_delete .
+                    "' data-id='" .
+                    $lot['id'] .
+                    "'>
+                    <i class='fa fa-lg fa-fw fa-trash'></i>
                 </button>
             </nobr>";
             }

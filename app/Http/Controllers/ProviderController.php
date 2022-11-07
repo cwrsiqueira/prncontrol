@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Models\Invoice;
+use App\Models\Invoice_material;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +74,31 @@ class ProviderController extends Controller
      */
     public function show($id)
     {
-        //
+        $provider = Provider::where('company_id', Auth::user()->company_id)
+            ->where('inactive', 0)
+            ->where('id', $id)
+            ->first();
+
+        $invoices = Invoice::select('invoices.*', 'constructions.name as construction_name')
+            ->join('constructions', 'constructions.id', 'invoices.construction_id')
+            ->where('invoices.company_id', Auth::user()->company_id)
+            ->where('invoices.inactive', 0)
+            ->where('invoices.provider_id', $id)
+            ->get();
+
+        foreach ($invoices as $i) {
+            $invoice_materials = Invoice_material::where('invoice_id', $i->id)->get();
+            $total = 0;
+            foreach ($invoice_materials as $im) {
+                $total += $im->qt * $im->unit_value;
+            }
+            $i->total = $total;
+        }
+
+        return view('providers.show', [
+            'provider' => $provider,
+            'invoices' => $invoices
+        ]);
     }
 
     /**

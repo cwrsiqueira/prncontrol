@@ -351,9 +351,5 @@
                 })
             })
         })
-
-        $(function() {
-            $('.unit_val').mask('#.#00,0000');
-        });
     </script>
 @stop

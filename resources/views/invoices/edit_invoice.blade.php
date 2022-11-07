@@ -148,6 +148,7 @@
 
             <div class="area-buttons">
                 <x-adminlte-button type="submit" class="d-flex mr-auto" theme="success" label="Salvar"/>
+                <a href="#" onclick="window.history.back()" class="btn btn-warning ml-auto">Voltar</a>
                 <a href="{{route('invoices.index')}}" class="btn btn-danger ml-auto">Sair</a>
             </div>
         </form>

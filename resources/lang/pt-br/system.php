@@ -108,4 +108,5 @@ return [
     'district' => 'Bairro',
     'city' => 'Município',
     'state' => 'Estado',
+    'edit_provider' => 'Editar Fornecedor',
 ];

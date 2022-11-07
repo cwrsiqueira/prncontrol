@@ -259,6 +259,7 @@ return [
             'text' => 'providers',
             'url' => 'providers',
             'icon' => 'fas fa-truck',
+            'active' => ['providers/*'],
         ],
         [
             'text' => 'materials',

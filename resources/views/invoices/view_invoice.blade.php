@@ -5,15 +5,16 @@
 @section('content_header')
 
     <pre>
-    ID: {{ $invoice->id }}
-    NOTA NR.: {{ $invoice->invoice_number }}
-    DATA DA NOTA: {{ date('d/m/Y', strtotime($invoice->invoice_date)) }}
+        ID: {{ $invoice->id }}
+        NOTA NR.: {{ $invoice->invoice_number }}
+        DATA DA NOTA: {{ date('d/m/Y', strtotime($invoice->invoice_date)) }}
 
-    CONSTRUÇÃO: {{ $invoice->construction_name }}
-    FORNECEDOR: {{ $invoice->provider_name }}
+        CONSTRUÇÃO: {{ $invoice->construction_name }}
+        FORNECEDOR: {{ $invoice->provider_name }}
 
-    VALOR DA NOTA: {{ number_format($total_invoice_value, 2, ',', '.') }}
-</pre>
+        VALOR DA NOTA: {{ number_format($total_invoice_value, 2, ',', '.') }}
+    </pre>
+    <a href="#" onclick="window.history.back()" class="btn btn-warning mb-2">Voltar</a>
 
 
     <table class="table table-hover view-invoice">
