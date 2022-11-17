@@ -29,7 +29,8 @@ class CreateCompaniesTable extends Migration
             $table->string('website')->nullable();
             $table->text('socialmedia')->nullable();
             $table->string('logo')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

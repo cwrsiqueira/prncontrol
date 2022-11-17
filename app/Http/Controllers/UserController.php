@@ -48,10 +48,10 @@ class UserController extends Controller
     /**
      * Generate Password
      *
-     * @param integer $qtyCaraceters
+     * @param integer $qtyCharacters
      * @return string
      */
-    private function generatePassword($qtyCaraceters = 8): string
+    private function generatePassword($qtyCharacters = 8): string
     {
         //Letras minúsculas embaralhadas
         $smallLetters = str_shuffle('abcdefghijklmnopqrstuvwxyz');
@@ -70,7 +70,7 @@ class UserController extends Controller
         $characters = $capitalLetters . $smallLetters . $numbers . $specialCharacters;
 
         //Embaralha e pega apenas a quantidade de caracteres informada no parâmetro
-        $password = substr(str_shuffle($characters), 0, $qtyCaraceters);
+        $password = substr(str_shuffle($characters), 0, $qtyCharacters);
 
         //Retorna a senha
         return $password;
@@ -116,7 +116,7 @@ class UserController extends Controller
         $data['password'] = '***';
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'users', 'add', $data['created_at']);
+        Helper::saveLog($user_id, array('inclusão: ' => $data), 'users', 'add');
 
         return redirect()->route("users.index")->with('success', 'Atenção!!! Cadastro efetuado com sucesso! A senha cadastrada foi: <br><h3>' . $password . '</h3> copie e cole em algum lugar seguro antes de fechar a janela.');
     }
@@ -169,7 +169,7 @@ class UserController extends Controller
         $data['password'] = '***';
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'edit', $data['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'edit');
 
         return redirect()->route("users.index")->with('success', 'Cadastro Alterado com sucesso');
     }

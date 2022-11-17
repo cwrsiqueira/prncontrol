@@ -59,7 +59,7 @@ class ConstructionController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Obras', 'Inclusão', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Obras', 'Inclusão');
 
         return redirect()->route("constructions.index")->with('success', 'Obra cadastrada com sucesso!');
     }
@@ -105,7 +105,7 @@ class ConstructionController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Obras', 'Alteração', $change_to['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Obras', 'Alteração');
 
         return redirect()->route("constructions.index")->with('success', 'Cadastro Alterado com sucesso');
     }

@@ -117,7 +117,6 @@
                 <input type="hidden" name="password" value="8">
                 <input type="hidden" name="inactive" value="0">
                 <input type="hidden" name="avatar" value="images/default.png">
-                <input type="hidden" name="created_at" value="{{ date('Y-m-d H:m:i') }}">
                 <input type="hidden" name="permission_group_id" value="3">
 
                 {{-- <div class="avatar_field_area">

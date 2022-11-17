@@ -22,7 +22,8 @@ class CreateInvoiceMaterialsTable extends Migration
             $table->string('unid');
             $table->string('qt');
             $table->string('unit_value');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

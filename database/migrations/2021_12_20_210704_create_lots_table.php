@@ -19,7 +19,8 @@ class CreateLotsTable extends Migration
             $table->integer('inactive')->default(0);
             $table->string('name');
             $table->string('obs')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

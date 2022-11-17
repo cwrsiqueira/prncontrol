@@ -18,17 +18,18 @@ class CreateAddressesTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->foreignId('client_id')->constrained();
 
-            $table->string('logradouro_tipo')->comment('avenida, rua, travessa, rodovia etc.');
-            $table->string('logradouro_nome');
-            $table->string('numero');
+            $table->string('logradouro_tipo')->comment('avenida, rua, travessa, rodovia etc.')->nullable();
+            $table->string('logradouro_nome')->nullable();
+            $table->string('numero')->nullable();
             $table->string('complemento')->nullable();
-            $table->string('bairro');
-            $table->string('municipio');
-            $table->string('estado');
-            $table->string('cep');
+            $table->string('bairro')->nullable();
+            $table->string('municipio')->nullable();
+            $table->string('estado')->nullable();
+            $table->string('cep')->nullable();
 
             $table->integer('inactive')->default(0);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

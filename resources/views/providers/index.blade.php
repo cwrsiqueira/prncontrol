@@ -114,7 +114,6 @@
                 id="form_add_provider">
                 @csrf
                 <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
-                <input type="hidden" name="created_at" value="{{ date('Y-m-d H:m:i') }}">
 
                 <div class="row">
                     <x-adminlte-input name="name" label="{{ __('system.name') }}"

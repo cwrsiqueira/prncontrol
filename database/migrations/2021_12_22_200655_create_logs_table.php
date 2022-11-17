@@ -20,7 +20,8 @@ class CreateLogsTable extends Migration
             $table->string('action');
             $table->string('menu');
             $table->text('detail');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

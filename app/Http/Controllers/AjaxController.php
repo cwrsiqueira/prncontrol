@@ -26,12 +26,9 @@ class AjaxController extends Controller
 
     public function delUser(Request $request)
     {
-        $change_from = User::find($request->id);
         User::where('id', $request->id)->update(['inactive' => 1]);
-        $change_to = User::find($request->id);
-
-        $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'inactivate', $change_to['updated_at']);
+        echo 'Usuário deletado com sucesso!';
+        Helper::saveLog($request->id, 'change inactive to 1', 'users', 'inactivate');
     }
 
     // CLIENT
@@ -43,12 +40,11 @@ class AjaxController extends Controller
 
     public function delClient(Request $request)
     {
-        $change_from = Client::find($request->id);
         Client::where('id', $request->id)->update(['inactive' => 1]);
-        $change_to = Client::find($request->id);
+        echo 'Cliente deletado com sucesso!';
 
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'users', 'inactivate', $change_to['updated_at']);
+        Helper::saveLog($user_id, 'change inactive to 1', 'users', 'inactivate');
     }
 
     // LOTS
@@ -62,6 +58,9 @@ class AjaxController extends Controller
     {
         Lot::where('id', $request->id)->update(['inactive' => 1]);
         echo 'Lote deletado com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'lots', 'inactivate');
     }
 
     // CONTRUCTIONS
@@ -75,6 +74,9 @@ class AjaxController extends Controller
     {
         Construction::where('id', $request->id)->update(['inactive' => 1]);
         echo 'Obra deletada com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'constructions', 'inactivate');
     }
 
     // PROVIDERS
@@ -87,7 +89,10 @@ class AjaxController extends Controller
     public function delProvider(Request $request)
     {
         Provider::where('id', $request->id)->update(['inactive' => 1]);
-        echo 'Fornecedor deletada com sucesso!';
+        echo 'Fornecedor deletado com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'providers', 'inactivate');
     }
 
     // MATERIALS
@@ -101,6 +106,9 @@ class AjaxController extends Controller
     {
         Material::where('id', $request->id)->update(['inactive' => 1]);
         echo 'Material deletado com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'materials', 'inactivate');
     }
 
     // INVOICES
@@ -136,5 +144,8 @@ class AjaxController extends Controller
         Invoice::where('id', $request->id)->update(['inactive' => 1]);
         Invoice_material::where('invoice_id', $request->id)->update(['inactive' => 1]);
         echo 'Nota deletada com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'invoices', 'inactivate');
     }
 }

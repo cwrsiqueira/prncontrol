@@ -22,7 +22,8 @@ class CreateInvoicesTable extends Migration
             $table->string('invoice_number');
             $table->string('invoice_date');
             $table->string('obs')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

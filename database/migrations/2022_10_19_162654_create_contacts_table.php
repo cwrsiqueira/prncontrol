@@ -18,13 +18,14 @@ class CreateContactsTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->foreignId('client_id')->constrained();
 
-            $table->string('descricao_contato')->comment('telefone, whatsapp, email etc.');
-            $table->string('dados_contato');
+            $table->string('descricao_contato')->comment('telefone, whatsapp, email etc.')->nullable();
+            $table->string('dados_contato')->nullable();
             $table->integer('preferencial')->default(0);
 
             $table->text('obs')->nullable();
             $table->integer('inactive')->default(0);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

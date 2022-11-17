@@ -39,7 +39,6 @@
         <form action="{{ route('invoices.store') }}" method="post" enctype="multipart/form-data" id="form_add_invoice">
             @csrf
             <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
-            <input type="hidden" name="created_at" value="{{ date('Y-m-d H:m:i') }}">
 
             <div class="row">
 
@@ -82,6 +81,7 @@
                 <x-adminlte-select2 id="add_material" name="" label="{{ __('system.material') }}"
                     fgroup-class="col-md" enable-old-support>
                     <option value="">Selecione um material</option>
+                    <option value="ajuste">Ajuste do valor da nota</option>
                     @foreach ($materials as $material)
                         <option value="{{ $material->name }}">{{ $material->name }}</option>
                     @endforeach
@@ -329,10 +329,10 @@
                     // invoice_value += (qt * unit_val)
                     // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
-                    material = document.querySelector('#' + action + 'material').value = ''
-                    unid = document.querySelector('#' + action + 'unid').value = ''
-                    qt = document.querySelector('#' + action + 'qt').value = ''
-                    unit_val = document.querySelector('#' + action + 'unit_val').value = ''
+                    // document.querySelector('#' + action + 'material').value = '';
+                    document.querySelector('#' + action + 'unid').value = '';
+                    document.querySelector('#' + action + 'qt').value = '';
+                    document.querySelector('#' + action + 'unit_val').value = '';
 
                     let del_btn = document.querySelector('.delete_line');
 

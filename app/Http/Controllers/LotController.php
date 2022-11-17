@@ -59,7 +59,7 @@ class LotController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Lotes', 'Inclusão', $data['created_at']);
+        Helper::saveLog($user_id, array('inclusão: ' => $data), 'Lotes', 'Inclusão');
 
         return redirect()->route("lots.index")->with('success', 'Lote cadastrado com sucesso!');
     }
@@ -105,7 +105,7 @@ class LotController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Lotes', 'Alteração', $change_to['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Lotes', 'Alteração');
 
         return redirect()->route("lots.index")->with('success', 'Lote alterado com sucesso');
     }

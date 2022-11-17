@@ -18,7 +18,8 @@ class CreatePermissionItemsTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->string('name');
             $table->string('slug');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

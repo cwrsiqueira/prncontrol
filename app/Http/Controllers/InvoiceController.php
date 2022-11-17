@@ -91,7 +91,6 @@ class InvoiceController extends Controller
             $data,
             [
                 'company_id' => ['required'],
-                'created_at' => ['required'],
                 'construction' => ['required', 'max:255'],
                 'invoice_number' => ['required', 'max:255'],
                 'invoice_date' => ['required', 'date'],
@@ -187,7 +186,7 @@ class InvoiceController extends Controller
 
         $data['id'] = $invoice_id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Notas', 'Inclusão', $data['created_at']);
+        Helper::saveLog($user_id, array('change_from' => '', 'change_to' => $data), 'Notas', 'Inclusão');
 
         return redirect()->route("invoices.index")->with('success', 'Nota cadastrada com sucesso!');
     }
@@ -277,7 +276,6 @@ class InvoiceController extends Controller
             [
                 'invoiceId' => ['required'],
                 'company_id' => ['required'],
-                'updated_at' => ['required'],
                 'construction' => ['required', 'max:255'],
                 'invoice_number' => ['required', 'max:255'],
                 'invoice_date' => ['required', 'date'],
@@ -377,7 +375,7 @@ class InvoiceController extends Controller
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Notas', 'Alteração', $change_to['updated_at']);
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Notas', 'Alteração');
 
         return redirect()->route("invoices.edit", ['invoice' => $id])->with('success', 'Nota alterada com sucesso!');
     }

@@ -111,7 +111,7 @@ class ClientsController extends Controller
 
         Address::insert($address['address']);
 
-        Helper::saveLog(Auth::user()->id, $client, 'Clientes', 'Inclusão', date('Y-m-d H:i:s'));
+        Helper::saveLog(Auth::user()->id, $client, 'Clientes', 'Inclusão');
 
         return redirect()->route("clients.index")->with('success', 'Cadastro efetuado com sucesso!');
     }

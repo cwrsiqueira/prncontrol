@@ -18,7 +18,8 @@ class CreatePermissionLinksTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->foreignId('permission_group_id')->constrained();
             $table->foreignId('permission_item_id')->constrained();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
         });
     }
 

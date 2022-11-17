@@ -3,15 +3,12 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\Models\Log;
-use App\Models\User;
-use App\Models\Permission_item;
 use App\Models\Permission_link;
 
 class Helper
 {
-    public static function saveLog($user_id, $detail, $menu, $action, $date_action)
+    public static function saveLog($user_id, $detail, $menu, $action)
     {
         $log = new Log();
         $log->company_id = Auth::user()->company_id;
@@ -19,7 +16,6 @@ class Helper
         $log->detail = json_encode($detail);
         $log->action = $action;
         $log->menu = $menu;
-        $log->created_at = $date_action;
         $log->save();
     }
 
