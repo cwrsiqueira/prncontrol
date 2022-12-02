@@ -81,7 +81,6 @@
                 <x-adminlte-select2 id="add_material" name="" label="{{ __('system.material') }}"
                     fgroup-class="col-md" enable-old-support>
                     <option value="">Selecione um material</option>
-                    <option value="ajuste">Ajuste do valor da nota</option>
                     @foreach ($materials as $material)
                         <option value="{{ $material->name }}">{{ $material->name }}</option>
                     @endforeach
@@ -123,7 +122,7 @@
                                 $unit_val = old('materials')['unit_val'][$i];
                                 $unit_val = str_replace('.', '', $unit_val);
                                 $unit_val = str_replace(',', '.', $unit_val);
-                                $total_val = $qt * $unit_val;
+                                $total_val = floor($qt * $unit_val * 100) / 100;
                             @endphp
                             <tr>
                                 @foreach (old('materials') as $key => $item)
@@ -231,6 +230,11 @@
 
 @section('js')
     <script>
+        const arredonda = function(numero, casasDecimais) {
+            casasDecimais = typeof casasDecimais !== 'undefined' ? casasDecimais : 2;
+            return +(Math.floor(numero + ('e+' + casasDecimais)) + ('e-' + casasDecimais));
+        };
+
         const calc_invoice_value = (value, action) => {
             let invoice_value = document.querySelector('.invoice_value').value || '0'
             invoice_value = invoice_value.replace(/[^0-9.,]/g, '').replace(/[.]/g, '').replace(/[,]/g, '.')
@@ -310,7 +314,7 @@
 
                     let row_1_data_5 = document.createElement('td')
                     row_1_data_5.classList.add('total_val')
-                    row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', {
+                    row_1_data_5.innerHTML = (arredonda(qt * unit_val, 2)).toLocaleString('pt-BR', {
                         minimumFractionDigits: 2,
                         style: 'currency',
                         currency: 'BRL'
@@ -325,8 +329,8 @@
 
                     document.querySelector('#' + action + 'tbody').appendChild(row_1)
 
-                    calc_invoice_value(qt * unit_val, '+')
-                    // invoice_value += (qt * unit_val)
+                    calc_invoice_value(arredonda(qt * unit_val, 2), '+')
+                    // invoice_value += (arredonda(qt * unit_val, 2))
                     // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                     // document.querySelector('#' + action + 'material').value = '';
