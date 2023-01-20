@@ -122,7 +122,7 @@
                                 $unit_val = old('materials')['unit_val'][$i];
                                 $unit_val = str_replace('.', '', $unit_val);
                                 $unit_val = str_replace(',', '.', $unit_val);
-                                $total_val = floor($qt * $unit_val * 100) / 100;
+                                $total_val = ($qt * $unit_val * 100) / 100;
                             @endphp
                             <tr>
                                 @foreach (old('materials') as $key => $item)
@@ -314,7 +314,7 @@
 
                     let row_1_data_5 = document.createElement('td')
                     row_1_data_5.classList.add('total_val')
-                    row_1_data_5.innerHTML = (arredonda(qt * unit_val, 2)).toLocaleString('pt-BR', {
+                    row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', {
                         minimumFractionDigits: 2,
                         style: 'currency',
                         currency: 'BRL'
@@ -329,7 +329,7 @@
 
                     document.querySelector('#' + action + 'tbody').appendChild(row_1)
 
-                    calc_invoice_value(arredonda(qt * unit_val, 2), '+')
+                    calc_invoice_value(qt * unit_val, '+')
                     // invoice_value += (arredonda(qt * unit_val, 2))
                     // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 

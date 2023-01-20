@@ -110,7 +110,7 @@ class InvoiceController extends Controller
             $qt = Helper::format_value($value[2]);
             $vlr_unit = Helper::format_value($value[3]);
 
-            $total_invoice += floor((floatval($qt) * floatval($vlr_unit)) * 100) / 100;
+            $total_invoice += ((floatval($qt) * floatval($vlr_unit)) * 100) / 100;
         }
 
         $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
@@ -295,7 +295,7 @@ class InvoiceController extends Controller
             $qt = Helper::format_value($value[2]);
             $vlr_unit = Helper::format_value($value[3]);
 
-            $total_invoice += floor((floatval($qt) * floatval($vlr_unit)) * 100) / 100;
+            $total_invoice += ((floatval($qt) * floatval($vlr_unit)) * 100) / 100;
         }
 
         $data['invoice_value'] = preg_replace('/[^0-9.,]/', '', $data['invoice_value']);
@@ -391,3 +391,5 @@ class InvoiceController extends Controller
         //
     }
 }
+
+

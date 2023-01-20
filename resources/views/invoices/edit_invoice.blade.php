@@ -126,7 +126,7 @@
                                 $unit_val = old('materials')['unit_val'][$i];
                                 $unit_val = str_replace('.', '', $unit_val);
                                 $unit_val = str_replace(',', '.', $unit_val);
-                                $total_val = (floor($qt * $unit_val * 100)) / 100;
+                                $total_val = ($qt * $unit_val * 100) / 100;
                             @endphp
                             <tr>
                                 @foreach (old('materials') as $key => $item)
@@ -319,7 +319,7 @@
 
                     let row_1_data_5 = document.createElement('td')
                     row_1_data_5.classList.add('total_val')
-                    row_1_data_5.innerHTML = (arredonda(qt * unit_val, 2)).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
+                    row_1_data_5.innerHTML = (qt * unit_val).toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
                     let row_1_data_6 = document.createElement('td')
                     row_1_data_6.innerHTML = "<div class='btn btn-outline-danger btn-sm delete_line' onclick='deleteLine(this)'><i class='fas fa-lg fa-trash'></i></div>"
@@ -329,7 +329,7 @@
 
                     document.querySelector('#'+action+'tbody').appendChild(row_1)
 
-                    calc_invoice_value(arredonda(qt * unit_val, 2), '+')
+                    calc_invoice_value(qt * unit_val, '+')
                     // invoice_value += (qt * unit_val)
                     // document.querySelector('.invoice_value').innerHTML = invoice_value.toLocaleString('pt-BR', { minimumFractionDigits: 2 , style: 'currency', currency: 'BRL' })
 
@@ -392,7 +392,7 @@
                     let unid = invoice.materials.unid[i]
                     let qt = parseFloat(invoice.materials.qt[i])
                     let unit_val = parseFloat(invoice.materials.unit_val[i])
-                    let total_val = arredonda(parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i]))
+                    let total_val = (parseFloat(invoice.materials.qt[i] * invoice.materials.unit_val[i]))
                     total_invoice += parseFloat(total_val.toFixed(2))
 
                     html += '<tr>'
