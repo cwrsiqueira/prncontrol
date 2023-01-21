@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('system.reports'))
+@section('title', 'PRNCONTROL | ' . __('system.reports'))
 
 @section('content_header')
     <cw-header-title>

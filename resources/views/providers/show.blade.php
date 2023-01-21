@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', $provider->name)
+@section('title', 'PRNCONTROL | ' . $provider->name)
 
 @section('content_header')
     <cw-header-title>

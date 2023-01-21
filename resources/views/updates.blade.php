@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Updates')
+@section('title', 'PRNCONTROL | ' . 'Updates')
 
 @section('content_header')
     <h1>Updates</h1>

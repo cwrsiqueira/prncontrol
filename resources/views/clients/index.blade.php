@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('system.clients'))
+@section('title', 'PRNCONTROL | ' . __('system.clients'))
 
 @section('content_header')
     <cw-header-title>
@@ -261,8 +261,9 @@
                         </div>
                         <div class="row">
                             <x-adminlte-input class="logradouro_tipo" name="address[logradouro_tipo]"
-                                label="{{ __('system.address_type') }}" placeholder="{{ __('system.address_type') }}"
-                                fgroup-class="col-md" enable-old-support />
+                                label="{{ __('system.address_type') }}"
+                                placeholder="{{ __('system.address_type_examples') }}" fgroup-class="col-md"
+                                enable-old-support />
                             <x-adminlte-input class="logradouro_nome" name="address[logradouro_nome]"
                                 label="{{ __('system.address_name') }}" placeholder="{{ __('system.address_name') }}"
                                 fgroup-class="col-md" enable-old-support />

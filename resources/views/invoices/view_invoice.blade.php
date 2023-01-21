@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', __('system.invoices'))
+@section('title', 'PRNCONTROL | ' . __('system.invoices'))
 
 @section('content_header')
 
