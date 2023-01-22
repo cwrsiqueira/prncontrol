@@ -63,16 +63,18 @@
             $data = [];
             foreach ($clients as $key => $client) {
                 $data[$key]['nome_razao_social'] = $client['nome_razao_social'];
-                $data[$key]['contact'] = $client->contacts[0]->descricao_contato . ': ' . $client->contacts[0]->dados_contato;
+                $data[$key]['contact'] = !empty($client->contacts[0]) ? $client->contacts[0]->descricao_contato . ': ' . $client->contacts[0]->dados_contato : 'Contato não cadastrado!';
                 $data[$key]['actions'] =
                     "<nobr>
-                <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='" .
+                <a href=" .
+                    route('clients.edit', ['client' => $client['id']]) .
+                    ">
+                    <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='" .
                     $system_edit .
-                    "' data-id='" .
-                    $client['id'] .
                     "'>
                     <i class='fa fa-lg fa-fw fa-pen'></i>
-                </button>
+                    </button>
+                </a>
                 <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='" .
                     $system_details .
                     "' data-id='" .

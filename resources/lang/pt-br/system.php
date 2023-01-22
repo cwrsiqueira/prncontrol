@@ -109,4 +109,6 @@ return [
     'city' => 'Município',
     'state' => 'Estado',
     'edit_provider' => 'Editar Fornecedor',
+    'edit_client' => 'Editar Cliente',
+    'address_type_examples' => 'Rua, Avenida, Rodovia, Travessa etc.',
 ];

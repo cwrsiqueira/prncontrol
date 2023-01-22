@@ -244,16 +244,19 @@ return [
             'text' => 'clients',
             'url' => 'clients',
             'icon' => 'fas fa-user',
+            'active' => ['clients/*'],
         ],
         [
             'text' => 'lots',
             'url' => 'lots',
             'icon' => 'fas fa-th',
+            'active' => ['lots/*'],
         ],
         [
             'text' => 'constructions',
             'url' => 'constructions',
             'icon' => 'fas fa-store-alt',
+            'active' => ['constructions/*'],
         ],
         [
             'text' => 'providers',

@@ -98,8 +98,10 @@ class ClientsController extends Controller
             }
         }
 
+        $loop = 1;
         foreach ($contacts['contacts'] as $contact) {
-            Contact::insert($contact);
+            if (($contact['descricao_contato'] || $contact['dados_contato']) || $loop == 1) Contact::insert($contact);
+            $loop++;
         }
 
         $address = $request->only([
@@ -135,7 +137,13 @@ class ClientsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $client = Client::find($id);
+        $client['contacts'] = Client::find($id)->contacts;
+        $client['addresses'] = Client::find($id)->addresses;
+
+        // dd($client);
+
+        return view('clients.edit', ['client' => $client]);
     }
 
     /**
@@ -147,7 +155,7 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($request->all(), $id);
     }
 
     /**
