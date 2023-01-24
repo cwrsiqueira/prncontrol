@@ -100,7 +100,9 @@ class ClientsController extends Controller
 
         $loop = 1;
         foreach ($contacts['contacts'] as $contact) {
-            if (($contact['descricao_contato'] || $contact['dados_contato']) || $loop == 1) Contact::insert($contact);
+            if (($contact['descricao_contato'] || $contact['dados_contato']) || $loop == 1) {
+                Contact::insert($contact);
+            }
             $loop++;
         }
 

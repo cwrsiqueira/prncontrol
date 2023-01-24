@@ -200,7 +200,7 @@
                         <x-adminlte-button class="bg-success" icon="fas fa-plus" onclick="add_field_contact()" />
                     </div>
 
-                    <div class="row">
+                    <div class="row 1">
                         <div class="col-md">
                             <div class="custom-control custom-radio">
                                 <input class="custom-control-input custom-control-input-success" type="radio"
@@ -221,7 +221,7 @@
 
                     @if (old('contacts'))
                         @for ($o = 2; $o <= count(old('contacts')); $o++)
-                            <div class="row">
+                            <div class="row {{ $o }}">
                                 <div class="col-md">
                                     <div class="custom-control custom-radio">
                                         <input class="custom-control-input custom-control-input-success" type="radio"
@@ -407,16 +407,16 @@
             document.querySelector('.area-pessoa-juridica').classList.toggle('hidden');
         }
 
-        var contactNumber = 2
+        let rowCount = document.querySelectorAll(".contacts .row").length;
+        var contactNumber = rowCount + 1;
 
         function add_field_contact() {
             let newContact =
-                `<div class="row">
-                <div class="col-md">
+                `<div class="col-md">
                     <div class="custom-control custom-radio">
-                        <input class="custom-control-input custom-control-input-success" type="radio"
+                        <input style="cursor:pointer" class="custom-control-input custom-control-input-success" type="radio"
                             id="contact-data${contactNumber}" name="preferencialContact" value="${contactNumber}">
-                        <label for="contact-data${contactNumber}"
+                        <label style="cursor:pointer" for="contact-data${contactNumber}"
                             class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                     </div>
                 </div>
@@ -426,9 +426,10 @@
                     enable-old-support />
                 <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
                     name="contacts[contact${contactNumber}][dados_contato]" label="{{ __('system.contact_data') }}"
-                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
-            </div>`;
+                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />`;
             const newDiv = document.createElement("div");
+            newDiv.classList.add('row');
+            newDiv.classList.add(contactNumber);
             newDiv.innerHTML = newContact;
             document.querySelector(".contacts").appendChild(newDiv);
             contactNumber++;
