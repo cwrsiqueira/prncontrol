@@ -195,7 +195,8 @@
 
                     <hr>
                     <div class="d-flex justify-content-between w-100%">
-                        <h4>{{ __('system.contact_informations') }}</h4>
+                        <h4>{{ __('system.contact_informations') }} <small>(Deixe em branco para excluir um
+                                contato)</small> </h4>
                         <x-adminlte-button class="bg-success" icon="fas fa-plus" onclick="add_field_contact()" />
                     </div>
 
@@ -244,7 +245,7 @@
                                     value="{{ old('contacts[contact' . $o . '][dados_contato]') }}" enable-old-support />
                             </div>
                         @endfor
-                    @endif;
+                    @endif
 
                 </div>
 

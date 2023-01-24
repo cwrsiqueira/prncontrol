@@ -8,13 +8,31 @@
         <div>
             <a href="{{ route('clients.index') }}">{{ __('system.clients') }}</a> | {{ __('system.edit_client') }}
         </div>
+
+        @if (session('success'))
+            <x-adminlte-modal id="modalMessages" title="{{ __('system.success') }}!" size="lg" theme="success"
+                icon="fas fa-thumbs-up" v-centered static-backdrop scrollable>
+
+                {!! session('success') !!}
+
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="success" label="{{ __('system.close') }}" data-dismiss="modal"
+                        data-toggle="modal" />
+                </x-slot>
+            </x-adminlte-modal>
+
+            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages"
+                style="display:none;" />
+        @endif
+        <input type="hidden" id="messages" value="{{ session('success') }}">
+
     </cw-header-title>
 @stop
 
 @section('content')
     <x-adminlte-card theme="success" theme-mode="outline">
-        <form action="{{ route('clients.update', ['client' => $client['id']]) }}" method="post" enctype="multipart/form-data"
-            id="form_add_client">
+        <form action="{{ route('clients.update', ['client' => $client['id']]) }}" method="post"
+            enctype="multipart/form-data" id="form_edit_client">
             @method('PUT')
             @csrf
             <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
@@ -31,8 +49,8 @@
 
                 <div class="row">
                     <x-adminlte-input name="nome" value="{{ $client['nome_razao_social'] }}"
-                        label="{{ __('system.name') }}" placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12"
-                        enable-old-support />
+                        label="{{ __('system.name') }}" placeholder="{{ __('system.enter_name') }}"
+                        fgroup-class="col-md-12" enable-old-support />
                 </div>
 
                 <div class="row">
@@ -85,12 +103,13 @@
                 </div>
 
                 <div class="row">
-                    <x-adminlte-input style="cursor:help" title="{{ __('system.legal_natures') }}" name="natureza_juridica"
-                        value="{{ $client['natureza_juridica'] }}" label="{{ __('system.legal_nature') }}"
-                        placeholder="{{ __('system.legal_natures') }}" fgroup-class="col-md" enable-old-support />
-                    <x-adminlte-input name="inscricao_estadual" value="{{ $client['inscricao_estadual'] }}"
-                        label="{{ __('system.state_registration') }}" placeholder="{{ __('system.state_registration') }}"
+                    <x-adminlte-input style="cursor:help" title="{{ __('system.legal_natures') }}"
+                        name="natureza_juridica" value="{{ $client['natureza_juridica'] }}"
+                        label="{{ __('system.legal_nature') }}" placeholder="{{ __('system.legal_natures') }}"
                         fgroup-class="col-md" enable-old-support />
+                    <x-adminlte-input name="inscricao_estadual" value="{{ $client['inscricao_estadual'] }}"
+                        label="{{ __('system.state_registration') }}"
+                        placeholder="{{ __('system.state_registration') }}" fgroup-class="col-md" enable-old-support />
                 </div>
 
                 <div class="row">
@@ -105,17 +124,20 @@
 
                 <hr>
                 <div class="d-flex justify-content-between w-100%">
-                    <h4>{{ __('system.contact_informations') }}</h4>
+                    <h4>{{ __('system.contact_informations') }} <small>(Deixe em branco para excluir um
+                            contato)</small> </h4>
                     <x-adminlte-button class="bg-success" icon="fas fa-plus" onclick="add_field_contact()" />
                 </div>
 
-                <div class="row">
+                <div class="row 1">
                     <div class="col-md">
                         <div class="custom-control custom-radio">
                             <input style="cursor:pointer" class="custom-control-input custom-control-input-success"
                                 type="radio" id="contact-data1" name="preferencialContact" value="1"
                                 enable-old-support @if (
-                                    ($client['contacts'][0]['preferencial'] == 1 && empty(old('preferencialContact'))) ||
+                                    (!empty($client['contacts'][0]) &&
+                                        $client['contacts'][0]['preferencial'] == 1 &&
+                                        empty(old('preferencialContact'))) ||
                                         old('preferencialContact') == 1) checked @endif />
                             <label style="cursor:pointer" for="contact-data1"
                                 class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
@@ -123,24 +145,26 @@
                     </div>
                     <x-adminlte-input style="cursor:help" title="{{ __('system.contact_descriptions') }}"
                         name="contacts[contact1][descricao_contato]"
-                        value="{{ $client['contacts'][0]['descricao_contato'] }}"
+                        value="{{ $client['contacts'][0]['descricao_contato'] ?? '' }}"
                         label="{{ __('system.contact_description') }}"
                         placeholder="{{ __('system.contact_descriptions') }}" fgroup-class="col-md" enable-old-support />
                     <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
-                        name="contacts[contact1][dados_contato]" value="{{ $client['contacts'][0]['dados_contato'] }}"
+                        name="contacts[contact1][dados_contato]"
+                        value="{{ $client['contacts'][0]['dados_contato'] ?? '' }}"
                         label="{{ __('system.contact_data') }}" placeholder="{{ __('system.contact_datas') }}"
                         fgroup-class="col-md" enable-old-support />
                 </div>
 
                 @if (old('contacts'))
                     @for ($o = 2; $o <= count(old('contacts')); $o++)
-                        <div class="row">
+                        <div class="row {{ $o }}">
                             <div class="col-md">
                                 <div class="custom-control custom-radio">
-                                    <input class="custom-control-input custom-control-input-success" type="radio"
+                                    <input style="cursor:pointer"
+                                        class="custom-control-input custom-control-input-success" type="radio"
                                         id="{{ 'contact-data' . $o }}" name="preferencialContact"
                                         value="{{ $o }}" @if (old('preferencialContact') == $o) checked @endif />
-                                    <label for="{{ 'contact-data' . $o }}"
+                                    <label style="cursor:pointer" for="{{ 'contact-data' . $o }}"
                                         class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                                 </div>
                             </div>
@@ -158,14 +182,15 @@
                     @endfor
                 @elseif ($client['contacts'])
                     @for ($o = 2; $o <= count($client['contacts']); $o++)
-                        <div class="row">
+                        <div class="row {{ $o }}">
                             <div class="col-md">
                                 <div class="custom-control custom-radio">
-                                    <input class="custom-control-input custom-control-input-success" type="radio"
+                                    <input style="cursor:pointer"
+                                        class="custom-control-input custom-control-input-success" type="radio"
                                         id="{{ 'contact-data' . $o }}" name="preferencialContact"
                                         value="{{ $o }}"
                                         @if ($client['contacts'][$o - 1]['preferencial']) == 1) checked @endif />
-                                    <label for="{{ 'contact-data' . $o }}"
+                                    <label style="cursor:pointer" for="{{ 'contact-data' . $o }}"
                                         class="custom-control-label">{{ __('system.preferencial_contact') }}</label>
                                 </div>
                             </div>
@@ -197,37 +222,38 @@
                 <div class="container">
                     <div class="row">
                         <x-adminlte-input class="postal_code_field" name="address[cep]"
-                            value="{{ $client['addresses'][0]['cep'] }}" label="{{ __('system.postal_code') }}"
+                            value="{{ $client['addresses'][0]['cep'] ?? '' }}" label="{{ __('system.postal_code') }}"
                             placeholder="{{ __('system.postal_code') }}" fgroup-class="col-md" enable-old-support />
                     </div>
                     <div class="row">
                         <x-adminlte-input class="logradouro_tipo" name="address[logradouro_tipo]"
-                            value="{{ $client['addresses'][0]['logradouro_tipo'] }}"
+                            value="{{ $client['addresses'][0]['logradouro_tipo'] ?? '' }}"
                             label="{{ __('system.address_type') }}"
                             placeholder="{{ __('system.address_type_examples') }}" fgroup-class="col-md"
                             enable-old-support />
                         <x-adminlte-input class="logradouro_nome" name="address[logradouro_nome]"
-                            value="{{ $client['addresses'][0]['logradouro_nome'] }}"
+                            value="{{ $client['addresses'][0]['logradouro_nome'] ?? '' }}"
                             label="{{ __('system.address_name') }}" placeholder="{{ __('system.address_name') }}"
                             fgroup-class="col-md" enable-old-support />
                         <x-adminlte-input class="numero" name="address[numero]"
-                            value="{{ $client['addresses'][0]['numero'] }}" label="{{ __('system.address_number') }}"
-                            placeholder="{{ __('system.address_number') }}" fgroup-class="col-md" enable-old-support />
+                            value="{{ $client['addresses'][0]['numero'] ?? '' }}"
+                            label="{{ __('system.address_number') }}" placeholder="{{ __('system.address_number') }}"
+                            fgroup-class="col-md" enable-old-support />
                     </div>
                     <div class="row">
                         <x-adminlte-input class="complemento" name="address[complemento]"
-                            value="{{ $client['addresses'][0]['complemento'] }}"
+                            value="{{ $client['addresses'][0]['complemento'] ?? '' }}"
                             label="{{ __('system.address_complement') }}"
                             placeholder="{{ __('system.address_complement') }}" fgroup-class="col-md"
                             enable-old-support />
                         <x-adminlte-input class="bairro" name="address[bairro]"
-                            value="{{ $client['addresses'][0]['bairro'] }}" label="{{ __('system.district') }}"
+                            value="{{ $client['addresses'][0]['bairro'] ?? '' }}" label="{{ __('system.district') }}"
                             placeholder="{{ __('system.district') }}" fgroup-class="col-md" enable-old-support />
                         <x-adminlte-input class="municipio" name="address[municipio]"
-                            value="{{ $client['addresses'][0]['municipio'] }}" label="{{ __('system.city') }}"
+                            value="{{ $client['addresses'][0]['municipio'] ?? '' }}" label="{{ __('system.city') }}"
                             placeholder="{{ __('system.city') }}" fgroup-class="col-md" enable-old-support />
                         <x-adminlte-input class="estado" name="address[estado]"
-                            value="{{ $client['addresses'][0]['estado'] }}" label="{{ __('system.state') }}"
+                            value="{{ $client['addresses'][0]['estado'] ?? '' }}" label="{{ __('system.state') }}"
                             placeholder="{{ __('system.state') }}" fgroup-class="col-md" enable-old-support />
                     </div>
                 </div>
@@ -262,17 +288,22 @@
 
 @section('js')
     <script>
+        let messages = document.querySelector('#messages').value
+        if (messages !== '') {
+            document.querySelector('#openModalMessages').click()
+        }
+
         const selectPessoa = (e) => {
             document.querySelector('.area-pessoa-fisica').classList.toggle('hidden');
             document.querySelector('.area-pessoa-juridica').classList.toggle('hidden');
         }
 
-        var contactNumber = 2
+        let rowCount = document.querySelectorAll(".contacts .row").length;
+        var contactNumber = rowCount + 1;
 
         function add_field_contact() {
             let newContact =
-                `<div class="row">
-                <div class="col-md">
+                `<div class="col-md">
                     <div class="custom-control custom-radio">
                         <input style="cursor:pointer" class="custom-control-input custom-control-input-success" type="radio"
                             id="contact-data${contactNumber}" name="preferencialContact" value="${contactNumber}">
@@ -286,9 +317,10 @@
                     enable-old-support />
                 <x-adminlte-input style="cursor:help" title="{{ __('system.contact_datas') }}"
                     name="contacts[contact${contactNumber}][dados_contato]" label="{{ __('system.contact_data') }}"
-                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />
-            </div>`;
+                    placeholder="{{ __('system.contact_datas') }}" fgroup-class="col-md" enable-old-support />`;
             const newDiv = document.createElement("div");
+            newDiv.classList.add('row');
+            newDiv.classList.add(contactNumber);
             newDiv.innerHTML = newContact;
             document.querySelector(".contacts").appendChild(newDiv);
             contactNumber++;
