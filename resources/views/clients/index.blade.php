@@ -75,13 +75,15 @@
                     <i class='fa fa-lg fa-fw fa-pen'></i>
                     </button>
                 </a>
-                <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='" .
-                    $system_details .
-                    "' data-id='" .
-                    $client['id'] .
+                <a href=" .
+                    route('clients.show', ['client' => $client['id']]) .
+                    ">
+                    <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='" .
+                    $system_edit .
                     "'>
                     <i class='fa fa-lg fa-fw fa-eye'></i>
-                </button>
+                    </button>
+                </a>
                 <button class='btn btn-xs btn-default text-danger mx-1 shadow btnAction delete' title='" .
                     $system_delete .
                     "' data-id='" .

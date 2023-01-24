@@ -128,7 +128,11 @@ class ClientsController extends Controller
      */
     public function show($id)
     {
-        //
+        $client = Client::find($id);
+        $client['contacts'] = Client::find($id)->contacts;
+        $client['addresses'] = Client::find($id)->addresses;
+
+        return view('clients.show', ['client' => $client]);
     }
 
     /**
@@ -142,8 +146,6 @@ class ClientsController extends Controller
         $client = Client::find($id);
         $client['contacts'] = Client::find($id)->contacts;
         $client['addresses'] = Client::find($id)->addresses;
-
-        // dd($client);
 
         return view('clients.edit', ['client' => $client]);
     }

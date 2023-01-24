@@ -110,5 +110,6 @@ return [
     'state' => 'Estado',
     'edit_provider' => 'Editar Fornecedor',
     'edit_client' => 'Editar Cliente',
+    'show_client' => 'Informações do Cliente',
     'address_type_examples' => 'Rua, Avenida, Rodovia, Travessa etc.',
 ];
