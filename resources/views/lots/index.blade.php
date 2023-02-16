@@ -114,10 +114,93 @@
                 @csrf
                 <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
 
+                <h4>Localização</h4>
                 <div class="row">
-                    <x-adminlte-input name="name" label="{{ __('system.name') }}"
-                        placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
+                    <x-adminlte-input name="loteamento" label="Loteamento"
+                        placeholder="Loteamento Conjunto Agrovilla Hortifrutigranjeiro, Loteamento Conjunto Fazendinha Alfaville"
+                        fgroup-class="col-md-12" enable-old-support />
                 </div>
+                <div class="row">
+                    <x-adminlte-input name="quadra" label="Quadra" placeholder="Ex.: 45" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="lote" label="Lote" placeholder="Ex.: 10" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+
+                <h4>Endereço</h4>
+                <div class="row">
+                    <x-adminlte-input name="cep" label="CEP" placeholder="Ex.: 12.234-56" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="logradouro_nome" label="Endereço" placeholder="Ex.: Rua Jardim das Flores"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="logradouro_número" label="Número" placeholder="Ex.: 123"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="bairro" label="Bairro" placeholder="Ex.: Jardins" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="cidade" label="Cidade" placeholder="Ex.: Floripa" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="estado" label="Estado" placeholder="Ex.: SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+
+                <h4>Informações</h4>
+                <div class="row">
+                    <x-adminlte-input name="area_m2" label="Área (m²)" placeholder="Ex.: 300" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="formato" label="Formato"
+                        placeholder="Ex.: retangular, quadrado, irregular, outros" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="aprovacao_orgao" label="Aprovado pelo órgão"
+                        placeholder="Ex.: Prefeitura Municipal de Floripa-SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="aprovacao_documento" label="Documento de aprovação"
+                        placeholder="Ex.: Alvará, Decreto, outros" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="aprovacao_numero" label="Número da aprovação" placeholder="Ex.: 1.234/2020"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="aprovacao_data" label="Data da Aprovação" placeholder="Ex.: 10/10/2020"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="registro_cartorio_nome" label="Cartório de Registro"
+                        placeholder="Ex.: Cartório de Registro de Imóveis de Floripa-SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="registro_cartorio_numero" label="Número do registro"
+                        placeholder="Ex.: 1.234 L-1/A" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="confrontacoes" label="Confrontações"
+                        placeholder="Ex.: Frente para Rua 01 com 12m, fundos para o lote 02 com 12m, lado direito para o lote 03 com 25m e lado esquerdo para a Rua 02 com 25m"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="valor" label="Valor" placeholder="Ex.: 150.000,00"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+
                 <div class="row">
                     <x-adminlte-input name="obs" label="{{ __('system.obs') }}"
                         placeholder="{{ __('system.enter_obs') }}" fgroup-class="col-md-12" enable-old-support />
