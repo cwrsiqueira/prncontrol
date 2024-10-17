@@ -25,6 +25,10 @@ class LotController extends Controller
     public function index()
     {
         $lots = Lot::where('inactive', 0)->get();
+
+        foreach($lots as $lot){
+            $lot['movimento'] = 'Última movimentação';
+        }
         return view('lots.index', ['lots' => $lots]);
     }
 
@@ -51,9 +55,15 @@ class LotController extends Controller
         Validator::make(
             $data,
             [
-                'name' => ['required', 'max:255'],
+                'company_id' => ['required'],
+                'loteamento' => ['required'],
+                'quadra' => ['required'],
+                'lote' => ['required'],
             ],
         )->validate();
+
+        $data['aprovacao_data'] = ($data['aprovacao_data']) ? implode('-', array_reverse(explode('/', $data['aprovacao_data']))) : null;
+        $data['valor'] = (Helper::format_value($data['valor']));
 
         $id = Lot::insertGetId($data);
 
@@ -97,17 +107,25 @@ class LotController extends Controller
     {
         $data = $request->except(['_token', '_method']);
 
-        $change_from = Lot::find($id);
-        Lot::where('id', $id)->update($data);
-        $change_to = Lot::find($id);
+        Validator::make(
+            $data,
+            [
+                'company_id' => ['required'],
+                'loteamento' => ['required'],
+                'quadra' => ['required'],
+                'lote' => ['required'],
+            ],
+        )->validate();
 
-        // $changes = array_unique(array_merge($change_from,$change_to), SORT_REGULAR);
+        $data['aprovacao_data'] = ($data['aprovacao_data']) ? implode('-', array_reverse(explode('/', $data['aprovacao_data']))) : null;
+        $data['valor'] = (Helper::format_value($data['valor']));
 
-        $data['id'] = $id;
+        Lot::find($id)->update($data);
+
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Lotes', 'Alteração');
+        Helper::saveLog($user_id, array('alteração: ' => $data), 'Lotes', 'Alteração');
 
-        return redirect()->route("lots.index")->with('success', 'Lote alterado com sucesso');
+        return redirect()->route("lots.index")->with('success', 'Lote editado com sucesso!');
     }
 
     /**

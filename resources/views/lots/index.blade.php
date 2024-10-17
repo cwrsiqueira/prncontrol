@@ -59,11 +59,13 @@
             $system_edit = __('system.edit');
             $system_delete = __('system.delete');
             $system_details = __('system.details');
-            $heads = [__('system.name'), __('system.obs'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
+            $heads = [__('system.loteamento'), __('system.quadra'), __('system.lote'), __('system.movimento'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
             $data = [];
             foreach ($lots as $key => $lot) {
-                $data[$key]['name'] = $lot['name'];
-                $data[$key]['obs'] = $lot['obs'];
+                $data[$key]['loteamento'] = $lot['loteamento'];
+                $data[$key]['quadra'] = $lot['quadra'];
+                $data[$key]['lote'] = $lot['lote'];
+                $data[$key]['movimento'] = $lot['movimento'];
                 $data[$key]['actions'] =
                     "<nobr>
                 <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='" .
@@ -143,6 +145,10 @@
                         fgroup-class="col-md-12" enable-old-support />
                 </div>
                 <div class="row">
+                    <x-adminlte-input name="complemento" label="Complemento" placeholder="Ex.: Apto 10 Bloco 1B / Entrada 1B / Sobrado 2º piso / etc."
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
                     <x-adminlte-input name="bairro" label="Bairro" placeholder="Ex.: Jardins" fgroup-class="col-md-12"
                         enable-old-support />
                 </div>
@@ -218,13 +224,101 @@
             <form id="form_edit_lot" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
-                <input type="hidden" name="updated_at" value="{{ date('Y-m-d H:m:i') }}">
+                <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
+
+                <h4>Localização</h4>
                 <div class="row">
-                    <x-adminlte-input id="edit_input_name" name="name" label="{{ __('system.name') }}"
-                        placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
+                    <x-adminlte-input id="edit_loteamento" name="loteamento" label="Loteamento"
+                        placeholder="Loteamento Conjunto Agrovilla Hortifrutigranjeiro, Loteamento Conjunto Fazendinha Alfaville"
+                        fgroup-class="col-md-12" enable-old-support />
                 </div>
                 <div class="row">
-                    <x-adminlte-input id="edit_input_obs" name="obs" label="{{ __('system.obs') }}"
+                    <x-adminlte-input id="edit_quadra" name="quadra" label="Quadra" placeholder="Ex.: 45" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_lote" name="lote" label="Lote" placeholder="Ex.: 10" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+
+                <h4>Endereço</h4>
+                <div class="row">
+                    <x-adminlte-input id="edit_cep" name="cep" label="CEP" placeholder="Ex.: 12.234-56" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_logradouro_nome" name="logradouro_nome" label="Endereço" placeholder="Ex.: Rua Jardim das Flores"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_logradouro_número" name="logradouro_número" label="Número" placeholder="Ex.: 123"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_complemento" name="complemento" label="Complemento" placeholder="Ex.: Apto 10 Bloco 1B / Entrada 1B / Sobrado 2º piso / etc."
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_bairro" name="bairro" label="Bairro" placeholder="Ex.: Jardins" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_cidade" name="cidade" label="Cidade" placeholder="Ex.: Floripa" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_estado" name="estado" label="Estado" placeholder="Ex.: SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+
+                <h4>Informações</h4>
+                <div class="row">
+                    <x-adminlte-input id="edit_area_m2" name="area_m2" label="Área (m²)" placeholder="Ex.: 300" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_formato" name="formato" label="Formato"
+                        placeholder="Ex.: retangular, quadrado, irregular, outros" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_aprovacao_orgao" name="aprovacao_orgao" label="Aprovado pelo órgão"
+                        placeholder="Ex.: Prefeitura Municipal de Floripa-SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_aprovacao_documento" name="aprovacao_documento" label="Documento de aprovação"
+                        placeholder="Ex.: Alvará, Decreto, outros" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_aprovacao_numero" name="aprovacao_numero" label="Número da aprovação" placeholder="Ex.: 1.234/2020"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_aprovacao_data" name="aprovacao_data" label="Data da Aprovação" placeholder="Ex.: 10/10/2020"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_registro_cartorio_nome" name="registro_cartorio_nome" label="Cartório de Registro"
+                        placeholder="Ex.: Cartório de Registro de Imóveis de Floripa-SC" fgroup-class="col-md-12"
+                        enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_registro_cartorio_numero" name="registro_cartorio_numero" label="Número do registro"
+                        placeholder="Ex.: 1.234 L-1/A" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_confrontacoes" name="confrontacoes" label="Confrontações"
+                        placeholder="Ex.: Frente para Rua 01 com 12m, fundos para o lote 02 com 12m, lado direito para o lote 03 com 25m e lado esquerdo para a Rua 02 com 25m"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_valor" name="valor" label="Valor" placeholder="Ex.: 150.000,00"
+                        fgroup-class="col-md-12" enable-old-support />
+                </div>
+
+                <div class="row">
+                    <x-adminlte-input id="edit_obs" name="obs" label="{{ __('system.obs') }}"
                         placeholder="{{ __('system.enter_obs') }}" fgroup-class="col-md-12" enable-old-support />
                 </div>
                 <x-slot name="footerSlot">
@@ -259,7 +353,7 @@
                 let id = el.getAttribute('data-id')
                 let action = el.classList.contains('edit') ? 'edit' : el.classList.contains('delete') ?
                     'delete' : el.classList.contains('details') ? 'details' : ''
-                let lot
+                let lot;
 
                 var ajax = new XMLHttpRequest();
                 ajax.open("GET", "{{ route('getLot') }}/?id=" + id, true);
@@ -286,8 +380,30 @@
         const edit_lot = (lot) => {
             let route_edit = "{{ route('lots.update', ['lot' => 'lot_id']) }}"
             document.querySelector('#form_edit_lot').setAttribute('action', route_edit.replace('lot_id', lot.id))
-            document.querySelector('#edit_input_name').value = lot.name
-            document.querySelector('#edit_input_obs').value = lot.obs
+
+            const formEdit = document.getElementById('form_edit_lot');
+            const inputElements = formEdit.querySelectorAll('.row input');
+
+            inputElements.forEach(e => {
+                let item = e.getAttribute("name");
+                document.querySelector('#edit_' + item).value = lot[`${item}`];
+                if(item == 'aprovacao_data'){
+                    let data = lot[`${item}`];
+                    if(data){
+                        document.querySelector('#edit_' + item).value = new Date(data.split('-').reverse().join('/')).toLocaleDateString();
+                    }
+                }
+                if(item == 'valor'){
+                    let data = lot[`${item}`];
+                    if(data){
+                        document.querySelector('#edit_' + item).value = parseFloat(data).toLocaleString('pt-BR', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })
+                    }
+                }
+            });
+
             document.querySelector('#openModalEdit').click()
         }
 
