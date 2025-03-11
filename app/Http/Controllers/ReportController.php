@@ -22,7 +22,6 @@ class ReportController extends Controller
 
     public function index()
     {
-
         $constructions = Construction::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $invoices = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
@@ -48,15 +47,15 @@ class ReportController extends Controller
     {
         $data = $request->except('_token');
 
-        foreach ($data as $key => $value) {
-            if ($value === null) {
-                unset($data[$key]);
-            }
-        }
+        // Remove valores nulos
+        $data = array_filter($data, fn($value) => !is_null($value));
 
-        $init_date = date('Y-m-d', strtotime(explode(' - ', $data['dtRange'])[0]));
-        $fin_date = date('Y-m-d', strtotime(explode(' - ', $data['dtRange'])[1]));
+        // Converte o período de datas
+        $dateRange = explode(' - ', $data['dtRange'] ?? '');
+        $init_date = date('Y-m-d', strtotime($dateRange[0] ?? ''));
+        $fin_date  = date('Y-m-d', strtotime($dateRange[1] ?? ''));
 
+        // Consulta as invoices no banco de dados
         $invoices = Invoice::select(
             'invoices.*',
             'invoice_materials.material_id as id_material',
@@ -71,123 +70,81 @@ class ReportController extends Controller
             ->join('constructions', 'constructions.id', 'invoices.construction_id')
             ->join('providers', 'providers.id', 'invoices.provider_id')
             ->join('materials', 'materials.id', 'invoice_materials.material_id')
-            ->where('invoices.construction_id', 'LIKE', $data['construction_id'] ?? '%')
-            ->where('invoices.provider_id', 'LIKE', $data['provider_id'] ?? '%')
-            ->where('invoice_materials.material_id', 'LIKE', $data['material_id'] ?? '%')
-            ->where('invoices.id', 'LIKE', $data['invoice_id'] ?? '%')
-            ->whereBetween('invoice_date', [$init_date, $fin_date])
-            ->where('invoices.company_id', Auth::user()->company_id)->where('invoices.inactive', 0)
-            ->orderBy('invoice_date', 'asc')
-            ->get();
+            ->where('invoices.company_id', Auth::user()->company_id)
+            ->where('invoices.inactive', 0)
+            ->whereBetween('invoice_date', [$init_date, $fin_date]);
 
-        $total_materials = 0;
-        $total_cost = 0;
-        $construction = 'Todas';
-        $provider = 'Todos';
-        $material = 'Todos';
-        $invoice = 'Todas';
-
-        if (count($invoices) > 0) {
-
-            foreach ($invoices as $key => $value) {
-                $total_materials += $value->material_qt;
-            }
-
-            foreach ($invoices as $key => $value) {
-                $total_cost += $value->material_qt * $value->material_unit_value;
-            }
-
-
-            if (isset($data['construction_id'])) {
-                $construction_total_cost = 0;
-                foreach ($invoices as $key => $value) {
-                    $construction_total_cost += $value->material_qt * $value->material_unit_value;
-                }
-                $construction = $invoices[0]->construction_name;
-            }
-
-            if (isset($data['provider_id'])) {
-                $provider_total_cost = 0;
-                foreach ($invoices as $key => $value) {
-                    $provider_total_cost += $value->material_qt * $value->material_unit_value;
-                }
-                $provider = $invoices[0]->provider_name . ' = ' . number_format($provider_total_cost, 2, ',', '.');
-            }
-
-            if (isset($data['material_id'])) {
-                $material_total = 0;
-                $material_total_cost = 0;
-                foreach ($invoices as $key => $value) {
-                    $material_total += $value->material_qt;
-                    $material_total_cost += $value->material_qt * $value->material_unit_value;
-                }
-                $material = $invoices[0]->material_name;
-            }
-
-            if (isset($data['invoice_id'])) {
-                $invoice_total_cost = 0;
-                foreach ($invoices as $key => $value) {
-                    $invoice_total_cost += $value->material_qt * $value->material_unit_value;
-                }
-                $invoice = $invoices[0]->invoice_number . ' = ' . number_format($invoice_total_cost, 2, ',', '.');
+        // Aplica filtros se estiverem preenchidos
+        foreach (['construction_id', 'provider_id', 'material_id', 'invoice_id'] as $filter) {
+            if (!empty($data[$filter])) {
+                $invoices->where("invoices.$filter", $data[$filter]);
             }
         }
 
-        $dtRange = $data['dtRange'] ?? '';
+        $invoices = $invoices->orderBy('invoice_date', 'asc')->get();
 
-        // dd(
-        //     $invoices,
-        //     $construction,
-        //     $provider,
-        //     $material,
-        //     $invoice,
-        //     $dtRange,
-        //     $total_materials,
-        //     $total_cost,
-        // );
+        // Se não houver dados, inicializa valores padrão
+        if ($invoices->isEmpty()) {
+            return view('reports.generate', [
+                'reportData' => [
+                    'invoices' => [],
+                    'total_materials' => 0,
+                    'total_cost' => 0,
+                    'construction' => 'Todas',
+                    'provider' => 'Todos',
+                    'material' => 'Todos',
+                    'invoice' => 'Todas',
+                    'dtRange' => $data['dtRange'] ?? '',
+                ],
+            ]);
+        }
 
-        // Setup a filename
-        $documentFileName = "relatório.pdf";
+        // Cálculo de totais
+        $total_materials = $invoices->sum('material_qt');
+        $total_cost = $invoices->sum(fn($item) => $item->material_qt * $item->material_unit_value);
 
-        // Create the mPDF document
-        $document = new PDF([
-            'mode' => 'utf-8',
-            'format' => 'A4',
-            'margin_header' => '3',
-            'margin_top' => '20',
-            'margin_bottom' => '20',
-            'margin_footer' => '2',
-        ]);
+        // Define nomes para os filtros
+        $construction = $data['construction_id'] ?? 'Todas';
+        $provider = $data['provider_id'] ?? 'Todos';
+        $material = $data['material_id'] ?? 'Todos';
+        $invoice = $data['invoice_id'] ?? 'Todas';
 
-        // Set some header informations for output
-        $header = [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $documentFileName . '"'
+        if ($invoices->isNotEmpty()) {
+            $construction = $invoices->first()->construction_name;
+            $provider = $data['provider_id'] ?? null ? $invoices->first()->provider_name . ' = ' . number_format($total_cost, 2, ',', '.') : 'Todos';
+            $material = $data['material_id'] ?? null ? $invoices->first()->material_name : 'Todos';
+            $invoice = $data['invoice_id'] ?? null ? $invoices->first()->invoice_number . ' = ' . number_format($total_cost, 2, ',', '.') : 'Todas';
+        }
+
+        // Se o usuário deseja agrupar por material
+        if (!empty($data['group_by_material'])) {
+            $invoices = $invoices->groupBy('material_name')->map(function ($group) {
+                $total_qt = $group->sum('material_qt');
+                $total_cost = $group->sum(fn($item) => $item->material_qt * $item->material_unit_value);
+
+                return [
+                    'material_name' => $group->first()->material_name,
+                    'total_qt' => $total_qt,
+                    'total_cost' => $total_cost,
+                    'items' => $group->toArray(),
+                ];
+            })->values();
+        }
+
+        // Retorno dos dados do relatório
+        $reportData = [
+            'invoices' => $invoices,
+            'total_materials' => $total_materials,
+            'total_cost' => $total_cost,
+            'construction' => $construction,
+            'provider' => $provider,
+            'material' => $material,
+            'invoice' => $invoice,
+            'dtRange' => $data['dtRange'] ?? '',
         ];
 
-        // Write some simple Content
-        $document->WriteHTML(view(
-            'reports.generate',
-            [
-                'invoices' => $invoices,
-                'construction' => $construction,
-                'provider' => $provider,
-                'material' => $material,
-                'invoice' => $invoice,
-                'dtRange' => $dtRange,
-                'total_materials' => $total_materials,
-                'total_cost' => $total_cost,
-            ]
-        ));
+        // dd($reportData);
 
-        // Use Blade if you want
-        //$document->WriteHTML(view('fun.testtemplate'));
-
-        // Save PDF on your public storage
-        Storage::disk('public')->put($documentFileName, $document->Output($documentFileName, "S"));
-
-        // Get file back from storage with the give header informations
-        return Storage::disk('public')->download($documentFileName, 'Request', $header); //
-
+        return view('reports.generate', ['reportData' => $reportData]);
     }
 }

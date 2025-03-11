@@ -1,68 +1,160 @@
+@extends('adminlte::page')
 
-<style>
-    * {
-        color:#222;
-    }
-    table {
-        width:100%;
-        border: 1px solid #000;
-    }
-    table td, table th {
-        border: 1px solid #000;
-        padding:5px;
-    }
-    table th {
-        font-size:14px;
-        font-weight:bold;
-        background-color:#eee;
-    }
-    table .vlr_field {
-        text-align: right;
-    }
-</style>
+@section('title', 'PRNCONTROL | Relatório')
 
+@section('content_header')
+    <cw-header-title>
+        <h1><i class="fas fa-boxes"></i> {{ __('system.materials') }}</h1>
 
-<h1><i class="fa fa-id-card-o"></i>Relatórios de Gastos com Materiais</h1>
+        {{-- IT OPENS SUCCESS MODAL --}}
+        @if (session('success'))
+            <x-adminlte-modal id="modalMessages" title="{{ __('system.success') }}!" size="lg" theme="success"
+                icon="fas fa-thumbs-up" v-centered static-backdrop scrollable>
 
-    <h3>Obra: {{$construction}}</h3>
-    {{-- Fornecedor: {{$provider}} <br> --}}
-    <h3>Material: {{$material}}</h3>
-    {{-- Nota: {{$invoice}} <br> --}}
-    <h3>Período: {{$dtRange}}</h3>
+                {!! session('success') !!}
 
-	<div class="wraper-table">
-	<table>
-		<tr>
-            <th>Nota</th>
-            <th>Data</th>
-			<th>Material</th>
-			<th>Unid</th>
-			<th>Quant</th>
-			<th>Vlr Unit</th>
-			<th>Vlr Total</th>
-		</tr>
-        <tr>
-            <th colspan="4">TOTAIS</th>
-            <th>{{number_format($total_materials, 2, ',', '.')}}</th>
-            <th></th>
-            <th>{{number_format($total_cost, 2, ',', '.')}}</th>
-        </tr>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="success" label="{{ __('system.close') }}" data-dismiss="modal"
+                        data-toggle="modal" />
+                </x-slot>
+            </x-adminlte-modal>
 
-		<?php
+            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalMessages" id="openModalMessages"
+                style="display:none;" />
+        @endif
+        <input type="hidden" id="messages" value="{{ session('success') }}">
 
-			foreach ($invoices as $key => $value) {
-		?>
-		<tr>
-            <td>{{$value['invoice_number']}}</td>
-            <td class="vlr_field">{{date('d/m/Y', strtotime($value['invoice_date']))}}</td>
-			<td><?php echo $value['material_name']; ?></td>
-			<td><?php echo $value['material_unid']; ?></td>
-			<td class="vlr_field"><?php echo number_format($value['material_qt'], 2); ?></td>
-			<td class="vlr_field"><?php echo number_format($value['material_unit_value'], 2); ?></td>
-			<td class="vlr_field"><?php echo number_format($value['material_qt'] * $value['material_unit_value'], 2); ?></td>
-		</tr>
+        {{-- IT OPENS ERRORS FILING FORM FIELDS MODAL --}}
+        @if ($errors->any())
+            <x-adminlte-modal id="modalErrors" title="{{ __('system.atenction') }}!" size="lg" theme="danger"
+                icon="fas fa-ban" v-centered static-backdrop scrollable>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button theme="danger" label="{{ __('system.close') }}" data-dismiss="modal"
+                        data-toggle="modal" data-target="#modalAdd" />
+                </x-slot>
+            </x-adminlte-modal>
 
-		<?php } ?>
+            <x-adminlte-button label="Open Modal" data-toggle="modal" data-target="#modalErrors" id="openModalErrors"
+                style="display:none;" />
 
-	</table>
-</div>
+        @endif
+
+        <input type="hidden" id="errors" value="{{ $errors->any() }}">
+
+        <x-adminlte-button label="{{ __('system.add_material') }}" data-toggle="modal" data-target="#modalAdd"
+            class="bg-success" icon="fas fa-plus" id="openModalAdd" />
+        <x-adminlte-button data-toggle="modal" data-target="#modalEdit" id="openModalEdit" style="display:none;" />
+    </cw-header-title>
+@stop
+
+@section('content')
+    <x-adminlte-card theme="success" theme-mode="outline">
+        @php
+            $obra = $reportData['construction'];
+            $material = $reportData['material'];
+            $periodo = $reportData['dtRange'];
+            $total_materials = $reportData['total_materials'];
+            $total_cost = number_format($reportData['total_cost'], 2, ',', '.');
+
+            $heads = ['NotaNr.', 'Data', 'Material', 'Unid', 'Quant', 'Vlr Unit', 'Vlr Total'];
+            $data = [];
+            foreach ($reportData['invoices'] as $key => $value) {
+                $invoice_date = !empty($value['invoice_date']) ? date('d/m/Y', strtotime($value['invoice_date'])) : '';
+                $material_qt = $value['material_qt'] ?? $value['total_qt'];
+                $material_unit_value = $value['material_unit_value'] ?? 1;
+                $total_value = $value['items'] ? $value['total_cost'] : $material_qt * $material_unit_value;
+
+                $data[$key][] = $value['invoice_number'] ?? '';
+                $data[$key][] = $invoice_date;
+                $data[$key][] = $value['material_name'];
+                $data[$key][] = $value['material_unid'] ?? '';
+                $data[$key][] = number_format($material_qt, 2);
+                $data[$key][] = number_format($material_unit_value, 2);
+                $data[$key][] = number_format($total_value, 2);
+            }
+            $config = [
+                'data' => $data,
+                'order' => [[1, 'asc']],
+                'columns' => [null, null, null, null, null, null, null],
+                'buttons' => [
+                    [
+                        'extend' => 'pdfHtml5',
+                        'title' => 'Relatório de Gastos com Construção',
+                        'messageTop' => "Obra: $obra - Material: $material \n
+                            Período: $periodo \n
+                            Total de materiais: $total_materials - Valor Total: $total_cost",
+                    ],
+                    [
+                        'extend' => 'excelHtml5',
+                        'title' => 'Relatório de Gastos com Construção',
+                        'messageTop' => "Obra: $obra - Material: $material - Período: $periodo - Total de materiais: $total_materials - Valor Total: $total_cost",
+                    ],
+                    [
+                        'extend' => 'print',
+                        'title' => 'Relatório de Gastos com Construção',
+                        'messageTop' => "Obra: $obra - Material: $material - Período: $periodo - Total de materiais: $total_materials - Valor Total: $total_cost",
+                    ],
+                ],
+            ];
+        @endphp
+
+        {{-- Compressed with style options / fill data using the plugin config --}}
+        <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
+            bordered compressed withButtons />
+
+        {{-- Modal ADD --}}
+        <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_material') }}" size="lg" theme="success"
+            icon="fas fa-boxes" v-centered static-backdrop scrollable>
+            <form action="{{ route('materials.store') }}" method="post" enctype="multipart/form-data"
+                id="form_add_material">
+                @csrf
+                <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
+
+                <div class="row">
+                    <x-adminlte-input name="name" label="{{ __('system.name') }}"
+                        placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input name="obs" label="{{ __('system.obs') }}"
+                        placeholder="{{ __('system.enter_obs') }}" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button type="submit" class="mr-auto" theme="success" label="Salvar" />
+            </form>
+            <x-adminlte-button theme="danger" label="Fechar" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal>
+
+        {{-- Modal EDIT --}}
+        <x-adminlte-modal id="modalEdit" title=" {{ __('system.edit_material') }}" size="lg" theme="success"
+            icon="fas fa-boxes" v-centered static-backdrop scrollable>
+            <form id="form_edit_material" method="post" enctype="multipart/form-data">
+                @method('PUT')
+                @csrf
+                <input type="hidden" name="updated_at" value="{{ date('Y-m-d H:m:i') }}">
+                <div class="row">
+                    <x-adminlte-input id="edit_input_name" name="name" label="{{ __('system.name') }}"
+                        placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <div class="row">
+                    <x-adminlte-input id="edit_input_obs" name="obs" label="{{ __('system.obs') }}"
+                        placeholder="{{ __('system.enter_obs') }}" fgroup-class="col-md-12" enable-old-support />
+                </div>
+                <x-slot name="footerSlot">
+                    <x-adminlte-button type="submit" class="mr-auto" theme="success" label="Salvar" />
+            </form>
+            <x-adminlte-button theme="danger" label="Fechar" data-dismiss="modal" />
+            </x-slot>
+        </x-adminlte-modal>
+
+    </x-adminlte-card>
+@stop
+
+@section('css')
+    <link rel="stylesheet" href="/css/app.css">
+@stop

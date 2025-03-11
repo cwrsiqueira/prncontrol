@@ -59,7 +59,11 @@
             $system_edit = __('system.edit');
             $system_delete = __('system.delete');
             $system_details = __('system.details');
-            $heads = [__('system.name'), __('system.obs'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
+            $heads = [
+                __('system.name'),
+                __('system.obs'),
+                ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
+            ];
             $data = [];
             foreach ($materials as $key => $material) {
                 $data[$key]['name'] = $material['name'];

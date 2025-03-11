@@ -37,7 +37,13 @@
             $system_edit = __('system.edit');
             $system_delete = __('system.delete');
             $system_details = __('system.details');
-            $heads = [__('system.invoice_date'), __('system.invoice_number'), __('system.provider'), __('system.construction'), ['label' => __('system.actions'), 'no-export' => true, 'width' => 5]];
+            $heads = [
+                __('system.invoice_date'),
+                __('system.invoice_number'),
+                __('system.provider'),
+                __('system.construction'),
+                ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
+            ];
             $data = [];
             foreach ($invoices as $key => $invoice) {
                 $data[$key]['invoice_date'] = date('d/m/Y', strtotime($invoice['invoice_date']));
