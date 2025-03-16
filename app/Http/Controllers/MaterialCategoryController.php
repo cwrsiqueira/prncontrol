@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\Material;
 use App\Models\Material_category;
 
-class MaterialController extends Controller
+class MaterialCategoryController extends Controller
 {
     public function __construct()
     {
@@ -25,9 +24,8 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        $materials = Material::where('inactive', 0)->with('category')->get();
         $categories = Material_category::where('inactive', 0)->get();
-        return view('materials.index', ['materials' => $materials, 'categories' => $categories]);
+        return view('category_materials.index', ['categories' => $categories]);
     }
 
     /**
@@ -48,20 +46,22 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'type' => 'required|string',
-            'category_id' => 'required|exists:material_categories,id', // Validação para categoria
-        ]);
-    
-        $material = new Material();
-        $material->name = $request->name;
-        $material->type = $request->type;
-        $material->obs = $request->obs;
-        $material->category_id = $request->category_id; // Armazena a categoria
-        $material->save();
-    
-        return redirect()->route('materials.index')->with('success', __('system.material_created'));
+        $data = $request->except('_token');
+
+        Validator::make(
+            $data,
+            [
+                'name' => ['required', 'max:255', 'unique:materials'],
+            ],
+        )->validate();
+
+        $id = Material_category::insertGetId($data);
+
+        $data['id'] = $id;
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, array('inclusão: ' => $data), ' Categorias de Materiais', 'Inclusão');
+
+        return redirect()->route("material-categories.index")->with('success', 'Material cadastrada com sucesso!');
     }
 
     /**
@@ -97,18 +97,18 @@ class MaterialController extends Controller
     {
         $data = $request->except(['_token', '_method']);
 
-        $change_from = Material::find($id);
+        $change_from = Material_category::find($id);
 
-        Material::where('id', $id)->update($data);
-        $change_to = Material::find($id);
+        Material_category::where('id', $id)->update($data);
+        $change_to = Material_category::find($id);
 
         // $changes = array_unique(array_merge($change_from,$change_to), SORT_REGULAR);
 
         $data['id'] = $id;
         $user_id = Auth::user()->id;
-        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Materiais', 'Alteração');
+        Helper::saveLog($user_id, array('change_from' => $change_from, 'change_to' => $change_to), 'Categorias de Materiais', 'Alteração');
 
-        return redirect()->route("materials.index")->with('success', 'Cadastro Alterado com sucesso');
+        return redirect()->route("material-categories.index")->with('success', 'Cadastro Alterado com sucesso');
     }
 
     /**

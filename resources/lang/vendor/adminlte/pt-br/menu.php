@@ -20,6 +20,8 @@ return [
     'constructions'                 => 'Obras',
     'providers'                     => 'Fornecedores',
     'materials'                     => 'Materiais',
+    'materials_categories'          => 'Categorias',
+    'list'                          => 'Listar',
     'invoices'                      => 'Notas',
     'reports'                       => 'Relatórios',
     'users'                         => 'Usuários',

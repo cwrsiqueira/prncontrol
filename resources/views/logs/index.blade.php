@@ -10,40 +10,48 @@
 
 @section('content')
     <x-adminlte-card theme="success" theme-mode="outline">
-        {{-- Setup data for datatables --}}
         @php
+            // Cabeçalhos da tabela
             $heads = [__('system.user_name'), __('system.action'), __('system.menu'), __('system.changes'), __('system.date')];
+
             $data = [];
-            foreach ($logs as $key => $log) {
-                if (Auth::user()->permission_group_id === 1) {
-                    $data[$key]['user_name'] = $log['user_name'];
-                    $data[$key]['action'] = $log['action'];
-                    $data[$key]['menu'] = $log['menu'];
-                    $data[$key]['beforeChange'] = $log['detail'];
-                    // $data[$key]['afterChange'] = $log['afterChange'];
-                    $data[$key]['updated_at'] = date('d/m/Y - H:i:s', strtotime($log['updated_at'] ?? $log['created_at']));
+            $isAdmin = Auth::user()->permission_group_id === 1;
+
+            if ($isAdmin) {
+                foreach ($logs as $log) {
+                    $beforeChange = json_decode($log['detail'], true);
+                    
+                    // Adiciona os valores na mesma ordem dos cabeçalhos
+                    $data[] = [
+                        $log['user_name'],
+                        $log['action'],
+                        $log['menu'],
+                        "<pre>" . json_encode($beforeChange, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "</pre>",
+                        date('d/m/Y - H:i:s', strtotime($log['updated_at'] ?? $log['created_at'])),
+                    ];
                 }
             }
 
+            // Configuração do DataTable
             $config = [
                 'data' => $data,
-                'order' => [[5, 'DESC']],
-                'columns' => [null, null, null, null, null],
+                'order' => [[4, 'DESC']], // Ordenando pela data
+                'columns' => [
+                    ['title' => __('system.user_name')],
+                    ['title' => __('system.action')],
+                    ['title' => __('system.menu')],
+                    ['title' => __('system.changes')],
+                    ['title' => __('system.date')],
+                ],
+                'lengthMenu' => [10, 50, 100, 500]
             ];
-            $config['lengthMenu'] = [10, 50, 100, 500];
         @endphp
-        {{-- Minimal example / fill data using the component slot --}}
-        <x-adminlte-datatable id="table1" :heads="$heads" with-buttons>
-            @foreach ($config['data'] as $row)
-                <tr>
-                    @foreach ($row as $cell)
-                        <td>{!! $cell !!}</td>
-                    @endforeach
-                </tr>
-            @endforeach
-        </x-adminlte-datatable>
+
+        {{-- Renderiza a tabela DataTable --}}
+        <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" with-buttons />
     </x-adminlte-card>
 @stop
+
 
 @section('css')
     <link rel="stylesheet" href="/css/app.css">

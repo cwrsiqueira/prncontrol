@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'PRNCONTROL | ' . __('system.materials'))
+@section('title', 'PRNCONTROL | ' . __('system.materials_categories'))
 
 @section('content_header')
     <cw-header-title>
-        <h1><i class="fas fa-boxes"></i> {{ __('system.materials') }}</h1>
+        <h1><i class="fas fa-boxes"></i> {{ __('system.materials_categories') }}</h1>
 
         {{-- IT OPENS SUCCESS MODAL --}}
         @if (session('success'))
@@ -46,7 +46,7 @@
 
         <input type="hidden" id="errors" value="{{ $errors->any() }}">
 
-        <x-adminlte-button label="{{ __('system.add_material') }}" data-toggle="modal" data-target="#modalAdd"
+        <x-adminlte-button label="{{ __('system.add_cagetory_material') }}" data-toggle="modal" data-target="#modalAdd"
             class="bg-success" icon="fas fa-plus" id="openModalAdd" />
         <x-adminlte-button data-toggle="modal" data-target="#modalEdit" id="openModalEdit" style="display:none;" />
     </cw-header-title>
@@ -61,36 +61,34 @@
             $system_details = __('system.details');
             $heads = [
                 __('system.name'),
-                __('system.category'),
                 __('system.obs'),
                 ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
             ];
             $data = [];
-            foreach ($materials as $key => $material) {               
-                $category_name = $material->category ? $material->category->name : '';
-                $data[$key]['name'] = $material['name'];
-                $data[$key]['category_id'] = $category_name;
-                $data[$key]['obs'] = $material['obs'];
+            
+            foreach ($categories as $key => $category) {
+                $data[$key]['name'] = $category['name'];
+                $data[$key]['obs'] = $category['obs'];
                 $data[$key]['actions'] =
                     "<nobr>
                 <button class='btn btn-xs btn-default text-primary mx-1 shadow btnAction edit' title='" .
                     $system_edit .
                     "' data-id='" .
-                    $material['id'] .
+                    $category['id'] .
                     "'>
                     <i class='fa fa-lg fa-fw fa-pen'></i>
                 </button>
                 <button class='btn btn-xs btn-default text-teal mx-1 shadow btnAction details' title='" .
                     $system_details .
                     "' data-id='" .
-                    $material['id'] .
+                    $category['id'] .
                     "'>
                     <i class='fa fa-lg fa-fw fa-eye'></i>
                 </button>
                 <button class='btn btn-xs btn-default text-danger mx-1 shadow btnAction delete' title='" .
                     $system_delete .
                     "' data-id='" .
-                    $material['id'] .
+                    $category['id'] .
                     "'>
                     <i class='fa fa-lg fa-fw fa-trash'></i>
                 </button>
@@ -114,9 +112,9 @@
         </x-adminlte-datatable>
 
         {{-- Modal ADD --}}
-        <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_material') }}" size="lg" theme="success"
+        <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_cagetory_material') }}" size="lg" theme="success"
             icon="fas fa-boxes" v-centered static-backdrop scrollable>
-            <form action="{{ route('materials.store') }}" method="post" enctype="multipart/form-data"
+            <form action="{{ route('material-categories.store') }}" method="post" enctype="multipart/form-data"
                 id="form_add_material">
                 @csrf
                 <input type="hidden" name="company_id" value="{{ Auth::user()->company_id }}">
@@ -124,14 +122,6 @@
                 <div class="row">
                     <x-adminlte-input name="name" label="{{ __('system.name') }}"
                         placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
-                </div>
-                <div class="row">
-                    <x-adminlte-select id="category_id" name="category_id" label="{{ __('system.type') }}" fgroup-class="col-md-12">
-                        <option value=""></option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </x-adminlte-select>
                 </div>
                 <div class="row">
                     <x-adminlte-input name="obs" label="{{ __('system.obs') }}"
@@ -145,23 +135,15 @@
         </x-adminlte-modal>
 
         {{-- Modal EDIT --}}
-        <x-adminlte-modal id="modalEdit" title=" {{ __('system.edit_material') }}" size="lg" theme="success"
+        <x-adminlte-modal id="modalEdit" title=" {{ __('system.edit_category_material') }}" size="lg" theme="success"
             icon="fas fa-boxes" v-centered static-backdrop scrollable>
-            <form id="form_edit_material" method="post" enctype="multipart/form-data">
+            <form id="form_edit_category_material" method="post" enctype="multipart/form-data">
                 @method('PUT')
                 @csrf
                 <input type="hidden" name="updated_at" value="{{ date('Y-m-d H:m:i') }}">
                 <div class="row">
                     <x-adminlte-input id="edit_input_name" name="name" label="{{ __('system.name') }}"
                         placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
-                </div>
-                <div class="row">
-                    <x-adminlte-select id="edit_input_category_id" name="category_id" label="{{ __('system.type') }}" fgroup-class="col-md-12">
-                        <option value=""></option>
-                        @foreach ($categories as $category)
-                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
-                    </x-adminlte-select>
                 </div>
                 <div class="row">
                     <x-adminlte-input id="edit_input_obs" name="obs" label="{{ __('system.obs') }}"
@@ -199,23 +181,23 @@
                 let id = el.getAttribute('data-id')
                 let action = el.classList.contains('edit') ? 'edit' : el.classList.contains('delete') ?
                     'delete' : el.classList.contains('details') ? 'details' : ''
-                let material
+                let category
 
                 var ajax = new XMLHttpRequest();
-                ajax.open("GET", "{{ route('getMaterial') }}/?id=" + id, true);
+                ajax.open("GET", "{{ route('getMaterialCategory') }}/?id=" + id, true);
                 ajax.send();
                 ajax.onreadystatechange = function() {
                     if (ajax.readyState == 4 && ajax.status == 200) {
-                        material = JSON.parse(ajax.responseText)
+                        category = JSON.parse(ajax.responseText)
                         switch (action) {
                             case 'edit':
-                                edit_material(material)
+                                edit_category(category)
                                 break;
                             case 'delete':
-                                delete_material(material)
+                                delete_category(category)
                                 break;
                             case 'details':
-                                show_material(material)
+                                show_category(category)
                                 break;
                         }
                     }
@@ -223,24 +205,23 @@
             })
         })
 
-        const edit_material = (material) => {
-            let route_edit = "{{ route('materials.update', ['material' => 'material_id']) }}"
-            document.querySelector('#form_edit_material').setAttribute('action', route_edit.replace('material_id',
-                material.id))
-            document.querySelector('#edit_input_name').value = material.name
-            document.querySelector('#edit_input_category_id').value = material.category_id
-            document.querySelector('#edit_input_obs').value = material.obs
+        const edit_category = (category) => {
+            let route_edit = "{{ route('material-categories.update', ['material_category' => 'category_id']) }}"
+            document.querySelector('#form_edit_category_material').setAttribute('action', route_edit.replace('category_id',
+            category.id))
+            document.querySelector('#edit_input_name').value = category.name
+            document.querySelector('#edit_input_obs').value = category.obs
             document.querySelector('#openModalEdit').click()
         }
 
-        const delete_material = (material) => {
+        const delete_category = (material) => {
             if (!confirm('system.delete_confirm')) {
                 return false;
             }
             let id = material.id
 
             var ajax = new XMLHttpRequest();
-            ajax.open("GET", "{{ route('delMaterial') }}/?id=" + id, true);
+            ajax.open("GET", "{{ route('delMaterialCategory') }}/?id=" + id, true);
             ajax.send();
             ajax.onreadystatechange = function() {
                 if (ajax.readyState == 4 && ajax.status == 200) {

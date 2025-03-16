@@ -25,7 +25,7 @@ class LogController extends Controller
     public function index()
     {
         $logs = Log::select('logs.*', 'users.name as user_name')->join('users', 'users.id', 'logs.user_id')->where('logs.company_id', Auth::user()->company_id)->get();
-
+       
         return view('logs.index', [
             'logs' => $logs
         ]);

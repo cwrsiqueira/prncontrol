@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMaterialsTable extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -13,12 +12,11 @@ class CreateMaterialsTable extends Migration
      */
     public function up()
     {
-        Schema::create('materials', function (Blueprint $table) {
+        Schema::create('material_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained();
             $table->integer('inactive')->default(0);
             $table->string('name');
-            $table->string('type');
             $table->string('obs')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();
@@ -32,6 +30,6 @@ class CreateMaterialsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('materials');
+        Schema::dropIfExists('material_categories');
     }
-}
+};

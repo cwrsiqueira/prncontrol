@@ -12,6 +12,7 @@ use App\Models\Lot;
 use App\Models\Construction;
 use App\Models\Provider;
 use App\Models\Material;
+use App\Models\Material_category;
 use App\Models\Invoice;
 use App\Models\Invoice_material;
 
@@ -109,6 +110,22 @@ class AjaxController extends Controller
 
         $user_id = Auth::user()->id;
         Helper::saveLog($user_id, 'change inactive to 1', 'materials', 'inactivate');
+    }
+
+    // MATERIALS CATEGORIES
+    public function getMaterialCategory(Request $request)
+    {
+        $category = Material_category::find($request->id);
+        return $category;
+    }
+
+    public function delMaterialCategory(Request $request)
+    {
+        Material_category::where('id', $request->id)->update(['inactive' => 1]);
+        echo 'Categoria de Material deletado com sucesso!';
+
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, 'change inactive to 1', 'materials_categories', 'inactivate');
     }
 
     // INVOICES

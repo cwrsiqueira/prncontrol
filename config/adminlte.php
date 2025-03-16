@@ -301,7 +301,7 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'fullscreen-widget',
+            'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
@@ -338,10 +338,22 @@ return [
             'icon' => 'fas fa-truck',
             'active' => ['providers/*'],
         ],
+        // Submenu for materials
         [
             'text' => 'materials',
-            'url' => 'materials',
             'icon' => 'fas fa-boxes',
+            'submenu' => [
+                [
+                    'text' => 'list',
+                    'url' => 'materials',
+                    'icon' => '',
+                ],
+                [
+                    'text' => 'materials_categories',
+                    'url' => 'material-categories',
+                    'icon' => '',
+                ],
+            ],
         ],
         [
             'text' => 'invoices',

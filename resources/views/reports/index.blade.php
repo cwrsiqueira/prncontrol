@@ -41,6 +41,14 @@
                     @endforeach
                 </x-adminlte-select2>
             </div>
+            <div class="row">
+                <x-adminlte-select2 name="category_id" label="{{ __('system.category') }}" fgroup-class="col-md-6">
+                    <option value="">Todos</option>
+                    @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
             {{-- <div class="row">
                 <x-adminlte-select2 name="invoice_id" label="{{__('system.invoice_number')}}" fgroup-class="col-md-6">
                     <option value=""></option>
