@@ -50,13 +50,12 @@ class MaterialController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'type' => 'required|string',
             'category_id' => 'required|exists:material_categories,id', // Validação para categoria
         ]);
     
         $material = new Material();
         $material->name = $request->name;
-        $material->type = $request->type;
+        $material->category_id = $request->category_id;
         $material->obs = $request->obs;
         $material->category_id = $request->category_id; // Armazena a categoria
         $material->save();

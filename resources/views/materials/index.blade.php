@@ -126,7 +126,7 @@
                         placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
                 </div>
                 <div class="row">
-                    <x-adminlte-select id="category_id" name="category_id" label="{{ __('system.type') }}" fgroup-class="col-md-12">
+                    <x-adminlte-select id="category_id" name="category_id" label="{{ __('system.category') }}" fgroup-class="col-md-12">
                         <option value=""></option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -156,7 +156,7 @@
                         placeholder="{{ __('system.enter_name') }}" fgroup-class="col-md-12" enable-old-support />
                 </div>
                 <div class="row">
-                    <x-adminlte-select id="edit_input_category_id" name="category_id" label="{{ __('system.type') }}" fgroup-class="col-md-12">
+                    <x-adminlte-select id="edit_input_category_id" name="category_id" label="{{ __('system.category') }}" fgroup-class="col-md-12">
                         <option value=""></option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
