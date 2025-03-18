@@ -57,7 +57,6 @@ class MaterialController extends Controller
         $material->name = $request->name;
         $material->category_id = $request->category_id;
         $material->obs = $request->obs;
-        $material->category_id = $request->category_id; // Armazena a categoria
         $material->save();
     
         return redirect()->route('materials.index')->with('success', __('system.material_created'));
