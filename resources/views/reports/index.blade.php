@@ -13,7 +13,7 @@
         <h1>Gerar Relatório</h1>
         <p>Insira os campos pra filtragem</p>
 
-        <form action="{{ route('reports.generate') }}" method="post" target="_blank">
+        <form action="{{ route('reports.generate') }}" method="post" target="">
             @csrf
             <input type="checkbox" name="group_by_material" value="1"> Agrupar por Material
 

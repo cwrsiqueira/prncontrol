@@ -48,18 +48,22 @@ class MaterialController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'category_id' => 'required|exists:material_categories,id', // Validação para categoria
-        ]);
-    
-        $material = new Material();
-        $material->name = $request->name;
-        $material->category_id = $request->category_id;
-        $material->obs = $request->obs;
-        $material->save();
-    
-        return redirect()->route('materials.index')->with('success', __('system.material_created'));
+        $data = $request->except('_token');
+        Validator::make(
+            $data,
+            [
+                'name' => ['required', 'max:255', 'unique:materials'],
+                'category_id' => 'required|exists:material_categories,id',
+            ],
+        )->validate();
+        $id = Material::insertGetId($data);
+        
+        $data['id'] = $id;
+        
+        $user_id = Auth::user()->id;
+        Helper::saveLog($user_id, array('inclusão: ' => $data), 'Materiais', 'Inclusão');
+
+        return redirect()->route("materials.index")->with('success', 'Material cadastrada com sucesso!');
     }
 
     /**

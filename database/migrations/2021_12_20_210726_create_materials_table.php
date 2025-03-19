@@ -18,7 +18,6 @@ class CreateMaterialsTable extends Migration
             $table->foreignId('company_id')->constrained();
             $table->integer('inactive')->default(0);
             $table->string('name');
-            $table->string('type');
             $table->string('obs')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->nullable();

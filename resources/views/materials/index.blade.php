@@ -183,11 +183,12 @@
 
 @section('js')
     <script>
+        /*
         let messages = document.querySelector('#messages').value
         if (messages !== '') {
             document.querySelector('#openModalAdd').click()
         }
-
+        */
         let errors = document.querySelector('#errors').value
         if (errors == 1) {
             document.querySelector('#openModalErrors').click()
