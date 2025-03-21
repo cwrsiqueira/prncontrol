@@ -338,7 +338,7 @@ return [
             'icon' => 'fas fa-truck',
             'active' => ['providers/*'],
         ],
-        // Submenu for materials
+        // Submenu for materials created
         [
             'text' => 'materials',
             'icon' => 'fas fa-boxes',
