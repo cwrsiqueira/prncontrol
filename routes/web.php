@@ -7,6 +7,7 @@ use App\Http\Controllers\LotController;
 use App\Http\Controllers\ConstructionController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\MaterialCategoryController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReportController;
 
@@ -43,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('constructions', ConstructionController::class);
     Route::resource('providers', ProviderController::class);
     Route::resource('materials', MaterialController::class);
+    Route::resource('material-categories', MaterialCategoryController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('logs', LogController::class);
     Route::resource('permissions', PermissionController::class);
@@ -72,6 +74,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/getMaterial', [AjaxController::class, 'getMaterial'])->name('getMaterial');
     Route::get('/delMaterial', [AjaxController::class, 'delMaterial'])->name('delMaterial');
+
+    Route::get('/getMaterialCategory', [AjaxController::class, 'getMaterialCategory'])->name('getMaterialCategory');
+    Route::get('/delMaterialCategory', [AjaxController::class, 'delMaterialCategory'])->name('delMaterialCategory');
+
 
     Route::get('/getInvoice', [AjaxController::class, 'getInvoice'])->name('getInvoice');
     Route::get('/delInvoice', [AjaxController::class, 'delInvoice'])->name('delInvoice');

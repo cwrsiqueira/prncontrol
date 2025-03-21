@@ -158,6 +158,7 @@ return [
     'attributes' => [
         'name' => 'Nome',
         'email' => 'Email',
+        'category_id' => 'Categoria',
         'password' => 'Senha',
         'avatar' => 'Avatar',
         'invoice_number' => 'Número da Nota',

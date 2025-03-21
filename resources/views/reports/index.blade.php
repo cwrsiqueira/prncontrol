@@ -13,7 +13,7 @@
         <h1>Gerar Relatório</h1>
         <p>Insira os campos pra filtragem</p>
 
-        <form action="{{ route('reports.generate') }}" method="post" target="_blank">
+        <form action="{{ route('reports.generate') }}" method="post" target="">
             @csrf
             <input type="checkbox" name="group_by_material" value="1"> Agrupar por Material
 
@@ -38,6 +38,14 @@
                     <option value="">Todos</option>
                     @foreach ($materials as $material)
                         <option value="{{ $material->id }}">{{ $material->name }}</option>
+                    @endforeach
+                </x-adminlte-select2>
+            </div>
+            <div class="row">
+                <x-adminlte-select2 name="category_id" label="{{ __('system.category') }}" fgroup-class="col-md-6">
+                    <option value="">Todos</option>
+                    @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </x-adminlte-select2>
             </div>

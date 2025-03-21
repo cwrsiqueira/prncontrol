@@ -11,6 +11,7 @@ use App\Models\Construction;
 use App\Models\Material;
 use App\Models\Invoice;
 use App\Models\Provider;
+use App\Models\Material_category;
 
 class ReportController extends Controller
 {
@@ -26,6 +27,7 @@ class ReportController extends Controller
         $materials = Material::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $invoices = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
         $providers = Provider::where('company_id', Auth::user()->company_id)->where('inactive', 0)->get();
+        $categories = Material_category::where('inactive', 0)->get();
 
         $first_invoice = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->orderBy('invoice_date', 'asc')->first();
         $last_invoice = Invoice::where('company_id', Auth::user()->company_id)->where('inactive', 0)->orderBy('invoice_date', 'desc')->first();
@@ -35,6 +37,7 @@ class ReportController extends Controller
             [
                 'constructions' => $constructions,
                 'materials' => $materials,
+                'categories' => $categories,
                 'invoices' => $invoices,
                 'providers' => $providers,
                 'first_invoice' => $first_invoice,
@@ -53,7 +56,7 @@ class ReportController extends Controller
         // Converte o período de datas
         $dateRange = explode(' - ', $data['dtRange'] ?? '');
         $init_date = date('Y-m-d', strtotime($dateRange[0] ?? ''));
-        $fin_date  = date('Y-m-d', strtotime($dateRange[1] ?? ''));
+        $fin_date = date('Y-m-d', strtotime($dateRange[1] ?? ''));
 
         // Consulta as invoices no banco de dados
         $invoices = Invoice::select(
@@ -62,23 +65,39 @@ class ReportController extends Controller
             'constructions.name as construction_name',
             'providers.name as provider_name',
             'materials.name as material_name',
+            'material_categories.name as category_name',
             'invoice_materials.unid as material_unid',
             'invoice_materials.qt as material_qt',
-            'invoice_materials.unit_value as material_unit_value',
+            'invoice_materials.unit_value as material_unit_value'
         )
             ->join('invoice_materials', 'invoices.id', 'invoice_materials.invoice_id')
             ->join('constructions', 'constructions.id', 'invoices.construction_id')
             ->join('providers', 'providers.id', 'invoices.provider_id')
             ->join('materials', 'materials.id', 'invoice_materials.material_id')
+            ->leftJoin('material_categories', 'material_categories.id', 'materials.category_id') // Alterado para LEFT JOIN
             ->where('invoices.company_id', Auth::user()->company_id)
             ->where('invoices.inactive', 0)
             ->whereBetween('invoice_date', [$init_date, $fin_date]);
 
         // Aplica filtros se estiverem preenchidos
-        foreach (['construction_id', 'provider_id', 'material_id', 'invoice_id'] as $filter) {
+        foreach (['construction_id', 'provider_id', 'material_id', 'invoice_id', 'category_id'] as $filter) {
             if (!empty($data[$filter])) {
-                $invoices->where("invoices.$filter", $data[$filter]);
+                switch($filter) {                     
+                    case 'category_id':                         
+                        $invoices->where('materials.category_id', $data[$filter]);
+                        break;
+                    case 'material_id':
+                        $invoices->where('materials.id', $data[$filter]);
+                        break;
+                    default:
+                        $invoices->where("invoices.$filter", $data[$filter]);
+                }
             }
+        }
+
+        // Aplicar filtro por categoria
+        if (!empty($data['category_id'])) {
+            $invoices->where('materials.category_id', $data['category_id']);
         }
 
         $invoices = $invoices->orderBy('invoice_date', 'asc')->get();
@@ -93,6 +112,7 @@ class ReportController extends Controller
                     'construction' => 'Todas',
                     'provider' => 'Todos',
                     'material' => 'Todos',
+                    'category' => 'Todas',
                     'invoice' => 'Todas',
                     'dtRange' => $data['dtRange'] ?? '',
                 ],
@@ -107,12 +127,14 @@ class ReportController extends Controller
         $construction = $data['construction_id'] ?? 'Todas';
         $provider = $data['provider_id'] ?? 'Todos';
         $material = $data['material_id'] ?? 'Todos';
+        $category = $data['category_id'] ?? 'Todas';
         $invoice = $data['invoice_id'] ?? 'Todas';
 
         if ($invoices->isNotEmpty()) {
             $construction = $invoices->first()->construction_name;
             $provider = $data['provider_id'] ?? null ? $invoices->first()->provider_name . ' = ' . number_format($total_cost, 2, ',', '.') : 'Todos';
             $material = $data['material_id'] ?? null ? $invoices->first()->material_name : 'Todos';
+            $category = $data['category_id'] ?? null ? $invoices->first()->category_name : 'Todas';
             $invoice = $data['invoice_id'] ?? null ? $invoices->first()->invoice_number . ' = ' . number_format($total_cost, 2, ',', '.') : 'Todas';
         }
 
@@ -121,12 +143,16 @@ class ReportController extends Controller
             $invoices = $invoices->groupBy('material_name')->map(function ($group) {
                 $total_qt = $group->sum('material_qt');
                 $total_cost = $group->sum(fn($item) => $item->material_qt * $item->material_unit_value);
-
+                
+                $unit_value = $group->first()->material_unit_value;
+                
                 return [
                     'material_name' => $group->first()->material_name,
                     'total_qt' => $total_qt,
                     'total_cost' => $total_cost,
+                    'category_name' => $group->first()->category_name ?? '',
                     'items' => $group->toArray(),
+                    'material_unit_value' => $unit_value,  // Adiciona o unit_value
                 ];
             })->values();
         }
@@ -139,12 +165,12 @@ class ReportController extends Controller
             'construction' => $construction,
             'provider' => $provider,
             'material' => $material,
+            'category' => $category,
             'invoice' => $invoice,
             'dtRange' => $data['dtRange'] ?? '',
         ];
 
-        // dd($reportData);
-
         return view('reports.generate', ['reportData' => $reportData]);
     }
+
 }

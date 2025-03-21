@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\Material;
+use App\Models\Material_category;
 
 class MaterialController extends Controller
 {
@@ -24,8 +25,9 @@ class MaterialController extends Controller
      */
     public function index()
     {
-        $materials = Material::where('inactive', 0)->get();
-        return view('materials.index', ['materials' => $materials]);
+        $materials = Material::where('inactive', 0)->with('category')->get();
+        $categories = Material_category::where('inactive', 0)->get();
+        return view('materials.index', ['materials' => $materials, 'categories' => $categories]);
     }
 
     /**
@@ -47,17 +49,17 @@ class MaterialController extends Controller
     public function store(Request $request)
     {
         $data = $request->except('_token');
-
         Validator::make(
             $data,
             [
                 'name' => ['required', 'max:255', 'unique:materials'],
+                'category_id' => 'required|exists:material_categories,id',
             ],
         )->validate();
-
         $id = Material::insertGetId($data);
-
+        
         $data['id'] = $id;
+        
         $user_id = Auth::user()->id;
         Helper::saveLog($user_id, array('inclusão: ' => $data), 'Materiais', 'Inclusão');
 
@@ -98,6 +100,7 @@ class MaterialController extends Controller
         $data = $request->except(['_token', '_method']);
 
         $change_from = Material::find($id);
+
         Material::where('id', $id)->update($data);
         $change_to = Material::find($id);
 
