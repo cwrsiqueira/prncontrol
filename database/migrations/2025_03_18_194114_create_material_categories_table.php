@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('material_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained();
+            $table->foreignId('company_id')->constrained('companies');
             $table->integer('inactive')->default(0);
             $table->string('name');
             $table->string('obs')->nullable();
