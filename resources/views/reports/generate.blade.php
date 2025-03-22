@@ -62,14 +62,14 @@
             $total_materials = $reportData['total_materials'];
             $total_cost = number_format($reportData['total_cost'], 2, ',', '.');
 
-            $heads = ['NotaNr.', 'Data', 'Material', 'Categoria','Unid', 'Quant', 'Vlr Unit', 'Vlr Total'];
+            $heads = ['NotaNr.', 'Data', 'Material', 'Categoria', 'Unid', 'Quant', 'Vlr Unit', 'Vlr Total'];
             $data = [];
             foreach ($reportData['invoices'] as $key => $value) {
                 $invoice_date = !empty($value['invoice_date']) ? date('d/m/Y', strtotime($value['invoice_date'])) : '';
                 $material_qt = $value['material_qt'] ?? $value['total_qt'];
                 $material_unit_value = $value['material_unit_value'] ?? 1;
                 $total_value = $value['items'] ? $value['total_cost'] : $material_qt * $material_unit_value;
-                
+
                 $data[$key][] = $value['invoice_number'] ?? '';
                 $data[$key][] = $invoice_date ?? '';
                 $data[$key][] = $value['material_name'] ?? '';
@@ -78,7 +78,7 @@
                 $data[$key][] = number_format($material_qt, 0) ?? '';
                 $data[$key][] = number_format($material_unit_value, 2) ?? '';
                 $data[$key][] = number_format($total_value, 2) ?? '';
-            }   
+            }
             $config = [
                 'data' => $data,
                 'order' => [[1, 'asc']],
@@ -105,9 +105,50 @@
             ];
         @endphp
 
-        {{-- Compressed with style options / fill data using the plugin config --}}
-        <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
-            bordered compressed withButtons />
+        <div class="row">
+            <div class="col-sm-2">
+                @php
+                    $dtRange = explode(' - ', $reportData['dtRange']);
+                    $dtRange = str_replace('-', '/', $dtRange[0]) . ' a ' . str_replace('-', '/', $dtRange[1]);
+                @endphp
+                <x-adminlte-card theme="info" theme-mode="outline" title="Relatório Filtrado" icon="fas fa-filter">
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Obra:</strong> <br> {{ $reportData['construction'] ?? 'Todas' }}
+                        </li>
+                        {{-- <li class="list-group-item">
+                            <strong>Fornecedor:</strong> <br> {{ $reportData['provider'] ?? 'Todos' }}
+                        </li> --}}
+                        <li class="list-group-item">
+                            <strong>Nome material:</strong> <br> {{ $reportData['material'] ?? 'Todos' }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Categoria:</strong> <br> {{ $reportData['category'] ?? 'Todas' }}
+                        </li>
+                        {{-- <li class="list-group-item">
+                            <strong>Nota Fiscal:</strong> <br> {{ $reportData['invoice'] ?? 'Todas' }}
+                        </li> --}}
+                        {{-- <li class="list-group-item">
+                            <strong>Quant. materiais:</strong> <br> {{ $reportData['total_materials'] ?? 0 }}
+                        </li> --}}
+                        {{-- <li class="list-group-item">
+                            <strong>Valor materiais:</strong> <br> R$
+                            {{ number_format($reportData['total_cost'] ?? 0, 2, ',', '.') }}
+                        </li> --}}
+                        <li class="list-group-item">
+                            <strong>Período:</strong> <br> {{ $dtRange ?? 'Não definido' }}
+                        </li>
+                    </ul>
+
+                </x-adminlte-card>
+            </div>
+            <div class="col-sm-10">
+                {{-- Compressed with style options / fill data using the plugin config --}}
+                <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
+                    bordered compressed withButtons />
+            </div>
+        </div>
 
         {{-- Modal ADD --}}
         <x-adminlte-modal id="modalAdd" title=" {{ __('system.add_material') }}" size="lg" theme="success"

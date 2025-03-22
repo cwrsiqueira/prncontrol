@@ -65,7 +65,7 @@
                 ['label' => __('system.actions'), 'no-export' => true, 'width' => 5],
             ];
             $data = [];
-            
+
             foreach ($categories as $key => $category) {
                 $data[$key]['name'] = $category['name'];
                 $data[$key]['obs'] = $category['obs'];
@@ -166,11 +166,11 @@
 @section('js')
     <script>
         /*
-        let messages = document.querySelector('#messages').value
-        if (messages !== '') {
-            document.querySelector('#openModalAdd').click()
-        }
-        */
+                let messages = document.querySelector('#messages').value
+                if (messages !== '') {
+                    document.querySelector('#openModalAdd').click()
+                }
+                */
 
         let errors = document.querySelector('#errors').value
         if (errors == 1) {
@@ -209,15 +209,16 @@
 
         const edit_category = (category) => {
             let route_edit = "{{ route('material-categories.update', ['material_category' => 'category_id']) }}"
-            document.querySelector('#form_edit_category_material').setAttribute('action', route_edit.replace('category_id',
-            category.id))
+            document.querySelector('#form_edit_category_material').setAttribute('action', route_edit.replace(
+                'category_id',
+                category.id))
             document.querySelector('#edit_input_name').value = category.name
             document.querySelector('#edit_input_obs').value = category.obs
             document.querySelector('#openModalEdit').click()
         }
 
         const delete_category = (material) => {
-            if (!confirm('system.delete_confirm')) {
+            if (!confirm("{{ __('system.delete_confirm') }}")) {
                 return false;
             }
             let id = material.id

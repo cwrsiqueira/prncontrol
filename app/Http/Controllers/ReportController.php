@@ -82,8 +82,8 @@ class ReportController extends Controller
         // Aplica filtros se estiverem preenchidos
         foreach (['construction_id', 'provider_id', 'material_id', 'invoice_id', 'category_id'] as $filter) {
             if (!empty($data[$filter])) {
-                switch($filter) {                     
-                    case 'category_id':                         
+                switch ($filter) {
+                    case 'category_id':
                         $invoices->where('materials.category_id', $data[$filter]);
                         break;
                     case 'material_id':
@@ -131,7 +131,7 @@ class ReportController extends Controller
         $invoice = $data['invoice_id'] ?? 'Todas';
 
         if ($invoices->isNotEmpty()) {
-            $construction = $invoices->first()->construction_name;
+            $construction = $construction === 'Todas' ? 'Todas' : $invoices->first()->construction_name;
             $provider = $data['provider_id'] ?? null ? $invoices->first()->provider_name . ' = ' . number_format($total_cost, 2, ',', '.') : 'Todos';
             $material = $data['material_id'] ?? null ? $invoices->first()->material_name : 'Todos';
             $category = $data['category_id'] ?? null ? $invoices->first()->category_name : 'Todas';
@@ -143,9 +143,9 @@ class ReportController extends Controller
             $invoices = $invoices->groupBy('material_name')->map(function ($group) {
                 $total_qt = $group->sum('material_qt');
                 $total_cost = $group->sum(fn($item) => $item->material_qt * $item->material_unit_value);
-                
+
                 $unit_value = $group->first()->material_unit_value;
-                
+
                 return [
                     'material_name' => $group->first()->material_name,
                     'total_qt' => $total_qt,
@@ -172,5 +172,4 @@ class ReportController extends Controller
 
         return view('reports.generate', ['reportData' => $reportData]);
     }
-
 }
