@@ -111,7 +111,7 @@
                     $dtRange = explode(' - ', $reportData['dtRange']);
                     $dtRange = str_replace('-', '/', $dtRange[0]) . ' a ' . str_replace('-', '/', $dtRange[1]);
                 @endphp
-                <x-adminlte-card theme="info" theme-mode="outline" title="Relatório Filtrado" icon="fas fa-filter">
+                <x-adminlte-card theme="secondary" theme-mode="outline" title="Relatório Filtrado" icon="fas fa-filter">
 
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
