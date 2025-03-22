@@ -121,7 +121,7 @@
                             <strong>Fornecedor:</strong> <br> {{ $reportData['provider'] ?? 'Todos' }}
                         </li> --}}
                         <li class="list-group-item">
-                            <strong>Nome material:</strong> <br> {{ $reportData['material'] ?? 'Todos' }}
+                            <strong>Material:</strong> <br> {{ $reportData['material'] ?? 'Todos' }}
                         </li>
                         <li class="list-group-item">
                             <strong>Categoria:</strong> <br> {{ $reportData['category'] ?? 'Todas' }}
