@@ -65,24 +65,44 @@
             $heads = ['NotaNr.', 'Data', 'Material', 'Categoria', 'Unid', 'Quant', 'Vlr Unit', 'Vlr Total'];
             $data = [];
             foreach ($reportData['invoices'] as $key => $value) {
-                $invoice_date = !empty($value['invoice_date']) ? date('d/m/Y', strtotime($value['invoice_date'])) : '';
-                $material_qt = $value['material_qt'] ?? $value['total_qt'];
-                $material_unit_value = $value['material_unit_value'] ?? 1;
-                $total_value = $value['items'] ? $value['total_cost'] : $material_qt * $material_unit_value;
+                $data[] = [
+                    'invoice_number' => $value['invoice_number'],
 
-                $data[$key][] = $value['invoice_number'] ?? '';
-                $data[$key][] = $invoice_date ?? '';
-                $data[$key][] = $value['material_name'] ?? '';
-                $data[$key][] = $value['category_name'] ?? '';
-                $data[$key][] = $value['material_unid'] ?? '';
-                $data[$key][] = number_format($material_qt, 0) ?? '';
-                $data[$key][] = number_format($material_unit_value, 2) ?? '';
-                $data[$key][] = number_format($total_value, 2) ?? '';
+                    'invoice_date' => [
+                        'display' => date('d/m/Y', strtotime($value['invoice_date'])),
+                        'timestamp' => strtotime($value['invoice_date']),
+                    ],
+                    'material_name' => $value['material_name'],
+                    'category_name' => $value['category_name'],
+                    'material_unid' => $value['material_unid'],
+                    'material_qt' => number_format($value['material_qt'] ?? $value['total_qt'], 0),
+                    'material_unit_value' => number_format($value['material_unit_value'] ?? 1, 2, ',', '.'),
+                    'total_value' => number_format(
+                        $value['items']
+                            ? $value['total_cost']
+                            : ($value['material_qt'] ?? $value['total_qt']) * ($value['material_unit_value'] ?? 1),
+                        2,
+                        ',',
+                        '.',
+                    ),
+                ];
             }
             $config = [
                 'data' => $data,
                 'order' => [[1, 'asc']],
-                'columns' => [null, null, null, null, null, null, null, null],
+                'columns' => [
+                    ['data' => 'invoice_number', 'name' => 'invoice_number'],
+                    [
+                        'name' => 'invoice_date',
+                        'data' => ['_' => 'invoice_date.display', 'sort' => 'invoice_date.timestamp'],
+                    ],
+                    ['data' => 'material_name', 'name' => 'material_name'],
+                    ['data' => 'category_name', 'name' => 'category_name'],
+                    ['data' => 'material_unid', 'name' => 'material_unid'],
+                    ['data' => 'material_qt', 'name' => 'material_qt'],
+                    ['data' => 'material_unit_value', 'name' => 'material_unit_value'],
+                    ['data' => 'total_value', 'name' => 'total_value'],
+                ],
                 'buttons' => [
                     [
                         'extend' => 'pdfHtml5',
@@ -117,25 +137,12 @@
                         <li class="list-group-item">
                             <strong>Obra:</strong> <br> {{ $reportData['construction'] ?? 'Todas' }}
                         </li>
-                        {{-- <li class="list-group-item">
-                            <strong>Fornecedor:</strong> <br> {{ $reportData['provider'] ?? 'Todos' }}
-                        </li> --}}
                         <li class="list-group-item">
                             <strong>Material:</strong> <br> {{ $reportData['material'] ?? 'Todos' }}
                         </li>
                         <li class="list-group-item">
                             <strong>Categoria:</strong> <br> {{ $reportData['category'] ?? 'Todas' }}
                         </li>
-                        {{-- <li class="list-group-item">
-                            <strong>Nota Fiscal:</strong> <br> {{ $reportData['invoice'] ?? 'Todas' }}
-                        </li> --}}
-                        {{-- <li class="list-group-item">
-                            <strong>Quant. materiais:</strong> <br> {{ $reportData['total_materials'] ?? 0 }}
-                        </li> --}}
-                        {{-- <li class="list-group-item">
-                            <strong>Valor materiais:</strong> <br> R$
-                            {{ number_format($reportData['total_cost'] ?? 0, 2, ',', '.') }}
-                        </li> --}}
                         <li class="list-group-item">
                             <strong>Período:</strong> <br> {{ $dtRange ?? 'Não definido' }}
                         </li>
@@ -145,8 +152,8 @@
             </div>
             <div class="col-sm-10">
                 {{-- Compressed with style options / fill data using the plugin config --}}
-                <x-adminlte-datatable id="table2" :heads="$heads" head-theme="dark" :config="$config" striped hoverable
-                    bordered compressed withButtons />
+                <x-adminlte-datatable id="table2" :heads="$heads" :config="$config" striped hoverable bordered
+                    compressed withButtons />
             </div>
         </div>
 

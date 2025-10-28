@@ -12,7 +12,13 @@
     <x-adminlte-card theme="success" theme-mode="outline">
         @php
             // Cabeçalhos da tabela
-            $heads = [__('system.user_name'), __('system.action'), __('system.menu'), __('system.changes'), __('system.date')];
+            $heads = [
+                __('system.user_name'),
+                __('system.action'),
+                __('system.menu'),
+                __('system.changes'),
+                __('system.date'),
+            ];
 
             $data = [];
             $isAdmin = Auth::user()->permission_group_id === 1;
@@ -20,14 +26,17 @@
             if ($isAdmin) {
                 foreach ($logs as $log) {
                     $beforeChange = json_decode($log['detail'], true);
-                    
+
                     // Adiciona os valores na mesma ordem dos cabeçalhos
                     $data[] = [
-                        $log['user_name'],
-                        $log['action'],
-                        $log['menu'],
-                        "<pre>" . json_encode($beforeChange, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "</pre>",
-                        date('d/m/Y - H:i:s', strtotime($log['updated_at'] ?? $log['created_at'])),
+                        'user_name' => $log['user_name'],
+                        'action' => $log['action'],
+                        'menu' => $log['menu'],
+                        'beforeChange' => json_encode($beforeChange, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+                        'date_at' => [
+                            'display' => date('d/m/Y - H:i:s', strtotime($log['updated_at'] ?? $log['created_at'])),
+                            'timestamp' => strtotime($log['updated_at'] ?? $log['created_at']),
+                        ],
                     ];
                 }
             }
@@ -37,13 +46,13 @@
                 'data' => $data,
                 'order' => [[4, 'DESC']], // Ordenando pela data
                 'columns' => [
-                    ['title' => __('system.user_name')],
-                    ['title' => __('system.action')],
-                    ['title' => __('system.menu')],
-                    ['title' => __('system.changes')],
-                    ['title' => __('system.date')],
+                    ['name' => __('system.user_name'), 'data' => 'user_name'],
+                    ['name' => __('system.action'), 'data' => 'action'],
+                    ['name' => __('system.menu'), 'data' => 'menu'],
+                    ['name' => __('system.changes'), 'data' => 'beforeChange'],
+                    ['name' => __('system.date'), 'data' => ['_' => 'date_at.display', 'sort' => 'date_at.timestamp']],
                 ],
-                'lengthMenu' => [10, 50, 100, 500]
+                'lengthMenu' => [10, 50, 100, 500],
             ];
         @endphp
 

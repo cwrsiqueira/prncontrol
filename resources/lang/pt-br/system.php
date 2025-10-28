@@ -38,7 +38,7 @@ return [
     'add_cagetory_material' => 'Adicionar Categoria de Material',
     'add_invoice' => 'Adicionar Nota',
     'edit_invoice' => 'Editar Nota',
-    'invoice_number' => 'Número da Nota',
+    'invoice_number' => 'Nota nr.',
     'provider' => 'Fornecedor',
     'items' => 'Itens',
     'material' => 'Material',
